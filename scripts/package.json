@@ -1,0 +1,8 @@
+{
+  "name": "dudis-cli",
+  "version": "1.0.0",
+  "bin": {
+    "dudis": "src/new_project.js"
+  },
+  "dependencies": {}
+}
