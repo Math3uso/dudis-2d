@@ -98,7 +98,7 @@ make
 se tudo ocorrer bem você verá uma janela =)
 
 ## 🏗️ Como Usar
-...
+....
 
 ## 🔧 Dependências
 
