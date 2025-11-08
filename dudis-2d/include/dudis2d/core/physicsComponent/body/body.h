@@ -24,6 +24,8 @@ private:
   PhysicsDef physicsDef;
   Vec2 offset = {0.0, 0.0};
   SizeI size;
+  const char *_label;
+  std::function<void()> callbackColision;
 
 public:
   PhysicsShape(SizeI size, PhysicsDef nDef) : physicsDef(nDef), size(size) {
@@ -41,8 +43,13 @@ public:
     fixtureDef.shape = &shape;
   }
 
+  // void callbackColision()
+
   void setFixtureOffset(Vec2 nOffset) { offset = nOffset; }
   const Vec2 getOffset() const { return offset; }
+
+  void setLabel(const char *nLabel) { _label = nLabel; }
+  const char *getLabel() const { return _label; }
 
   b2FixtureDef fixtureDef;
   b2PolygonShape shape;
@@ -55,21 +62,25 @@ private:
   b2FixtureDef fixtureDef;
   SizeI size;
   Vec2 offset;
+  const char *label;
   // std::vector<std::shared_ptr<PhysicsShape>> shapes;
   std::vector<PhysicsShape> shapes;
   static constexpr float PIXELS_TO_METERS = 100.0f;
   static constexpr float METERS_TO_PIXELS = 1.0f / PIXELS_TO_METERS;
 
 public:
-  Body(SizeI size, bool isDinamic);
+  Body(const SizeI &size, bool isDinamic);
   void setPhysicsDef(PhysicsDef def);
   void setShape(const PhysicsShape &nShape);
   // std::vector<std::shared_ptr<PhysicsShape>> &getShapes() { return shapes; }
   std::vector<PhysicsShape> &getShapes() { return shapes; }
   void rotate(bool isRotate);
-  void setPos(Vec2 pos);
+  void setPos(const Vec2 &pos);
 
   void setFixtureOffset(Vec2 nOffset) { offset = nOffset; }
+
+  void setLabel(const char *nLabel) { label = nLabel; }
+  const char *getLabel() const { return label; }
 
   b2BodyDef &getBodyDef() { return bodyDef; }
   b2Body *getBody() { return body; }

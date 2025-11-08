@@ -6,6 +6,7 @@ using namespace dudis;
 FrameBuffer::FrameBuffer(SizeI size) : Renderable() {
   this->size = size;
   color = WHITE;
+  pos = {0, 0};
 
   texture = LoadRenderTexture(size.w, size.h);
 
@@ -22,6 +23,7 @@ void FrameBuffer::render() {
 
 void FrameBuffer::makeFrameBuffer() {
   BeginTextureMode(texture);
+  // ClearBackground(RED);
   drawCall();
   EndTextureMode();
 }

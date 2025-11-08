@@ -3,3 +3,7 @@ build
 assets
 .clang-format
 teste.txt
+out
+node_modules
+v1.md
+package-lock.json

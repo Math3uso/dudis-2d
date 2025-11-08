@@ -1,59 +1,27 @@
 # Dudis2D - Pequeno framework para criação de jogos 2d
 
-Dudis2d foi escrito com raylib e ajuda na criação de jogos 2d usando C++.
+## dudis2d oq é?
+`dudis2d` foi escrito com raylib e ajuda na criação de jogos 2d usando C++.
+descrição...
 
 ## Status
 ⚠️ Este projeto ainda está **em desenvolvimento**. Algumas funcionalidades podem estar faltando e podem ocorrer bugs.  
 Os logs da engine ainda estão ativos para facilitar o desenvolvimento. (O README está desatualizado)
 
-## Contribuição
-Contribuições são bem-vindas! Abra issues, pull requests ou apenas acompanhe a evolução.
+## Pre-requisitos
+### Cmake
+O `CMake` é necessário para gerar os arquivos de compilação do seu projeto dudis2d.
+Se você ainda não tem, pode instalar rapidamente usando o gerenciador de pacotes do seu sistema:
 
-## 📁 Estrutura do Projeto
-
-### **Estrutura Modular**
-
+- **Linux (Debian/Ubuntu):**  
+```bash
+sudo apt install cmake
 ```
-dudis-2d/
-├── include/                    # Headers públicos da API
-│   └── dudis2d/
-│       ├── dudis2d.h          # Header principal
-│       ├── physics.h          # Sistema de física
-│       ├── graphics.h         # Sistema de renderização
-│       ├── core/              # Componentes fundamentais
-│       │   ├── log/           # Sistema de logging
-│       │   ├── model/         # Modelos de dados
-│       │   ├── physicsComponent/ # Componentes de física
-│       │   ├── utils/         # Utilitários
-│       │   └── window/        # Gerenciamento de janelas
-│       ├── graphics/          # Sistema de renderização
-│       │   ├── sprites/       # Sprites e retângulos
-│       │   ├── ui/            # Interface do usuário
-│       │   └── utils/         # Utilitários gráficos
-│       ├── globals/           # Variáveis e estado global
-│       └── scenes/            # Sistema de cenas
-│           ├── scene/         # Gerenciamento de cenas
-│           └── sceneManager/  # Gerenciador de cenas
-├── src/                       # Código fonte (implementação)
-│   ├── core/                  # Implementação dos componentes fundamentais
-│   ├── graphics/              # Implementação do sistema de renderização
-│   ├── globals/               # Implementação das variáveis globais
-│   └── scenes/                # Implementação do sistema de cenas
-├── extern/                    # Dependências externas
-│   ├── box2d/                 # Motor de física 2D
-│   └── raygui/                # Interface gráfica
-├── build/                     # Arquivos de compilação
-└── CMakeLists.txt             # Sistema de build
-```
+- **Windows**
+Você pode baixar o CMake no site oficial: [cmake.org](https://cmake.org/download/)
 
-## 🎯 Características
-
-- **Motor de Física 2D** baseado no Box2D
-- **Sistema de Renderização** com Raylib
-- **Interface Gráfica** com RayGUI
-- **Arquitetura Modular** com separação clara de responsabilidades
-- **Sistema de Cenas** para organização do código
-- **Build System** com CMake
+### Nodejs
+todos os spripts/CLI do `dudis2d` é escrito em JavaScript (até o momento) e por isso é necessario ter instalado em sua maquina. No entando sua instalação e rapida e facil consulete a doc oficial: [nodejs.org](https://nodejs.org/)
 
 ## Instalação
 clone o repositorio
@@ -109,10 +77,10 @@ se tudo ocorrer bem você verá uma janela =)
 ## 📦 Build
 
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+
+cmake -S . -B build
+cmake --build build
+
 ```
 
 A biblioteca será gerada como `libdudis.a` na pasta `build/`.
@@ -123,3 +91,7 @@ A biblioteca será gerada como `libdudis.a` na pasta `build/`.
 - O código fonte está na pasta `src/`
 - A biblioteca é modular e pode ser usada como `.a` ou `.lib/.dll`
 - Os usuários só precisam dos headers da pasta `include/`
+
+
+## Contribuição
+Contribuições são bem-vindas! Abra issues, pull requests ou apenas acompanhe a evolução.

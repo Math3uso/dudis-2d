@@ -4,7 +4,7 @@ using namespace dudis;
 
 Text::Text(const std::string &content, int size) {
   pos = {20, 20};
-  TextColor = BLACK;
+  TextColor = WHITE;
   fontSize = size;
   text = content;
 }

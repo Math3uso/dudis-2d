@@ -13,7 +13,7 @@ shared_ptr<PhysicsComponent> PhysicsComponent::create(DDModel *ownerModel) {
   return component;
 }
 
-void PhysicsComponent::createBoxBody(SizeI sizeBox, bool isStatic,
+void PhysicsComponent::createBoxBody(const SizeI &sizeBox, bool isStatic,
                                      bool rotate) {
   if (!world)
     return;
@@ -132,9 +132,11 @@ void PhysicsComponent::syncFromPhysics() {
   // cout << "atualizando posições\n";
 
   b2Vec2 bodyPos = body->GetPosition();
-  owner->getPos().x = bodyPos.x * PIXELS_TO_METERS;
-  owner->getPos().y = bodyPos.y * PIXELS_TO_METERS;
-  owner->getAngle() = body->GetAngle() * RAD2DEG;
+  // owner->getPos().x = bodyPos.x * PIXELS_TO_METERS;
+  // owner->getPos().y = bodyPos.y * PIXELS_TO_METERS;
+  // owner->getAngle() = body->GetAngle() * RAD2DEG;
+  owner->setPos({bodyPos.x * PIXELS_TO_METERS, bodyPos.y * PIXELS_TO_METERS});
+  owner->setAngle(body->GetAngle() * RAD2DEG);
 }
 
 void PhysicsComponent::syncToPhysics() {
@@ -186,7 +188,7 @@ Vec2 PhysicsComponent::getPhysicsVelocity() {
   return {0, 0};
 }
 
-void PhysicsComponent::setDensity(float density) {
+void PhysicsComponent::setDensity(const float &density) {
   if (body) {
     for (b2Fixture *f = body->GetFixtureList(); f; f = f->GetNext()) {
       f->SetDensity(density);
@@ -195,7 +197,7 @@ void PhysicsComponent::setDensity(float density) {
   }
 }
 
-void PhysicsComponent::setFriction(float friction) {
+void PhysicsComponent::setFriction(const float &friction) {
   if (body) {
     for (b2Fixture *f = body->GetFixtureList(); f; f = f->GetNext()) {
       f->SetFriction(friction);
@@ -203,7 +205,7 @@ void PhysicsComponent::setFriction(float friction) {
   }
 }
 
-void PhysicsComponent::setRestitution(float restitution) {
+void PhysicsComponent::setRestitution(const float &restitution) {
   if (body) {
     for (b2Fixture *f = body->GetFixtureList(); f; f = f->GetNext()) {
       f->SetRestitution(restitution);

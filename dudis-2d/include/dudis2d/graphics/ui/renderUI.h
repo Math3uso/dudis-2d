@@ -17,36 +17,50 @@ public:
       : top(value), bottom(value), left(value), right(value) {}
 };
 
+enum class UIType {
+  Content,
+  Layout,
+};
+
 class RenderUI : public Renderable {
 protected:
   bool visible = true;
   bool enabled = true;
+  float mrgin = 0.f;
+  float borderWidth = 0;
   Color backgroundColor = BLACK;
   Color BorderColor = BLACK;
-  float borderWidth = 0;
   std::vector<std::shared_ptr<RenderUI>> children;
-  // Direction padding;
-  float mrgin = 0.f;
+  // Direction padding = (0.f, 0.f, 0.f, 0.f);
+
+  UIType type;
+  RenderUI *parent;
 
 public:
+  float paddingGlobal = 0.f;
   virtual bool contains(Vector2 point) const {
     return point.x >= pos.x && point.x <= pos.x + size.w && point.y >= pos.y &&
            point.y <= pos.y + size.h;
   }
-  virtual void render() = 0;
+  virtual void render() override = 0;
+
+  virtual void renderByParent();
+
   void setVisible(bool v) { visible = v; }
   void setEnabled(bool e) { enabled = e; }
   void setBackgroundColor(Color bgColor) { backgroundColor = bgColor; }
   void setBorderColor(Color bColor) { BorderColor = bColor; }
   Color BackgroundColor() { return backgroundColor; }
-  void updateChildren() {
-    for (const auto &child : children) {
-      child->setPos({pos.x + child->getPos().x, pos.y + child->getPos().y});
-    }
-  }
-  void setPos(dudis::Vec2 nPos) override {
-    pos = nPos;
-    updateChildren();
-  }
+
+  void updateChildren();
+  virtual void udpateLayout();
+
+  Rectangle getInnerBounds();
+
+  RenderUI *getParent() { return parent; }
+  void setParent(RenderUI *nParent) { parent = nParent; }
+
+  void addChildren(std::shared_ptr<RenderUI> child);
+  void setPos(dudis::Vec2 nPos) override;
 };
 } // namespace dudis

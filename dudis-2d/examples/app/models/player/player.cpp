@@ -15,11 +15,12 @@ void Player::start() {
   auto physicComponent = PhysicsComponent::create(this);
   auto body = PhysicsComponent::createBody({15, 12}, true);
   body->setPhysicsDef(PhysicsDef(1.0f, 4.0f, 0.0f));
-  body->rotate(false);
+  body->rotate(true);
   body->setFixtureOffset({0, 15.f});
 
-  // auto shape = PhysicsShape({50, 50}, PhysicsDef(1.0f, 1.0f, 0.0f));
-  // body->setShape(shape);
+  auto shape = PhysicsShape({50, 50}, PhysicsDef(1.0f, 1.0f, 0.0f));
+
+  body->setShape(shape);
 
   physicComponent->setPhysicsBody(body);
   auto animatedList = MakeAnimatedPlayer();
