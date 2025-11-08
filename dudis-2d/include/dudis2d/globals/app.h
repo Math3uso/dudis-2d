@@ -26,8 +26,8 @@ public:
   static void setSceneManager(SceneManager &nManager);
   static Window *getWindow();
   static SceneManager &getSceneManager() { return *sceneManager; }
-  static void WindowDraw(std::function<void()> nWindowCallback) {
-    windowCallback = nWindowCallback;
+  static void WindowDraw(const std::function<void()> &&nWindowCallback) {
+    windowCallback = std::move(nWindowCallback);
   };
 
   static void SceneDraw(std::function<void()> nSceneCallback) {

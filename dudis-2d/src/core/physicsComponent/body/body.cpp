@@ -2,7 +2,7 @@
 
 using namespace dudis;
 
-Body::Body(SizeI size, bool isDinamic) {
+Body::Body(const SizeI &size, bool isDinamic) {
   bodyDef.type = isDinamic ? b2_dynamicBody : b2_staticBody;
   this->size = size;
   this->offset = {0.0, 0.0};
@@ -17,7 +17,7 @@ void Body::setPhysicsDef(PhysicsDef def) {
 
 void Body::rotate(bool isRotate) { bodyDef.fixedRotation = !isRotate; }
 
-void Body::setPos(Vec2 nPos) {
+void Body::setPos(const Vec2 &nPos) {
   bodyDef.position.Set(nPos.x * METERS_TO_PIXELS, nPos.y * METERS_TO_PIXELS);
   // pos = nPos;
 }

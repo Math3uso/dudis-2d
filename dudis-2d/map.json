@@ -1,0 +1,25 @@
+{
+    "player": {
+        "type": "ddmodel",
+        "id": "player_id",
+        "layer": "1",
+        "sprite": "assets/player.png",
+        "pos": {
+            "x": "100",
+            "y": "100"
+        }
+    },
+    "graund": {
+        "type": "ddmodel",
+        "id": "ground_id",
+        "layer": "1",
+        "size": [
+            32,
+            32
+        ],
+        "sprite": "assets/player.png",
+        "drawMode": {
+            "full": true
+        }
+    }
+}

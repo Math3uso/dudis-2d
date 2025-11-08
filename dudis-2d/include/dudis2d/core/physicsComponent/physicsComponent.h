@@ -30,13 +30,14 @@ public:
     }
   }
 
-  std::function<void(b2BodyDef &bodyDef)> configureBodyDef;
+  std::function<void(const b2BodyDef &bodyDef)> configureBodyDef;
 
   // void createBoxBody(bool isStatic = false, dudis::SizeI sizeBox);
 
   void setPhysicsBody(std::shared_ptr<Body> body);
 
-  void createBoxBody(SizeI sizeBox, bool isStatic = false, bool rotate = false);
+  void createBoxBody(const SizeI &sizeBox, bool isStatic = false,
+                     bool rotate = false);
 
   // Sincronizar posição do corpo físico com DDModel
   void syncFromPhysics();
@@ -53,9 +54,9 @@ public:
 
   bool hasBody() const { return body != nullptr; }
   b2Body *getBody() { return body; }
-  void setDensity(float density);
-  void setFriction(float friction);
-  void setRestitution(float restitution);
+  void setDensity(const float &density);
+  void setFriction(const float &friction);
+  void setRestitution(const float &restitution);
   Vec2 getPhysicsVelocity();
 
   void SetTransform(Vec2 nPos);

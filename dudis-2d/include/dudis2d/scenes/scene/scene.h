@@ -40,7 +40,7 @@ public:
 
   void addPhysics();
   void togglePhysicsDebug() { showPhysicsDebug = !showPhysicsDebug; }
-  void setPhysicsDebug(bool enabled) { showPhysicsDebug = enabled; }
+  void setPhysicsDebug(const bool &enabled) { showPhysicsDebug = enabled; }
 
   void release() {
     if (_release) {
@@ -53,12 +53,14 @@ public:
 
   int getTotalRenderable() { return renderableList.size(); }
 
-  void releaseAfterUse(std::function<void()> callback) { _release = callback; }
+  void releaseAfterUse(std::function<void()> &&callback) {
+    _release = std::move(callback);
+  }
   void render();
-  void setSize(dudis::SizeI nSize);
+  void setSize(const dudis::SizeI &nSize);
   void setClearColor(Color nColor) { clearColor = nColor; };
-  RenderTexture2D &getFrameBuffer();
-  Color getClearColor() { return clearColor; }
+  const RenderTexture2D &getFrameBuffer() const;
+  const Color &getClearColor() const { return clearColor; }
 
   void addToRender(std::shared_ptr<dudis::Renderable> renderable);
   void addModel(std::shared_ptr<dudis::DDModel> nModel);

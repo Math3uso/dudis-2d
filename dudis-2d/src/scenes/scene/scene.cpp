@@ -1,10 +1,12 @@
 #include "dudis2d/scenes/scene/scene.h"
+// #include "dudis2d/core/debug/dd-debug.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/core/model/model.h"
 #include "dudis2d/core/physicsComponent/debugDraw/debugDraw.h"
 #include "dudis2d/core/window/window.h"
 #include "dudis2d/globals/app.h"
 #include "dudis2d/graphics/shape.h"
+#include "dudis2d/graphics/ui/renderUI.h"
 #include <algorithm>
 
 using namespace std;
@@ -26,7 +28,7 @@ Scene::~Scene() {
   }
 }
 
-RenderTexture2D &Scene::getFrameBuffer() { return sceneTexure; }
+const RenderTexture2D &Scene::getFrameBuffer() const { return sceneTexure; }
 
 dudis::Scope<Scene> Scene::create() {
   auto nScene = std::make_unique<Scene>();
@@ -49,8 +51,14 @@ void Scene::addToRender(std::shared_ptr<dudis::Renderable> render) {
     render->zIndex++;
   }
 
+  if (auto ui = dynamic_cast<dudis::RenderUI *>(render.get())) {
+    ui->udpateLayout();
+  }
+
   renderableList.push_back(render);
+
   Log::Info("total: " + to_string(renderableList.size()));
+
   return;
 }
 
@@ -111,7 +119,9 @@ void Scene::render() {
       continue;
     }
 
-    render->update();
+    // render->update();
+    //  render->runMotions();
+    render->defaultUpdate();
     render->render();
 
     if (render->drawOrigin) {
@@ -157,6 +167,10 @@ void Scene::addModel(shared_ptr<DDModel> nModel) {
 
   // nModel->start();
   this->addToRender(nModel->getRenderable());
+
+  // #ifdef DD_DEBUG
+  //   DD_DebugDetails::registerScene(this);
+  // #endif
 }
 
 void Scene::addPhysics() {
@@ -174,7 +188,7 @@ void Scene::addPhysics() {
   App::setPhysicWorld(this->world.get());
 }
 
-void Scene::setSize(SizeI size) {
+void Scene::setSize(const SizeI &size) {
   UnloadRenderTexture(sceneTexure);
   sceneTexure = LoadRenderTexture(size.w, size.h);
 }

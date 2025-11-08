@@ -41,10 +41,6 @@ void AppleItem::start() {
 
   this->addComponent<AnimatedList>(animatedList);
   this->addComponent<PhysicsComponent>(physicsComponent);
-}
-
-void AppleItem::update() {
-  DDModel::update();
 
   this->physicsComponent->setCallbackCollider([&](std::string name) {
     std::cout << name << "\n";
@@ -60,3 +56,5 @@ void AppleItem::update() {
     }
   });
 }
+
+void AppleItem::update() { DDModel::update(); }

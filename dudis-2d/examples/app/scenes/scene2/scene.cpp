@@ -13,6 +13,14 @@ void Scene2::start() {
 
   this->showPhysicsDebug = true;
 
+  auto bt2 = Button::create("prev");
+  bt2->setPos({250, 100});
+
+  bt2->addEventListnear(
+      [=](RenderUI *ref) { App::getSceneManager().popScene(); });
+
+  this->addToRender(bt2);
+
   auto ground = Ground::create();
   auto player = Player::create();
   auto item = AppleItem::create();

@@ -1,5 +1,7 @@
 #include <string>
 
+#pragma once
+
 namespace dudis {
 
 #define D_RESET "\033[0m"

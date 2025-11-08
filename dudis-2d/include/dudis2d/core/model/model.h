@@ -12,8 +12,7 @@
 class Scene;
 
 namespace dudis {
-class DDModel
-{
+class DDModel {
 private:
   // std::shared_ptr<AnimatedList> animated;
 
@@ -51,41 +50,28 @@ public:
 
   template <typename T> void addComponent(std::shared_ptr<T> component);
 
-  PhysicsComponent *getPhysicsComponent() {
-    return physicsComponent.get();
-  }
+  PhysicsComponent *getPhysicsComponent() { return physicsComponent.get(); }
 
-  const SceneProperty &getSceneProps() const {
-    return sceneProps;
-  }
+  const SceneProperty &getSceneProps() const { return sceneProps; }
 
   std::shared_ptr<Renderable> &getRenderable();
   void render();
   void move(Vec2 delta);
-  void setFlippedX(bool flip) {
-    flippedX = flip;
-  }
+  void setFlippedX(bool flip) { flippedX = flip; }
 
   Vec2 getMovementInput();
-  Vec2 &getPos() {
-    return pos;
-  }
-  SizeI getSize() const {
-    return size;
-  }
-  float &getAngle() {
-    return angle;
-  }
+  Vec2 &getPos() { return pos; }
+  const SizeI &getSize() const { return size; }
+  const float &getAngle() { return angle; }
+  void setAngle(const float &nAngle) { angle = nAngle; }
+  void setPos(const Vec2 &nPos) { pos = nPos; }
+  void setSize(const SizeI &nSize) { size = nSize; }
 
-  AnimatedList *getAnimated() {
-    return animated.get();
-  }
+  AnimatedList *getAnimated() { return animated.get(); }
 
   // const char *getName() { return name; }
 
-  const std::string &getName() const {
-    return name;
-  }
+  const std::string &getName() const { return name; }
 
   static std::shared_ptr<DDModel> create();
 
@@ -98,12 +84,10 @@ template <typename T> void DDModel::addComponent(std::shared_ptr<T> component) {
     this->renderable = component;
     std::cout << "if passou Renderable\n";
     this->renderable->setSize({size.w, size.h});
-  }
-  else if constexpr (std::is_same<T, PhysicsComponent>::value) {
+  } else if constexpr (std::is_same<T, PhysicsComponent>::value) {
     this->physicsComponent = component;
     std::cout << "if passou - PhysicsComponent\n";
-  }
-  else if constexpr (std::is_same<T, AnimatedList>::value) {
+  } else if constexpr (std::is_same<T, AnimatedList>::value) {
     this->animated = component;
     std::cout << this->animated->Animations().size() << "\n";
     std::cout << "if passou - AnimatedLists\n";
