@@ -3,6 +3,9 @@
 const fs = require("fs");
 const path = require("path");
 const { Command } = require('commander');
+const createNewProject = require("./actions/create.js");
+const { runProject, buildProject } = require("./actions/run.js");
+
 
 const program = new Command();
 
@@ -19,6 +22,24 @@ program.command("new")
     .argument("<projectName>", "Nome do novo projeto")
     .action((projectName) => {
         console.log(`Criando novo projeto: ${projectName}`);
+        createNewProject(projectName);
+    });
+
+
+
+program.command("run")
+    .description("compila e executa o projeto dudis2d")
+    .argument("<plataform>", "plataforma Ex: win32, linux")
+    .option("--force", "força uma recompilação completa (regera o CMake)")
+    .action((plataform, options) => {
+        runProject(plataform, options);
+    });
+
+program.command("build")
+    .description("prepara o projeto e compila")
+    // .argument("<plataform>", "plataforma Ex: win32, linux")
+    .action(() => {
+        buildProject();
     });
 
 
