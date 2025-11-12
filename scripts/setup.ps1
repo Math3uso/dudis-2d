@@ -38,4 +38,4 @@ npm link
 
 Write-Host "`n✅ Setup concluído!"
 Write-Host "Abra um novo terminal ou rode:"
-Write-Host "`n    . `$PROFILE"
+Write-Host "`n    . $PROFILE"
