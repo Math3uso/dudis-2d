@@ -147,7 +147,7 @@ function createNewProject(projectName) {
     fs.writeFileSync(path.join(projectPath, "src", "scenes", "mainScene.h"), getSceneHeader());
     fs.writeFileSync(path.join(projectPath, "src", "scenes", "mainScene.cpp"), getSceneSrc());
     fs.writeFileSync(path.join(projectPath, "dd-config.json"), `{
-    "projectName": "teste",
+    "projectName": "${projectName}",
     "version": "1.0"
 }`);
 
