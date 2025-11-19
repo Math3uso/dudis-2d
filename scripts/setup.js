@@ -30,6 +30,7 @@ async function setEnv(name, value) {
     if (plataform == "win32") {
         // Windows
         await run(`setx ${name} "${value}"`);
+        return;
     }
 
     // Linux / macOS
