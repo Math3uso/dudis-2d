@@ -1,9 +1,9 @@
 #pragma once
 
+#include "dudis2d/core/utils/types.h"
 #include <functional>
 #include <string>
 #include <unordered_map>
-
 class Window;
 
 class SceneManager;
