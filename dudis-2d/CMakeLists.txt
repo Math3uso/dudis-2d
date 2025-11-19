@@ -34,83 +34,73 @@
 # target_link_libraries(dudis PUBLIC raylib)
 
 
-
-cmake_minimum_required(VERSION 3.10)
-project(dudis-2d)
-
-set(CMAKE_CXX_STANDARD 17)
-
-# Caminho correto do Box2D
-set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
-
-# Pega os .cpp do teu projeto
-file(GLOB_RECURSE SRC_FILES src/*.cpp)
-
-# Pega os .cpp do Box2D
-file(GLOB_RECURSE BOX2D_SRC
-    ${BOX2D_DIR}/src/*.cpp
-)
-
-# Cria a lib estática com tudo junto
-add_library(dudis STATIC
-    ${SRC_FILES}
-    ${BOX2D_SRC}
-)
-
-# Inclui os diretórios de headers
-target_include_directories(dudis PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui
-    ${BOX2D_DIR}/include
-)
-
-# Linka com Raylib
-find_package(raylib REQUIRED)
-target_link_libraries(dudis PUBLIC raylib)
-
-
-
-# v2
-
+#==================================
+# v1
 # cmake_minimum_required(VERSION 3.10)
 # project(dudis-2d)
 
 # set(CMAKE_CXX_STANDARD 17)
 
-# # Caminhos das dependências
-# set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
-# set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
-# set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
+# Caminho correto do Box2D
+#set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
 
-# # Configurações do Raylib para build estático
-# set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-# set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
-# set(CUSTOMIZE_BUILD ON CACHE BOOL "" FORCE)
+# Pega os .cpp do teu projeto
+#file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
-# # Adiciona o Raylib como subdiretório
-# add_subdirectory(${RAYLIB_DIR})
+# Pega os .cpp do Box2D
+#file(GLOB_RECURSE BOX2D_SRC
+   # ${BOX2D_DIR}/src/*.cpp
+)
 
-# # Pega os .cpp do seu projeto
-# file(GLOB_RECURSE SRC_FILES src/*.cpp)
+# Cria a lib estática com tudo junto
+#add_library(dudis STATIC
+   # ${SRC_FILES}
+   # ${BOX2D_SRC}
+)
 
-# # Pega os .cpp do Box2D
-# file(GLOB_RECURSE BOX2D_SRC
-#     ${BOX2D_DIR}/src/*.cpp
-# )
+# Inclui os diretórios de headers
+#target_include_directories(dudis PUBLIC
+   #${CMAKE_CURRENT_SOURCE_DIR}/include
+    #${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui
+    #${BOX2D_DIR}/include
+#)
 
-# # Cria a biblioteca estática com tudo junto
-# add_library(dudis STATIC
-#     ${SRC_FILES}
-#     ${BOX2D_SRC}
-# )
+# Linka com Raylib
+#find_package(raylib REQUIRED)
+#target_link_libraries(dudis PUBLIC raylib)
+#==================================
 
-# # Inclui os diretórios de headers
-# target_include_directories(dudis PUBLIC
-#     ${CMAKE_CURRENT_SOURCE_DIR}/include
-#     ${RAYGUI_DIR}
-#     ${BOX2D_DIR}/include
-#     ${RAYLIB_DIR}/src  # Headers do Raylib
-# )
+cmake_minimum_required(VERSION 3.10)
+project(dudis-2d)
+set(CMAKE_CXX_STANDARD 17)
 
-# # Linka com Raylib (agora compilado localmente)
-# target_link_libraries(dudis PUBLIC raylib)
+set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
+set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
+set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
+
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
+set(CUSTOMIZE_BUILD ON CACHE BOOL "" FORCE)
+
+add_subdirectory(${RAYLIB_DIR})
+
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
+
+file(GLOB_RECURSE BOX2D_SRC
+    ${BOX2D_DIR}/src/*.cpp
+)
+
+add_library(dudis STATIC
+    ${SRC_FILES}
+    ${BOX2D_SRC}
+)
+
+target_include_directories(dudis PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${RAYGUI_DIR}
+    ${BOX2D_DIR}/include
+    ${RAYLIB_DIR}/src
+)
+
+target_link_libraries(dudis PUBLIC raylib)
+
