@@ -32,13 +32,21 @@ void Player::start() {
 void Player::update() {
   DDModel::update();
 
+  auto &camera = App::getWindow()->getGlobalCamera();
+
   auto movement = this->getMovementInput();
 
   float deltaTime = GetFrameTime();
 
   this->physicsComponent->setVelocity({movement.x * speed});
 
+  if (movement.x != 0) {
+    // camera.traslateTarget({pos.x, 0});
+  }
+
   Vector2 velocity = this->physicsComponent->getPhysicsVelocity();
+
+  // std::cout << abs(velocity.y) << "\n";
 
   if (isJump && abs(velocity.y) < 0.1f) {
     isJump = false;

@@ -25,6 +25,10 @@ void Scene2::start() {
   auto player = Player::create();
   auto item = AppleItem::create();
 
+  // auto font = DDFont::create("../assets/Roboto-Regular.ttf");
+  auto text = Text::create("sla", 28);
+  this->addToRender(text);
+
   auto *shader = new Shader(LoadShader(0, "../shaders/teste.frag"));
 
   sprite = new DDRectangle({100, 100}, {400, 300});

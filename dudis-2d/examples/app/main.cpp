@@ -14,7 +14,7 @@ using namespace dudis;
 
 int main() {
 
-  // SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
   Window window(SizeI(800, 600), "Janela");
 
@@ -25,28 +25,29 @@ int main() {
   window.setResolution(resolution);
 
   auto camera = DDCamera();
+  camera.setOffset({10, 10});
   // camera.setOffset({400, 300});
-  // camera.setTarget({400, 300});
+  camera.setTarget({100, 300});
 
-  // camera.setDebugOptions(CameraDebugOptions{
-  //     .drawCameraTarget = true,
-  //     .drawCameraOffset = true,
-  // });
+  camera.setDebugOptions(CameraDebugOptions{
+      // .drawCameraTarget = true,
+      //.drawCameraOffset = true,
+  });
 
   window.setGlobalCamera(camera);
 
   SceneManager manager;
 
   // auto scene1 = Scene1::create();
-  // auto scene2 = Scene2::create();
+  auto scene2 = Scene2::create();
   // auto sceneLayout = SceneLayout::create();
   // auto sceneSla = SceneSla::create();
   // auto sceneReso = SceneReso::create();
   // auto sceneCamera = SceneCamera::create();
 
-  auto sceneScn = SceneScn::create();
+  // auto sceneScn = SceneScn::create();
 
-  manager.pushScene(move(sceneScn));
+  manager.pushScene(move(scene2));
 
   App::setSceneManager(manager);
 
