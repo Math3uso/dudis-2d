@@ -5,15 +5,19 @@
 using namespace dudis;
 using namespace std;
 
-void DDModel::render() {
+void DDModel::render()
+{
 
-  if (animated) {
+  if (animated)
+  {
     this->renderable = animated->getCurrentAnimation();
   }
 
-  if (renderable) {
+  if (renderable)
+  {
     renderable->setPos({pos.x, pos.y});
     renderable->rotate(angle);
+    renderable->setOrigin(origin);
 
     this->renderable->setSize({size.w, size.h});
 
@@ -23,20 +27,25 @@ void DDModel::render() {
   }
 }
 
-shared_ptr<Renderable> &DDModel::getRenderable() {
+shared_ptr<Renderable> &DDModel::getRenderable()
+{
   return this->renderable;
 }
 
-DDModel::~DDModel() {
-  if (!name.empty()) {
+DDModel::~DDModel()
+{
+  if (!name.empty())
+  {
     std::cout << "model " << name << " deletado\n";
   }
-  else {
+  else
+  {
     std::cout << "model sem nome deletado\n";
   }
 }
 
-Vec2 DDModel::getMovementInput() {
+Vec2 DDModel::getMovementInput()
+{
 
   Vec2 input{0, 0};
 
@@ -52,11 +61,13 @@ Vec2 DDModel::getMovementInput() {
   return input;
 }
 
-void DDModel::move(Vec2 delta) {
+void DDModel::move(Vec2 delta)
+{
   pos = delta;
 }
 
-void DDModel::release() {
+void DDModel::release()
+{
 
   // if (this->renderable) {
   //   this->renderable.reset();
