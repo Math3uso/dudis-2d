@@ -50,13 +50,13 @@
 # Pega os .cpp do Box2D
 #file(GLOB_RECURSE BOX2D_SRC
    # ${BOX2D_DIR}/src/*.cpp
-)
+#) 
 
 # Cria a lib estática com tudo junto
 #add_library(dudis STATIC
    # ${SRC_FILES}
    # ${BOX2D_SRC}
-)
+#) 
 
 # Inclui os diretórios de headers
 #target_include_directories(dudis PUBLIC
