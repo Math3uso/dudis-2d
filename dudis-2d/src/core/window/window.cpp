@@ -76,7 +76,7 @@ void Window::Running() {
 
       ClearBackground(WHITE);
 
-      BeginMode2D(_globalCamera.getCameraProps());
+      // BeginMode2D(_globalCamera.getCameraProps());
 
       this->_drawTextureFromRenderManager(frameBuffer);
 
@@ -88,7 +88,7 @@ void Window::Running() {
         _globalCamera.drawDebugInfo();
       }
 
-      EndMode2D();
+      // EndMode2D();
 
       EndDrawing();
 
