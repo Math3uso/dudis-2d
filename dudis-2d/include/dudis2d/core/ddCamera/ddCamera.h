@@ -25,7 +25,7 @@ private:
 
 public:
   DDCamera();
-  void setTarget(const Vec2 &pos) { _camera.offset = pos; };
+  void setTarget(const Vec2 &pos) { _camera.target = pos; };
   void setRotation(const float angle) { _camera.rotation = angle; };
   void setZoom(int zoom) { _camera.zoom += zoom; }
   void setOffset(const Vec2 &offset) { _camera.offset = offset; }
