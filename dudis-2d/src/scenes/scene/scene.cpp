@@ -75,13 +75,6 @@ void Scene::render() {
   }
 
   if (!models.empty()) {
-    // for (const auto &model : models) {
-    //   if (!model)
-    //     return;
-
-    //   model->update();
-    //   model->render();
-    // }
     for (size_t i = 0; i < models.size();) {
       auto &model = models[i];
 
@@ -97,11 +90,6 @@ void Scene::render() {
       model->update();
       model->render();
       i++;
-      // else {
-      //   model->update();
-      //   model->render();
-      //   ++i;
-      // }
     }
   }
 
@@ -123,25 +111,15 @@ void Scene::render() {
     //  render->runMotions();
     render->defaultUpdate();
     render->render();
+    this->drawAllChilren(render.get());
 
-    if (render->drawOrigin) {
-      // auto origin = render->getOrigin();
-      auto pos = render->getPos();
-
-      if (auto shape = dynamic_cast<dudis::Renderable *>(render.get())) {
-        auto color = shape->getColor();
-
-        DrawRectangle(
-            pos.x - 5, pos.y - 5, 10, 10,
-            {(unsigned char)(255 - color.r), (unsigned char)(255 - color.g),
-             (unsigned char)(255 - color.b), (unsigned char)(color.a)});
-
-        continue;
+    for (const auto &child : render->getChildren()) {
+      if (Renderable *childRender = dynamic_cast<Renderable *>(child.get())) {
+        childRender->render();
       }
-
-      DrawRectangle(pos.x - 5, pos.y - 5, 10, 10, RED);
-      continue;
     }
+
+    _drawRenderableOrigin(render.get());
     ++i;
   }
 
@@ -201,6 +179,8 @@ void Scene::drawFrameBuffer(shared_ptr<FrameBuffer> frameBuffer) {
 
 void Scene::drawing(RenderTexture2D &frameBuffer, SizeI windowSize) {
 
+  auto &camera = App::getWindow()->getGlobalCamera();
+
   if (windowSize.w != size.w || windowSize.h != size.h) {
     size = {windowSize.w, windowSize.h};
     this->setSize(size);
@@ -215,8 +195,46 @@ void Scene::drawing(RenderTexture2D &frameBuffer, SizeI windowSize) {
     App::sceneCallback();
   }
 
+  BeginMode2D(camera.getCameraProps());
+
+  // DrawCircle(0, 0, 20, RED);
   this->render();
   this->update();
 
+  EndMode2D();
+
   EndTextureMode();
+}
+
+void Scene::_drawRenderableOrigin(Renderable *render) {
+  if (render->drawOrigin) {
+    // auto origin = render->getOrigin();
+    auto pos = render->getPos();
+
+    if (auto shape = dynamic_cast<dudis::Renderable *>(render)) {
+      auto color = shape->getColor();
+
+      DrawRectangle(pos.x - 5, pos.y - 5, 10, 10,
+                    {(unsigned char)(255 - color.r),
+                     (unsigned char)(255 - color.g),
+                     (unsigned char)(255 - color.b), (unsigned char)(color.a)});
+
+      return;
+    }
+
+    DrawRectangle(pos.x - 5, pos.y - 5, 10, 10, RED);
+    return;
+  }
+}
+
+void Scene::drawAllChilren(Entity *render) {
+  if (render->getChildren().size() == 0) {
+    return;
+  }
+
+  for (const auto &child : render->getChildren()) {
+    child->render();
+    // _drawRenderableOrigin(render);
+    this->drawAllChilren(child.get());
+  }
 }
