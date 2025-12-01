@@ -10,6 +10,8 @@ class SceneManager;
 
 class b2World;
 
+class b2Body;
+
 class App {
 protected:
   static float deltaTime;
@@ -17,6 +19,9 @@ protected:
   static SceneManager *sceneManager;
   static std::unordered_map<std::string, int> frameBuffers;
   static b2World *physicsWorld;
+  static std::vector<b2Body *> bodies;
+  static std::unordered_map<b2World *, std::vector<b2Body *>> worlds;
+  static b2World *currentWorld;
 
 public:
   static std::function<void()> windowCallback;
@@ -38,4 +43,15 @@ public:
   static b2World *getPhysicsWorld();
 
   static void setFrameBufferId(int id, const char *label);
+
+  static void setBody(b2World *world, b2Body *nBody);
+
+  static void addPhysicsWorld(b2World *world);
+
+  // static b2World *getB2World(b2World *world);
+
+  static void setCurrentPhysicsWorld(b2World *world) { currentWorld = world; }
+  static b2World *getCurrentWolrd() { return currentWorld; }
+
+  static void removePhysicsWorld(b2World *world);
 };
