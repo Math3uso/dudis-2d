@@ -25,12 +25,26 @@ Sprite::Sprite(const char *texturPath, SizeI size) {
 
 void Sprite::render() {
 
-  Rectangle dest = {pos.x, pos.y, (float)size.w, (float)size.h};
+  this->getGlobalMatrix();
+
+  auto gPos = this->getGlobalPos();
+  auto gRotation = this->getGlobalRotation() * RAD2DEG;
+  auto gScale = this->getGlocalScale();
+  auto finalSize = Size(size.w * gScale.x, size.h * gScale.y);
+
+  Rectangle dest = {gPos.x, gPos.y, (float)finalSize.w, (float)finalSize.h};
   Rectangle sourceRect = rect;
 
   if (flippedX) {
     sourceRect.width = -rect.width;
   }
+
+  // Rectangle dest = {pos.x, pos.y, (float)size.w, (float)size.h};
+  // Rectangle sourceRect = rect;
+
+  // if (flippedX) {
+  //   sourceRect.width = -rect.width;
+  // }
 
   DrawTexturePro(texture, sourceRect, dest, origin, angle, color);
 
