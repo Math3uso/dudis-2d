@@ -1,8 +1,8 @@
 #include "dudis2d/scenes/scene/scene.h"
 // #include "dudis2d/core/debug/dd-debug.h"
+#include "dudis2d/core/component/physicsComponent/debugDraw/debugDraw.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/core/model/model.h"
-#include "dudis2d/core/physicsComponent/debugDraw/debugDraw.h"
 #include "dudis2d/core/window/window.h"
 #include "dudis2d/globals/app.h"
 #include "dudis2d/graphics/shape.h"
@@ -13,6 +13,11 @@ using namespace std;
 using namespace dudis;
 
 Scene::Scene() {
+
+  // cout << "iniciando construtor scene" << "\n";
+
+  // this->init();
+
   size = App::getWindow()->getSize();
 
   sceneTexure = LoadRenderTexture(size.w, size.h);
@@ -20,12 +25,48 @@ Scene::Scene() {
   clearColor = {32, 32, 32, 255};
 }
 
+void Scene::init() {
+
+  _start = true;
+
+  std::cout << "Inicializando scene: " << "\n";
+  std::cout << this->renderableList.size() << "\n";
+
+  if (world && App::getCurrentWolrd() != world.get()) {
+    App::setCurrentPhysicsWorld(world.get());
+  }
+}
+
 Scene::~Scene() {
+
+  Log::Alert("[SCENE] Destruindo scene e liberando recursos");
 
   if (sceneTexure.id > 0) {
     puts("frameBuffer deletado [SCENE]");
+    std::cout << "scene removida: " << label << "\n";
     UnloadRenderTexture(sceneTexure);
+
+    this->release();
+
+    if (world) {
+      Log::Alert("====================physicsComponent====================");
+      Log::Info(
+          "\n\u2003\u2003[PHYSICS COMPONENT] Removendo PhysicsWorld da scene");
+      for (b2Body *body = world->GetBodyList(); body;) {
+        b2Body *next = body->GetNext();
+        world->DestroyBody(body);
+        body = next;
+        puts("\u2003\u2003body deletado");
+      }
+      // Remover do map global
+      App::removePhysicsWorld(world.get());
+      Log::Info(
+          "\n\u2003\u2003[PHYSICS COMPONENT] PhysicsWorld removido de scene\n");
+    }
+    Log::Alert("====================physicsComponent====================\n");
   }
+  renderableList.clear();
+  Log::Success("[SCENE] Scene destruida com sucesso");
 }
 
 const RenderTexture2D &Scene::getFrameBuffer() const { return sceneTexure; }
@@ -74,24 +115,26 @@ void Scene::render() {
     world->Step(deltaTime, velocityIterations, positionIterations);
   }
 
-  if (!models.empty()) {
-    for (size_t i = 0; i < models.size();) {
-      auto &model = models[i];
+  // [ADDMODEL]=========================================================================
+  // if (!models.empty()) {
+  //   for (size_t i = 0; i < models.size();) {
+  //     auto &model = models[i];
 
-      if (!model)
-        return;
+  //     if (!model)
+  //       return;
 
-      if (model->getSceneProps().onDelete) {
-        models.erase(models.begin());
-        Log::Info("item deletado");
-        i++;
-        continue;
-      }
-      model->update();
-      model->render();
-      i++;
-    }
-  }
+  //     if (model->getSceneProps().onDelete) {
+  //       models.erase(models.begin());
+  //       Log::Info("item deletado");
+  //       i++;
+  //       continue;
+  //     }
+  //     model->update();
+  //     model->render();
+  //     i++;
+  //   }
+  // }
+  // [ADDMODEL]=========================================================================
 
   for (size_t i = 0; i < renderableList.size();) {
 
@@ -113,11 +156,13 @@ void Scene::render() {
     render->render();
     this->drawAllChilren(render.get());
 
-    for (const auto &child : render->getChildren()) {
-      if (Renderable *childRender = dynamic_cast<Renderable *>(child.get())) {
-        childRender->render();
-      }
-    }
+    // for (const auto &child : render->getChildren()) {
+    //   if (Renderable *childRender = dynamic_cast<Renderable *>(child.get()))
+    //   {
+    //     childRender->render();
+    //   }
+    //   // child->render();
+    // }
 
     _drawRenderableOrigin(render.get());
     ++i;
@@ -128,43 +173,47 @@ void Scene::render() {
   }
 }
 
-void Scene::addModel(shared_ptr<DDModel> nModel) {
+void Scene::draw() {
 
-  nModel->start();
+  this->_initPropsInScene();
 
-  this->models.push_back(nModel);
+  for (auto &entity : _children) {
+    if (!entity)
+      continue;
 
-  if (nModel->getAnimated()) {
-    nModel->getAnimated()->drawToScene(this);
-    dudis::Log::Alert("animation enviada");
-
-    return;
+    // entity->_sortChildrenByIndex();
+    entity->defaultUpdate();
+    entity->render();
+    this->drawAllChilren(entity.get());
+    //_drawRenderableOrigin(entity.get());
   }
-
-  dudis::Log::Alert("animation n enviada");
-
-  // nModel->start();
-  this->addToRender(nModel->getRenderable());
-
-  // #ifdef DD_DEBUG
-  //   DD_DebugDetails::registerScene(this);
-  // #endif
 }
 
-void Scene::addPhysics() {
-  this->isSceneWithPhysic = true;
+// [ADDMODEL]=========================================================================
+// void Scene::addModel(shared_ptr<DDModel> nModel) {
 
-  b2Vec2 gravity(0.0f, 9.8f);
+//   nModel->start();
 
-  this->world = make_unique<b2World>(gravity);
+//   this->models.push_back(nModel);
 
-  this->world->SetContactListener(&contactListner);
+//   if (nModel->getAnimated()) {
+//     nModel->getAnimated()->drawToScene(this);
+//     dudis::Log::Alert("animation enviada");
 
-  this->debugDraw = std::make_unique<DebugDraw>();
-  this->world->SetDebugDraw(debugDraw.get());
+//     return;
+//   }
 
-  App::setPhysicWorld(this->world.get());
-}
+//   dudis::Log::Alert("animation n enviada");
+
+//   // nModel->start();
+//   this->addToRender(nModel->getRenderable());
+
+//   // #ifdef DD_DEBUG
+//   //   DD_DebugDetails::registerScene(this);
+//   // #endif
+// }
+
+// [ADDMODEL]=========================================================================
 
 void Scene::setSize(const SizeI &size) {
   UnloadRenderTexture(sceneTexure);
@@ -176,6 +225,37 @@ void Scene::drawFrameBuffer(shared_ptr<FrameBuffer> frameBuffer) {
 
   this->addToRender(frameBuffer);
 }
+
+// RenderTexture2D Scene::getFrameBufferWithScene(SizeI windowSize) {
+
+//   auto &camera = App::getWindow()->getGlobalCamera();
+
+//   if (windowSize.w != size.w || windowSize.h != size.h) {
+//     size = {windowSize.w, windowSize.h};
+//     this->setSize(size);
+//   }
+
+//   auto frameBuffer = this->getFrameBuffer();
+
+//   BeginTextureMode(frameBuffer);
+//   ClearBackground(this->getClearColor());
+
+//   if (App::sceneCallback) {
+//     App::sceneCallback();
+//   }
+
+//   BeginMode2D(camera.getCameraProps());
+
+//   // DrawCircle(0, 0, 20, RED);
+//   this->render();
+//   this->update();
+
+//   EndMode2D();
+
+//   EndTextureMode();
+
+//   return frameBuffer;
+// }
 
 void Scene::drawing(RenderTexture2D &frameBuffer, SizeI windowSize) {
 
@@ -233,8 +313,43 @@ void Scene::drawAllChilren(Entity *render) {
   }
 
   for (const auto &child : render->getChildren()) {
+    // child->getGlobalMatrix();
     child->render();
+    child->defaultUpdate();
     // _drawRenderableOrigin(render);
     this->drawAllChilren(child.get());
+  }
+}
+
+void Scene::addPhysics() {
+  this->isSceneWithPhysic = true;
+
+  b2Vec2 gravity(0.0f, 9.8f);
+
+  this->world = make_unique<b2World>(gravity);
+
+  this->world->SetContactListener(&contactListner);
+
+  this->debugDraw = std::make_unique<DebugDraw>();
+  this->world->SetDebugDraw(debugDraw.get());
+
+  App::addPhysicsWorld(this->world.get());
+
+  // App::setPhysicWorld(this->world.get());
+}
+
+void Scene::_initPropsInScene() {
+  float deltaTime = GetFrameTime();
+
+  if (isSceneWithPhysic) {
+
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
+
+    world->Step(deltaTime, velocityIterations, positionIterations);
+  }
+
+  if (isSceneWithPhysic && showPhysicsDebug && world) {
+    world->DebugDraw();
   }
 }

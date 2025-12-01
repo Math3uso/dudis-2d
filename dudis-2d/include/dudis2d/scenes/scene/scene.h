@@ -1,8 +1,11 @@
 #pragma once
 
-#include "dudis2d/core/model/model.h"
-#include "dudis2d/core/physicsComponent/contactListenear/contactListenear.h"
-#include "dudis2d/core/physicsComponent/debugDraw/debugDraw.h"
+// #include "dudis2d/core/model/model.h"
+// #include "dudis2d/core/physicsComponent/contactListenear/contactListenear.h"
+// #include "dudis2d/core/physicsComponent/debugDraw/debugDraw.h"
+#include "dudis2d/core/component/physicsComponent/contactListenear/contactListenear.h"
+#include "dudis2d/core/component/physicsComponent/debugDraw/debugDraw.h"
+#include "dudis2d/core/entity/entity.h"
 #include "dudis2d/core/utils/types.h"
 #include "dudis2d/graphics/frameBuffer/frameBuffer.h"
 #include "dudis2d/graphics/renderable.h"
@@ -11,10 +14,13 @@
 #include <memory>
 #include <vector>
 
-class Scene {
+class Scene : public dudis::Entity {
 private:
   std::function<void()> _release;
   std::function<void()> sceneEvents = nullptr;
+  void _drawRenderableOrigin(dudis::Renderable *render);
+  bool _start = false;
+  void _initPropsInScene();
 
 protected:
   RenderTexture2D sceneTexure = {};
@@ -25,7 +31,7 @@ protected:
   std::unique_ptr<dudis::DebugDraw> debugDraw;
   bool showPhysicsDebug = false;
   bool isSceneWithPhysic = false;
-  std::vector<std::shared_ptr<dudis::DDModel>> models;
+  // std::vector<std::shared_ptr<dudis::DDModel>> models;
   dudis::ContactListner contactListner;
 
 public:
@@ -37,6 +43,11 @@ public:
   // virtual void update() = 0;
   virtual void start() {};
   virtual void update() {};
+
+  void draw();
+
+  virtual void init();
+  virtual void stop() { _start = false; }
 
   void addPhysics();
   void togglePhysicsDebug() { showPhysicsDebug = !showPhysicsDebug; }
@@ -63,13 +74,15 @@ public:
   const Color &getClearColor() const { return clearColor; }
 
   void addToRender(std::shared_ptr<dudis::Renderable> renderable);
-  void addModel(std::shared_ptr<dudis::DDModel> nModel);
+  // void addModel(std::shared_ptr<dudis::DDModel> nModel);
   void drawFrameBuffer(std::shared_ptr<dudis::FrameBuffer> frameBuffer);
   void drawing(RenderTexture2D &frameBuffer, dudis::SizeI windowSize);
 
   void setEventListenear(std::function<void()> nCallback) {
     sceneEvents = nCallback;
   }
+
+  void drawAllChilren(dudis::Entity *render);
 
   b2World *getPhysicsWorld() { return this->world.get(); }
   std::function<void()> onSceneEvents() { return sceneEvents; }
