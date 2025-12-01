@@ -10,7 +10,13 @@ protected:
   dudis::Scope<Scene> current;
   std::vector<dudis::Scope<Scene>> scenes;
   dudis::Scope<Scene> nextScene = nullptr;
-  int index;
+  Scene *previousScene = nullptr;
+  dudis::Scope<Scene> pendingScene = nullptr;
+  bool _replaceMode = false;
+  bool _pendingPop = false;
+  bool _pendingPush = false;
+  bool _remove = false;
+  int _index;
   bool loadScene;
 
 public:
@@ -20,7 +26,10 @@ public:
   Scene *getCurrentScene();
   std::vector<dudis::Scope<Scene>> getScenes();
   int getSceneIndex();
-  int getTotalScenes();
+  size_t getTotalScenes();
+
+  bool onRemove() { return _remove; }
+
   void pushScene(dudis::Scope<Scene> nScene);
   void applyChangeScene();
   void popScene();

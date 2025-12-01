@@ -6,69 +6,76 @@
 Scene *SceneManager::getScene() { return current.get(); }
 
 bool SceneManager::setScene(dudis::Scope<Scene> nScene) {
-  if (nScene.get()) {
-    replaceSceneMode = false;
-    nextScene = dudis::SetScope<Scene>(std::move(nScene));
-    return true;
-  }
-  return false;
+  _replaceMode = true;
+  nextScene = std::move(nScene);
+  return true;
 }
 
 void SceneManager::popScene() {
 
-  this->replaceSceneMode = true;
-
-  if (!scenes.empty() && !current.get()) {
-    if (index > 0) {
-      index -= 1;
+  if (!scenes.empty()) {
+    _pendingPop = true;
+    if (_index > 0) {
+      _index -= 1;
     } else {
-      index = 0;
+      _index = 0;
     }
-    return;
-    // scenes.pop_back();
   }
+  std::cout << _index << "\n";
 
-  // current.reset();
-  return;
+  std::cout << "scene atual q dveria ser desenhada << "
+            << this->getCurrentScene()->label << "\n";
 }
 
 void SceneManager::pushScene(dudis::Scope<Scene> nScene) {
 
   dudis::Log::Info("================ Push Scene ================");
 
-  if (nScene.get()) {
+  dudis::Log::Info("preparando Scene para add na lista");
+
+  if (nScene) {
     scenes.push_back(std::move(nScene));
+    _index = scenes.size() - 1;
+    _pendingPush = true;
+  }
 
-    dudis::Log::Info("nova scene add na lista");
+  dudis::Log::Info("================ Push Scene ================");
+}
 
-    index = scenes.size() - 1;
-    scenes[index]->start();
-    auto sceneLabel = scenes[index]->label;
+void SceneManager::releaseCurrentScene() {}
 
-    dudis::Log::Success("Scene startada " + std::string(sceneLabel));
-    dudis::Log::Info("================ Push Scene ================");
+void SceneManager::applyChangeScene() {
+  if (scenes.empty())
+    return;
+
+  if (_pendingPush) {
+    scenes.back()->start();
+    scenes.back()->init();
+    _pendingPush = false;
+  } else if (_pendingPop) {
+    scenes.pop_back();
+    scenes.back()->init();
+    // scenes.back()->start();
+    _pendingPop = false;
+  } else if (_replaceMode) {
+    scenes[_index] = std::move(nextScene);
+    scenes[_index]->start();
+    scenes[_index]->init();
+    nextScene.reset();
+    nextScene = nullptr;
+    _replaceMode = false;
   }
 }
 
-void SceneManager::releaseCurrentScene() {
+int SceneManager::getSceneIndex() { return _index; }
 
-  dudis::Log::Info("================ releaseCurrentScene ================");
+size_t SceneManager::getTotalScenes() { return scenes.size(); }
 
-  if (current.get()->getFrameBuffer().id > 0) {
-    UnloadRenderTexture(current.get()->getFrameBuffer());
-  }
-
-  dudis::Log::Success("Scene deletada -> " + std::string(current->label));
-
-  current->release(); // esse release é da classe Scene e n do smart pointer.
-  current.reset();
-
-  dudis::Log::Info("================ releaseCurrentScene ================");
-}
+Scene *SceneManager::getCurrentScene() { return scenes[_index].get(); };
 
 void SceneManager::dispose() {
 
-  dudis::Log::Info("================ dispose scenes ================");
+  dudis::Log::Info("================ dispose scenes ================\n");
 
   dudis::Log::Alert("scenes sendo deletadas...");
 
@@ -77,39 +84,12 @@ void SceneManager::dispose() {
   }
 
   if (!scenes.empty()) {
-    for (const auto &scene : scenes) {
-      if (scene.get()->getFrameBuffer().id > 0) {
-        scene->release();
-        UnloadRenderTexture(scene.get()->getFrameBuffer());
-      }
-    }
 
     scenes.clear();
 
     dudis::Log::Info("Lista de scenes removidas");
   }
-  dudis::Log::Info("================ dispose scenes ================");
+  dudis::Log::Info("================ dispose scenes ================\n");
 
   return;
 }
-
-void SceneManager::applyChangeScene() {
-
-  if (nextScene.get()) {
-    dudis::Log::Info("Aplicando nova scene");
-    if (current.get()) {
-      releaseCurrentScene();
-    }
-    current = dudis::SetScope<Scene>(nextScene);
-    current->start();
-    nextScene.reset();
-  }
-}
-
-int SceneManager::getSceneIndex() { return index; }
-
-int SceneManager::getTotalScenes() { return scenes.size(); }
-
-Scene *SceneManager::getCurrentScene() { return scenes[index].get(); };
-
-// std::vector<dudis::Scope<Scene>> SceneManager::getScenes() { return scenes; }
