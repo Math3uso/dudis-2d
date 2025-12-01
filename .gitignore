@@ -7,3 +7,6 @@ out
 node_modules
 v1.md
 package-lock.json
+_temp
+__current.cpp
+__default.cpp
