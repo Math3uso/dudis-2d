@@ -1,24 +1,27 @@
 #pragma once
 
 #include "dudis2d/graphics/ui/renderUI.h"
+#include "dudis2d/graphics/ui/text/ddFont.h"
 
 namespace dudis {
 class Text : public RenderUI {
 private:
   std::string text;
   int fontSize = 20;
-  Font *font = nullptr;
+  std::shared_ptr<DDFont> _font = nullptr;
   Color TextColor;
 
 public:
-  Text(const std::string &content, int size);
-  void setText(const std::string nText) { text = nText; };
+  Text(const std::string &content, int size,
+       std::shared_ptr<DDFont> font = nullptr);
+  void setText(const std::string &nText) { text = nText; };
   void setTextColor(Color nTextColor) { TextColor = nTextColor; }
   void setFontSize(int nSize) { fontSize = nSize; }
   void render() override;
   void update() override {}
   std::string &getString() { return text; }
   int FontSize() { return fontSize; }
-  static std::shared_ptr<Text> create(const std::string &content, int size);
+  static std::shared_ptr<Text> create(const std::string &content, int size,
+                                      std::shared_ptr<DDFont> font = nullptr);
 };
 } // namespace dudis

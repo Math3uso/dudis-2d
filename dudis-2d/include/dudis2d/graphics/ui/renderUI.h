@@ -61,6 +61,6 @@ public:
   void setParent(RenderUI *nParent) { parent = nParent; }
 
   void addChildren(std::shared_ptr<RenderUI> child);
-  void setPos(dudis::Vec2 nPos) override;
+  void setPos(const dudis::Vec2 &nPos) override;
 };
 } // namespace dudis

@@ -10,7 +10,7 @@ void RenderUI::updateChildren() {
   }
 }
 
-void RenderUI::setPos(Vec2 nPos) {
+void RenderUI::setPos(const Vec2 &nPos) {
   pos = nPos;
   updateChildren();
 }
