@@ -1,28 +1,26 @@
-#include "models/ground/ground.h"
-#include "dudis2d/graphics.h"
-#include "dudis2d/physics.h"
+// #include "models/ground/ground.h"
+// #include "dudis2d/graphics.h"
+// #include "dudis2d/physics.h"
 
-using namespace dudis;
+// using namespace dudis;
 
-Ground::Ground() : DDModel() {}
+// Ground::Ground() : DDModel() {}
 
-void Ground::start() {
+// void Ground::start() {
 
-  name = "ground";
+//   name = "ground";
 
-  size = {650, 30};
-  pos = {330, 400};
+//   size = {2050, 30};
+//   pos = {330, 400};
 
-  auto shape = DDRectangle::create(size, pos);
-  shape->setOrigin({325, 14});
+//   auto shape = DDRectangle::create(size, pos);
+//   shape->setOrigin({325, 14});
 
-  shape->setColor(DARKPURPLE);
-  auto body = PhysicsComponent::createBoxPhysics(this, true);
+//   shape->setColor(DARKPURPLE);
+//   auto body = PhysicsComponent::createBoxPhysics(this, true);
 
-  this->addComponent<Renderable>(shape);
-  this->addComponent<PhysicsComponent>(body);
-}
+//   this->addComponent<Renderable>(shape);
+//   this->addComponent<PhysicsComponent>(body);
+// }
 
-void Ground::update() {
-  DDModel::update();
-}
+// void Ground::update() { DDModel::update(); }

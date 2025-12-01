@@ -1,12 +1,12 @@
 #define DD_DEBUG_MODE 1
 
 #include "dudis2d/dudis2d.h"
-#include "scenes/scene-camera/scene-camera.h"
-#include "scenes/scene-layout/sceneLayout.h"
-#include "scenes/scene-reso/scene-reso.h"
-#include "scenes/scene-scenes/scene-scn.h"
+// #include "scenes/scene-camera/scene-camera.h"
+// #include "scenes/scene-layout/sceneLayout.h"
+// #include "scenes/scene-reso/scene-reso.h"
+// #include "scenes/scene-scenes/scene-scn.h"
 #include "scenes/scene1.h"
-#include "scenes/scene2/scene2.h"
+// #include "scenes/scene2/scene2.h"
 #include <iostream>
 
 using namespace std;
@@ -25,21 +25,21 @@ int main() {
   window.setResolution(resolution);
 
   auto camera = DDCamera();
-  camera.setOffset({10, 10});
   // camera.setOffset({400, 300});
-  camera.setTarget({100, 300});
+  //  camera.setOffset({400, 300});
+  // camera.setTarget({25, 300});
 
   camera.setDebugOptions(CameraDebugOptions{
-      // .drawCameraTarget = true,
-      //.drawCameraOffset = true,
+      //  .drawCameraTarget = true,
+      // .drawCameraOffset = true,
   });
 
   window.setGlobalCamera(camera);
 
   SceneManager manager;
 
-  // auto scene1 = Scene1::create();
-  auto scene2 = Scene2::create();
+  auto scene1 = Scene1::create();
+  // auto scene2 = Scene2::create();
   // auto sceneLayout = SceneLayout::create();
   // auto sceneSla = SceneSla::create();
   // auto sceneReso = SceneReso::create();
@@ -47,7 +47,7 @@ int main() {
 
   // auto sceneScn = SceneScn::create();
 
-  manager.pushScene(move(scene2));
+  manager.pushScene(move(scene1));
 
   App::setSceneManager(manager);
 
