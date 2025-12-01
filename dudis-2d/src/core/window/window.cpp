@@ -9,14 +9,6 @@ using namespace dudis;
 
 Window::Window(SizeI nSize, const char *nTitle) {
 
-  // if constexpr (DDConfig::debugMode) {
-  //   puts("modo debug ativado");
-  // } else {
-  //   puts("debug n ativado");
-  // }
-
-  // DD_DEBUG(puts("foi"));
-
   SetTraceLogLevel(LOG_ERROR);
 
   _globalCamera = DDCamera();
@@ -24,20 +16,98 @@ Window::Window(SizeI nSize, const char *nTitle) {
   size = nSize;
   title = nTitle;
 
-  // float scaleX = 1.0f;
-  // float scaleY = 1.0f;
-
   InitWindow(size.w, size.h, title);
-
-  // camera.target = (Vector2){DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2};
-  // camera.offset = (Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2};
-  // camera.rotation = 0.0f;
-  // camera.zoom = 1.0f;
 
   SetTargetFPS(60);
 
   App::setWindow(*this);
 }
+
+// void Window::Running() {
+
+//   while (!WindowShouldClose()) {
+
+//     int currentWidth = GetScreenWidth();
+//     int currentHeight = GetScreenHeight();
+
+//     RenderTexture2D frameBuffer = {};
+
+//     // Size internalSize = _resolution.size;
+
+//     if (renderManager) {
+
+//       renderManager->applyChangeScene();
+
+//       if (renderManager->getTotalScenes() > 0) {
+//         auto scene = renderManager->getCurrentScene();
+
+//         // std::cout << scene->label << "\n";
+
+//         scene->drawing(frameBuffer, {currentWidth, currentHeight});
+//       }
+
+//       // auto currentScene = renderManager->getScene();
+//       // auto replace = renderManager->replaceSceneMode;
+
+//       // if (renderManager->getTotalScenes() > 0 && replace) {
+//       //   const auto scene = renderManager->getCurrentScene();
+
+//       //   if (scene) {
+//       //     scene->drawing(frameBuffer, {currentWidth, currentHeight});
+
+//       //     if (currentScene) {
+//       //       renderManager->releaseCurrentScene();
+//       //     }
+//       //   }
+//       // } else {
+
+//       //   currentScene->drawing(frameBuffer, {currentWidth, currentHeight});
+//       // }
+
+//       BeginDrawing();
+
+//       ClearBackground(WHITE);
+
+//       // BeginMode2D(_globalCamera.getCameraProps());
+
+//       this->_drawTextureFromRenderManager(frameBuffer);
+
+//       if (App::windowCallback) {
+//         App::windowCallback();
+//       }
+
+//       if (_globalCamera.isDebugMode()) {
+//         _globalCamera.drawDebugInfo();
+//       }
+
+//       // EndMode2D();
+
+//       EndDrawing();
+
+//       continue;
+//       //==============
+//     }
+
+//     BeginDrawing();
+//     ClearBackground(clearColor);
+
+//     EndDrawing();
+//   }
+
+//   puts("preparando pra fechar");
+
+//   if (renderManager) {
+//     renderManager->dispose();
+//   }
+
+//   puts("fechando janela");
+
+//   CloseWindow();
+// }
+
+// Versão modificada: agora a Scene é tratada como uma Entity.
+// Antes, a Scene possuía uma textura inteira para renderizar os elementos.
+// Mantendo o código original comentado para referência e testes.
 
 void Window::Running() {
 
@@ -46,39 +116,23 @@ void Window::Running() {
     int currentWidth = GetScreenWidth();
     int currentHeight = GetScreenHeight();
 
-    RenderTexture2D frameBuffer = {};
-
-    // Size internalSize = _resolution.size;
+    // RenderTexture2D frameBuffer = {};
 
     if (renderManager) {
 
-      renderManager->applyChangeScene();
-
-      auto currentScene = renderManager->getScene();
-      auto replace = renderManager->replaceSceneMode;
-
-      if (renderManager->getTotalScenes() > 0 && replace) {
-        const auto scene = renderManager->getCurrentScene();
-
-        if (scene) {
-          scene->drawing(frameBuffer, {currentWidth, currentHeight});
-
-          if (currentScene) {
-            renderManager->releaseCurrentScene();
-          }
-        }
-      } else {
-
-        currentScene->drawing(frameBuffer, {currentWidth, currentHeight});
-      }
-
       BeginDrawing();
 
-      ClearBackground(WHITE);
+      renderManager->applyChangeScene();
 
-      // BeginMode2D(_globalCamera.getCameraProps());
+      Color clearColor;
 
-      this->_drawTextureFromRenderManager(frameBuffer);
+      if (renderManager->getTotalScenes() > 0) {
+        auto scene = renderManager->getCurrentScene();
+        scene->draw();
+        clearColor = scene->getClearColor();
+      }
+
+      ClearBackground(clearColor);
 
       if (App::windowCallback) {
         App::windowCallback();
@@ -88,18 +142,16 @@ void Window::Running() {
         _globalCamera.drawDebugInfo();
       }
 
-      // EndMode2D();
-
       EndDrawing();
 
       continue;
       //==============
     }
 
-    BeginDrawing();
-    ClearBackground(clearColor);
+    // BeginDrawing();
+    // ClearBackground(clearColor);
 
-    EndDrawing();
+    // EndDrawing();
   }
 
   puts("preparando pra fechar");

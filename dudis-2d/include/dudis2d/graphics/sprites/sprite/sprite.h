@@ -20,7 +20,10 @@ public:
     }
   }
 
-  void setCrop(Rectangle src) { rect = src; }
+  void setCrop(Rectangle src) {
+    this->setDirty();
+    rect = src;
+  }
 
   static std::shared_ptr<Sprite> create(const char *texturPath, SizeI size);
 
