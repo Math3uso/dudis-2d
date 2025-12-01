@@ -10,7 +10,7 @@ enum class TypeShape { Triangle, Rectangle, Circle };
 
 class Renderable : public Entity {
 protected:
-  Vec2 origin = {0, 0};
+  // Vec2 origin = {0, 0};
   dudis::TypeShape type;
   Color color = WHITE;
   bool flippedX = false;
@@ -24,24 +24,30 @@ public:
 
   Renderable() {};
   virtual ~Renderable() { puts("renderable deletado [Renderable]"); };
-  virtual void render() = 0;
+  void render() override = 0;
   void update() override {};
-  virtual void setFlippedX(bool flip) { flippedX = flip; };
 
   // const std::string &getFilePath() const {
   //   return filePath;
   // }
 
-  Vec2 getOrigin() const { return origin; }
+  // Vec2 getOrigin() const { return origin; }
   Color getColor() const { return color; }
   dudis::TypeShape Type() const { return type; }
 
   SceneProperty &getSceneProps() { return sceneProps; }
 
-  void rotate(float nAngle) { angle = nAngle; }
-  void setOrigin(Vec2 nOrigin) { origin = nOrigin; }
+  // void rotate(float nAngle) { angle = nAngle; }
+  //  void setOrigin(Vec2 nOrigin) { origin = nOrigin; }
   void setColor(Color nColor) { color = nColor; }
+
+  virtual void setFlippedX(bool flip) {
+    this->setDirty();
+    flippedX = flip;
+  };
+
   void setOpacity(float opacity) {
+    this->setDirty();
     color = {color.r, color.g, color.b, (unsigned char)opacity};
   }
 };
