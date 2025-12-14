@@ -18,3 +18,11 @@
 #ifdef DD_PHYSICS
 #include "dudis2d/physics.h"
 #endif
+
+#define DD_ASSERT(cond, msg)                                                   \
+  do {                                                                         \
+    if (!(cond)) {                                                             \
+      printf("[D2D ASSERT] %s\n - file: %s:%d\n", msg, __FILE__, __LINE__);    \
+      abort();                                                                 \
+    }                                                                          \
+  } while (0)
