@@ -98,7 +98,8 @@ void Scene::addToRender(std::shared_ptr<dudis::Renderable> render) {
 
   renderableList.push_back(render);
 
-  Log::Info("total: " + to_string(renderableList.size()));
+  std::string msg = "total: " + std::to_string(renderableList.size());
+  Log::Info(msg.c_str());
 
   return;
 }

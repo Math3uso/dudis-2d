@@ -41,12 +41,12 @@ public:
   const char *label;
   // virtual void start() = 0;
   // virtual void update() = 0;
-  virtual void start() {};
+  virtual void start() override {};
   virtual void update() {};
 
   void draw();
 
-  virtual void init();
+  virtual void init() override;
   virtual void stop() { _start = false; }
 
   void addPhysics();
