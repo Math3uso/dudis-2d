@@ -49,6 +49,15 @@ enum class TransformType {
   DisableParentTransform
 };
 
+struct DDBufferPtr {
+  void *ptr;
+  void (*deleter)(void *);
+  size_t size;
+};
+
+#define DD_LOGS_ACTIVE 0
+#define DD_NO_LOGS 1
+
 class Entity {
 
 private:
@@ -61,6 +70,17 @@ private:
   bool _physicsComponent = false;
   TransformType _transformType = TransformType::Relative;
   int _zOrder = 0;
+  std::vector<DDBufferPtr> _owned;
+
+  template <typename T> static void _destroy(void *p) {
+    delete static_cast<T *>(p);
+  }
+
+#ifdef DD_DEBUG
+  static constexpr bool _DD_LOGS = DD_LOGS_ACTIVE;
+#else
+  static constexpr bool _DD_LOGS = DD_NO_LOGS;
+#endif
 
 protected:
   dudis::SizeI size = {0, 0};
@@ -72,6 +92,7 @@ protected:
   std::shared_ptr<Motion> _action;
   std::vector<std::shared_ptr<Entity>> _children;
   Entity *_parent = nullptr;
+  bool _isUpdated = false;
   void _sortChildrenByIndex();
 
 public:
@@ -80,6 +101,7 @@ public:
   Vec2 getPos() const { return pos; }
   SizeI getSize() const { return size; }
   Vec2 getOrigin() const { return origin; }
+  // void alloc(T* buff){}
 
   const Vec2 getGlobalPos();
   float getGlobalRotation();
@@ -96,6 +118,8 @@ public:
   virtual void translate(const dudis::Vec2 &nPos);
 
   virtual void rotate(float nAngle);
+  virtual void start() {};
+  virtual void init() {};
   virtual void update() {};
   virtual void render();
   virtual void updateChildren();
@@ -142,35 +166,13 @@ public:
 
     if (auto phys = std::dynamic_pointer_cast<PhysicsComponent>(comp)) {
       _physicsComponent = true;
-      puts("component fisico enviado [INSTANCIA]");
+      if (_DD_LOGS) {
+        puts("component fisico enviado [INSTANCIA]");
+      }
     }
 
     return comp;
   }
-
-  // Versão genérica
-  // template <typename T, typename... Args>
-  // std::shared_ptr<T> addComponent(Args &&...args) {
-  //   std::shared_ptr<T> comp;
-
-  //   if constexpr (std::is_same_v<T, PhysicsComponent>) {
-  //     // usa a factory padrão de box physics
-  //     comp = PhysicsComponent::createBoxPhysics(this);
-  //     _physicsComponent = true;
-  //     puts("compoenete de fisica criado");
-  //   } else {
-  //     comp = std::make_shared<T>(std::forward<Args>(args)...);
-  //   }
-
-  //   _components[typeid(T)] = comp;
-
-  //   if (auto phys = std::dynamic_pointer_cast<PhysicsComponent>(comp)) {
-  //     _physicsComponent = true;
-  //     puts("compoenete de fisica criado");
-  //   }
-
-  //   return comp;
-  // }
 
   template <typename T> std::shared_ptr<T> getComponent() {
     auto it = _components.find(typeid(T));
@@ -181,7 +183,20 @@ public:
 
   template <typename T> void removeComponent() { _components.erase(typeid(T)); }
 
-  // void release();
+  template <typename T, typename... Args> T *New(Args &&...args) {
+    T *data = new T(std::forward<Args>(args)...);
+
+    if constexpr (_DD_LOGS) {
+      _owned.push_back(DDBufferPtr{data, &_destroy<T>, sizeof(*data)});
+    } else {
+      _owned.push_back(DDBufferPtr{data, &_destroy<T>, 0});
+    }
+    return data;
+  };
+
+  template <typename T> static std::shared_ptr<T> create() {
+    return std::make_shared<T>();
+  }
 
   virtual ~Entity();
 };

@@ -210,6 +210,19 @@ Entity::~Entity() {
 
   Log::Info("Entity liberada [ENTITY]");
 
+  if (_owned.size() > 0) {
+    Log::Alert("\n[ENTITY] Deletando dados extras [OWNED]\n");
+    for (auto &data : _owned) {
+
+      std::cout << "\u2003bytes liberados: " << data.size << "\n";
+
+      data.deleter(data.ptr);
+    }
+    _owned.clear();
+    Log::Alert("\n[ENTITY] Deletando dados extras [OWNED]\n");
+  } else {
+    Log::Success("vazio sem dados extras");
+  }
   _components.clear();
   _children.clear();
 }
