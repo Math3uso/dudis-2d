@@ -3,11 +3,9 @@
 #include "dudis2d/core/utils/sizeI.h"
 #include "dudis2d/globals/app.h"
 #include "raylib.h"
-#include <box2d/box2d.h>
+
 #include <iostream>
 #include <memory>
-
-extern int drawCallCounter; // variável interna do rlgl.c
 
 namespace dudis {
 
@@ -15,6 +13,7 @@ namespace dudis {
 
 using Vec2 = Vector2;
 using Vec3 = Vector3;
+using r_Font = Font;
 
 // class Vec2 {
 // public:
@@ -48,13 +47,7 @@ using Vec3 = Vector3;
 //     return *this;
 //   }
 
-//   Vec2 operator=(const b2Vec2 &other) {
-//     x = other.x;
-//     y = other.y;
-//     return *this;
-//   }
-
-//   Vector2 toRaylibVec2() const { return Vector2{x, y}; }
+//   // Vector2 toRaylibVec2() const { return Vector2{x, y}; }
 // };
 
 using Size = SizeI;
@@ -72,3 +65,13 @@ dudis::Scope<T> CreateScope(Args &&...args) {
 }
 
 } // namespace dudis
+
+struct DDRect {
+  float x, y, w, h;
+};
+
+enum class DDPrimitiveType {
+  Fill,
+  Lines,
+  Points,
+};
