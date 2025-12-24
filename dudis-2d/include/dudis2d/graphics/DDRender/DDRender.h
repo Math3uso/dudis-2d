@@ -8,7 +8,7 @@ class DDRender {
 public:
   DDRender() = default;
   void init() {};
-  void draw(const DrawCommand &cmd);
+  void draw(const std::vector<DrawCommand> &cmd);
   static std::shared_ptr<DDRender> create() {
     return std::make_shared<DDRender>();
   }
