@@ -14,8 +14,8 @@ private:
 public:
   RenderQueue() { _renderList.reserve(_size); };
 
-  void collectRenderCommands(const DrawCommand &cmd);
-  void collectRenderCommands(const std::vector<DrawCommand> &&renderList);
+  void addCommand(const DrawCommand &cmd);
+  void addCommand(const std::vector<DrawCommand> &&renderList);
   const std::vector<DrawCommand> &getCommands() const { return _renderList; }
   void clear();
 
