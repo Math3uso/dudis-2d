@@ -15,10 +15,19 @@ void RenderQueue::addCommand(const vector<DrawCommand> &&renderList) {
 }
 
 void RenderQueue::_checkRelocation() {
+  // size_t renderChunck = _renderList.size() * sizeof(DrawCommand);
+  // _current = renderChunck > _current ? renderChunck : _current;
+
   size_t renderChunck = _renderList.size() * sizeof(DrawCommand);
   _current = renderChunck > _current ? renderChunck : _current;
 
-  if (_current >= _size) {
+  // if (_current >= _size) {
+  //   Log::Info("[INFO] realocando _renderList [RenderQueue]");
+  //   _size = _size * 2;
+  //   _renderList.reserve(_size);
+  // }
+
+  if (_renderList.size() >= _renderList.capacity()) {
     Log::Info("[INFO] realocando _renderList [RenderQueue]");
     _size = _size * 2;
     _renderList.reserve(_size);

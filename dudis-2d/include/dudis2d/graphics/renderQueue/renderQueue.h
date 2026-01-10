@@ -7,7 +7,7 @@ namespace dudis {
 class RenderQueue {
 private:
   std::vector<DrawCommand> _renderList;
-  uint32_t _size = sizeof(DrawCommand) * 500;
+  uint32_t _size = 500;
   uint32_t _current = 0;
   void _checkRelocation();
 
