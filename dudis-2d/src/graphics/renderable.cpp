@@ -19,10 +19,22 @@ void Renderable::buildRenderCommands(RenderQueue *queue) {
   cmd.rotation = gRotation;
   cmd.scale = gScale;
   cmd.src = DDRect{0, 0, 0, 0};
-  cmd.tex = 0;
+  // cmd.tex = 0;
+  cmd._tex = _tex;
   cmd.type = DDPrimitiveType::Fill;
+  cmd.batch = DDBatchType::Shapes;
   cmd.color = color;
   cmd.z = _zOrder;
+
+  if (_tex) {
+    cmd.dest = _rectDest;
+    cmd.src = _rectSrc;
+    cmd.batch = DDBatchType::Textures;
+    cmd.rlTex = *_rlTex;
+
+  } else {
+    puts("n é uma textura");
+  }
 
   queue->addCommand(cmd);
 
