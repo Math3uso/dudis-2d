@@ -4,13 +4,14 @@
 using namespace std;
 using namespace dudis;
 
-void Renderable::buildRenderCommands(RenderQueue *queue) {
+void Renderable::buildRenderCommands(RenderQueue *queue)
+{
   this->getGlobalMatrix();
 
   auto gPos = this->getGlobalPos();
   auto gRotation = this->getGlobalRotation() * RAD2DEG;
   auto gScale = this->getGlocalScale();
-  auto finalSize = Size(size.w * gScale.x, size.h * gScale.y);
+  auto finalSize = SizeF(size.w * gScale.x, size.h * gScale.y);
 
   DrawCommand cmd;
   cmd.pos = gPos;
@@ -26,19 +27,18 @@ void Renderable::buildRenderCommands(RenderQueue *queue) {
   cmd.color = color;
   cmd.z = _zOrder;
 
-  if (_tex) {
-    cmd.dest = _rectDest;
+  if (_tex)
+  {
+    // cmd.dest = _rectDest;
     cmd.src = _rectSrc;
     cmd.batch = DDBatchType::Textures;
     cmd.rlTex = *_rlTex;
-
-  } else {
-    puts("n é uma textura");
   }
 
   queue->addCommand(cmd);
 
-  for (auto &child : _children) {
+  for (auto &child : _children)
+  {
     child->buildRenderCommands(queue);
   }
 }
