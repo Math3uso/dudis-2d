@@ -4,23 +4,23 @@
 
 using namespace dudis;
 
-KeyState Keyboard::_keys[DD_KEYS_COUNT] = {};
+KeyState Keyboard::_keys[Keyboard::_keysCount] = {};
 
 void Keyboard::_beginFrames()
 {
     for (auto &st : _keys)
     {
-        st.preesed = false;
+        st.pressed = false;
         st.released = false;
     }
 }
 
-void Keyboard::_setKeyDown(Key key, bool isDownNow)
+void Keyboard::_setKeyDown(KeyCode key, bool isDownNow)
 {
     auto &st = _keys[(int)key];
 
     if (isDownNow && !st.down)
-        st.preesed = true;
+        st.pressed = true;
 
     if (!isDownNow && st.down)
         st.released = true;
@@ -31,14 +31,14 @@ void Keyboard::_setKeyDown(Key key, bool isDownNow)
 void Keyboard::update()
 {
     Keyboard::_beginFrames();
-    for (int i = 0; i < DD_KEYS_COUNT; i++)
+    for (int i = 0; i < _keysCount; i++)
     {
-        Key k = (Key)i;
+        KeyCode k = (KeyCode)i;
         Keyboard::_setKeyDown(k, Keyboard::_getKeyDownIsRl(k));
     }
 }
 
-bool Keyboard::_getKeyDownIsRl(Key key)
+bool Keyboard::_getKeyDownIsRl(KeyCode key)
 {
     int rk = ddrlUtils::toRaylibKey(key);
 
