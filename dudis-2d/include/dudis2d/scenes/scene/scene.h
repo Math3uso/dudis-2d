@@ -1,20 +1,22 @@
 #pragma once
 
-// #include "dudis2d/core/model/model.h"
-// #include "dudis2d/core/physicsComponent/contactListenear/contactListenear.h"
-// #include "dudis2d/core/physicsComponent/debugDraw/debugDraw.h"
 #include "dudis2d/core/component/physicsComponent/contactListenear/contactListenear.h"
 #include "dudis2d/core/component/physicsComponent/debugDraw/debugDraw.h"
 #include "dudis2d/core/entity/entity.h"
 #include "dudis2d/core/utils/types.h"
-#include "dudis2d/graphics/frameBuffer/frameBuffer.h"
 #include "dudis2d/graphics/renderable.h"
 #include <box2d/box2d.h>
 #include <functional>
 #include <memory>
 #include <vector>
 
-class Scene : public dudis::Entity {
+namespace dudis
+{
+  class RenderQueue;
+}
+
+class Scene : public dudis::Entity
+{
 private:
   std::function<void()> _release;
   std::function<void()> sceneEvents = nullptr;
@@ -23,7 +25,6 @@ private:
   void _initPropsInScene();
 
 protected:
-  RenderTexture2D sceneTexure = {};
   dudis::SizeI size;
   Color clearColor;
   std::vector<std::shared_ptr<dudis::Renderable>> renderableList;
@@ -31,20 +32,21 @@ protected:
   std::unique_ptr<dudis::DebugDraw> debugDraw;
   bool showPhysicsDebug = false;
   bool isSceneWithPhysic = false;
-  // std::vector<std::shared_ptr<dudis::DDModel>> models;
+
   dudis::ContactListner contactListner;
 
 public:
   Scene();
   virtual ~Scene();
   static dudis::Scope<Scene> create();
+
+  template <typename T>
+  static std::unique_ptr<T> create();
+
   const char *label;
-  // virtual void start() = 0;
-  // virtual void update() = 0;
+
   virtual void start() override {};
   virtual void update() {};
-
-  void draw();
 
   virtual void init() override;
   virtual void stop() { _start = false; }
@@ -53,8 +55,10 @@ public:
   void togglePhysicsDebug() { showPhysicsDebug = !showPhysicsDebug; }
   void setPhysicsDebug(const bool &enabled) { showPhysicsDebug = enabled; }
 
-  void release() {
-    if (_release) {
+  void release()
+  {
+    if (_release)
+    {
       _release();
       puts("extras da scene deletados");
     }
@@ -64,32 +68,36 @@ public:
 
   int getTotalRenderable() { return renderableList.size(); }
 
-  void releaseAfterUse(std::function<void()> &&callback) {
+  void releaseAfterUse(std::function<void()> &&callback)
+  {
     _release = std::move(callback);
   }
-  void render();
+
   void setSize(const dudis::SizeI &nSize);
   void setClearColor(Color nColor) { clearColor = nColor; };
-  const RenderTexture2D &getFrameBuffer() const;
   const Color &getClearColor() const { return clearColor; }
+  void collectRenderCommands(dudis::RenderQueue *queque);
 
-  void addToRender(std::shared_ptr<dudis::Renderable> renderable);
-  // void addModel(std::shared_ptr<dudis::DDModel> nModel);
-  void drawFrameBuffer(std::shared_ptr<dudis::FrameBuffer> frameBuffer);
-  void drawing(RenderTexture2D &frameBuffer, dudis::SizeI windowSize);
-
-  void setEventListenear(std::function<void()> nCallback) {
+  void setEventListenear(std::function<void()> nCallback)
+  {
     sceneEvents = nCallback;
   }
 
-  void drawAllChilren(dudis::Entity *render);
+  // void drawAllChilren(dudis::Entity *render);
 
   b2World *getPhysicsWorld() { return this->world.get(); }
   std::function<void()> onSceneEvents() { return sceneEvents; }
 };
 
-#define CREATE_SCENE(Scene)                                                    \
-  static dudis::Scope<Scene> create() {                                        \
-    auto nScene = std::make_unique<Scene>();                                   \
-    return nScene;                                                             \
+template <typename T>
+std::unique_ptr<T> Scene::create()
+{
+  return std::make_unique<T>();
+}
+
+#define CREATE_SCENE(Scene)                  \
+  static dudis::Scope<Scene> create()        \
+  {                                          \
+    auto nScene = std::make_unique<Scene>(); \
+    return nScene;                           \
   }
