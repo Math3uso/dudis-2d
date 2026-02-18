@@ -4,74 +4,50 @@
 #include "dudis2d/globals/app.h"
 #include "raylib.h"
 
+#include "dudis2d/core/math/vec2.h"
+
 #include <iostream>
 #include <memory>
+#include "dudis2d/core/math/react.h"
 
-namespace dudis {
+namespace rl
+{
+  using RlTexture = Texture2D;
+  using rlFont = Font;
 
-// int GetDrawCalls(void) { return drawCallCounter; }
+} // namespace rl
 
-using Vec2 = Vector2;
-using Vec3 = Vector3;
-using r_Font = Font;
+namespace dudis
+{
 
-// class Vec2 {
-// public:
-//   float x;
-//   float y;
+  using Size = SizeI;
 
-//   Vec2(float x, float y) : x(x), y(y) {}
-//   Vec2() : x(0), y(0) {}
+  template <typename T>
+  using Scope = std::unique_ptr<T>;
+  template <typename T>
+  constexpr auto SetScope = [](auto &&arg) -> decltype(auto)
+  {
+    return std::move(std::forward<decltype(arg)>(arg));
+  };
 
-//   bool operator==(const Vec2 &other) const {
-//     return x == other.x && y == other.y;
-//   }
-
-//   Vec2 operator+(const Vec2 &other) const {
-//     return Vec2(x + other.x, y + other.y);
-//   }
-
-//   Vec2 operator-(const Vec2 &other) const {
-//     return Vec2(x - other.x, y - other.y);
-//   }
-
-//   Vec2 operator+=(const Vec2 &other) {
-//     x += other.x;
-//     y += other.y;
-//     return *this;
-//   }
-
-//   Vec2 operator-=(const Vec2 &other) {
-//     x -= other.x;
-//     y -= other.y;
-//     return *this;
-//   }
-
-//   // Vector2 toRaylibVec2() const { return Vector2{x, y}; }
-// };
-
-using Size = SizeI;
-
-template <typename T> using Scope = std::unique_ptr<T>;
-template <typename T>
-constexpr auto SetScope = [](auto &&arg) -> decltype(auto) {
-  return std::move(std::forward<decltype(arg)>(arg));
-};
-
-template <typename T, typename... Args>
-dudis::Scope<T> CreateScope(Args &&...args) {
-  auto scope = std::make_unique<T>(std::forward<Args>(args)...);
-  return scope;
-}
+  template <typename T, typename... Args>
+  dudis::Scope<T> CreateScope(Args &&...args)
+  {
+    auto scope = std::make_unique<T>(std::forward<Args>(args)...);
+    return scope;
+  }
 
 } // namespace dudis
 
-struct DDRect {
-  float x, y, w, h;
-};
-
-enum class DDPrimitiveType {
+enum class DDPrimitiveType
+{
   Fill,
   Lines,
   Points,
+};
+
+enum class DDBatchType
+{
+  Shapes,
+  Textures,
 };
