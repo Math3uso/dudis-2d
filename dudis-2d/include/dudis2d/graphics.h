@@ -1,8 +1,6 @@
 #pragma once
 
-#include "dudis2d/graphics/frameBuffer/frameBuffer.h"
 #include "dudis2d/graphics/renderable.h"
-#include "dudis2d/graphics/shape.h"
 #include "dudis2d/graphics/sprites/rectangle.h"
 #include "dudis2d/graphics/sprites/sprite/sprite.h"
 // #include "dudis2d/graphics/ui/UIRoot/UIRoot.h"
