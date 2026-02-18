@@ -5,7 +5,7 @@ namespace dudis
     struct KeyState
     {
         bool down;
-        bool preesed;
+        bool pressed;
         bool released;
     };
 }
