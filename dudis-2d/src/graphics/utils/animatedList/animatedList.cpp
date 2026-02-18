@@ -72,7 +72,7 @@ void AnimatedList::drawToScene(Scene *scene) {
 
   for (const auto &animated : animations) {
     animated.second->setOpacity(0.f);
-    this->scene->addToRender(animated.second);
+    // this->scene->addToRender(animated.second);
   }
 
   // for (const auto &animated : animations) {
