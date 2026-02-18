@@ -45,9 +45,9 @@ inline void DDPrintMemoryUsage() {
     // somente das scenes
     size_t bytes = DD_DebugDetails::getSceneBytes();
 
-    Log::Info("================ Debug ================");
-    Log::Alert("Bytes: " + std::to_string(bytes));
-    Log::Info("================ Debug ================");
+    // Log::Info("================ Debug ================");
+    // Log::Alert("Bytes: " + std::to_string(bytes));
+    // Log::Info("================ Debug ================");
   }
 };
 
