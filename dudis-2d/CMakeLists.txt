@@ -95,6 +95,12 @@ add_library(dudis STATIC
     ${BOX2D_SRC}
 )
 
+# Macro pra Debug
+target_compile_definitions(dudis PRIVATE
+    $<$<CONFIG:Debug>:DD_DEBUG>
+    $<$<CONFIG:Release>:DD_RELEASE>
+)
+
 target_include_directories(dudis PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${RAYGUI_DIR}
