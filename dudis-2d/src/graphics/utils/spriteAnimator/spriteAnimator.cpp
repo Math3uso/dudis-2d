@@ -3,11 +3,13 @@
 using namespace dudis;
 using namespace std;
 
-SpriteAnimator::SpriteAnimator(shared_ptr<Sprite> sprite) {
+SpriteAnimator::SpriteAnimator(shared_ptr<Sprite> sprite)
+{
   this->sprite = sprite;
 }
 
-void SpriteAnimator::setAnimation(int total, SizeI size, float fps) {
+void SpriteAnimator::setAnimation(int total, SizeF size, float fps)
+{
   totalFrames = total;
   frameSize = size;
   frameTime = 1.0f / fps;
@@ -15,7 +17,8 @@ void SpriteAnimator::setAnimation(int total, SizeI size, float fps) {
   sprite->setCrop({0, 0, (float)frameSize.w, (float)frameSize.h});
 }
 
-void SpriteAnimator::update() {
+void SpriteAnimator::update()
+{
 
   if (!loop)
     return;
@@ -24,14 +27,18 @@ void SpriteAnimator::update() {
 
   timer += deltaTime;
 
-  if (timer >= frameTime) {
+  if (timer >= frameTime)
+  {
     timer = 0.0f;
     currentFrame++;
 
-    if (currentFrame >= totalFrames) {
-      if (loop) {
+    if (currentFrame >= totalFrames)
+    {
+      if (loop)
+      {
         currentFrame = 0;
-        if (onAnimationEnd) {
+        if (onAnimationEnd)
+        {
           std::cout << "Animação chegou no fim\n";
           onAnimationEnd();
         }
@@ -48,37 +55,42 @@ void SpriteAnimator::update() {
   }
 }
 
-void SpriteAnimator::render() {
-  if (loop) {
+void SpriteAnimator::render()
+{
+  if (loop)
+  {
     sprite->render();
   }
 }
 
-void SpriteAnimator::reset() {
+void SpriteAnimator::reset()
+{
   currentFrame = 0;
   timer = 0.0f;
 }
 
-void SpriteAnimator::setLoop(bool enable) {
-  loop = enable;
-}
+void SpriteAnimator::setLoop(bool enable) { loop = enable; }
 
 shared_ptr<SpriteAnimator>
-SpriteAnimator::create(shared_ptr<Sprite> spriteRef) {
+SpriteAnimator::create(shared_ptr<Sprite> spriteRef)
+{
   return make_shared<SpriteAnimator>(spriteRef);
 }
 
-void SpriteAnimator::setPos(Vec2 pos) {
+void SpriteAnimator::setPos(const Vec2 &pos)
+{
   this->pos = pos;
   this->sprite->setPos(pos);
 }
 
-void SpriteAnimator::setSize(SizeI size) {
+void SpriteAnimator::setSize(SizeF size)
+{
   this->size = size;
   this->sprite->setSize(size);
 }
 
-void SpriteAnimator::setFlippedX(bool flip) {
+void SpriteAnimator::setFlippedX(bool flip)
+{
   this->flippedX = flip;
   this->sprite->setFlippedX(flip);
 }
