@@ -1,11 +1,8 @@
 #pragma once
 
-#include "dudis2d/core/component/physicsComponent/contactListenear/contactListenear.h"
-#include "dudis2d/core/component/physicsComponent/debugDraw/debugDraw.h"
 #include "dudis2d/core/entity/entity.h"
 #include "dudis2d/core/utils/types.h"
 #include "dudis2d/graphics/renderable.h"
-#include <box2d/box2d.h>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -28,12 +25,7 @@ protected:
   dudis::SizeI size;
   Color clearColor;
   std::vector<std::shared_ptr<dudis::Renderable>> renderableList;
-  std::unique_ptr<b2World> world;
-  std::unique_ptr<dudis::DebugDraw> debugDraw;
-  bool showPhysicsDebug = false;
-  bool isSceneWithPhysic = false;
-
-  dudis::ContactListner contactListner;
+  // Physics integration temporarily disconnected (components remain available).
 
 public:
   Scene();
@@ -50,10 +42,6 @@ public:
 
   virtual void init() override;
   virtual void stop() { _start = false; }
-
-  void addPhysics();
-  void togglePhysicsDebug() { showPhysicsDebug = !showPhysicsDebug; }
-  void setPhysicsDebug(const bool &enabled) { showPhysicsDebug = enabled; }
 
   void release()
   {
@@ -85,7 +73,6 @@ public:
 
   // void drawAllChilren(dudis::Entity *render);
 
-  b2World *getPhysicsWorld() { return this->world.get(); }
   std::function<void()> onSceneEvents() { return sceneEvents; }
 };
 

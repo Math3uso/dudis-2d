@@ -8,20 +8,13 @@ class Window;
 
 class SceneManager;
 
-class b2World;
-
-class b2Body;
-
-class App {
+class App
+{
 protected:
   static float deltaTime;
   static Window *window;
   static SceneManager *sceneManager;
   static std::unordered_map<std::string, int> frameBuffers;
-  static b2World *physicsWorld;
-  static std::vector<b2Body *> bodies;
-  static std::unordered_map<b2World *, std::vector<b2Body *>> worlds;
-  static b2World *currentWorld;
   static double fixedDt;
 
 public:
@@ -32,29 +25,17 @@ public:
   static void setSceneManager(SceneManager &nManager);
   static Window *getWindow();
   static SceneManager &getSceneManager() { return *sceneManager; }
-  static void WindowDraw(const std::function<void()> &&nWindowCallback) {
+  static void WindowDraw(const std::function<void()> &&nWindowCallback)
+  {
     windowCallback = std::move(nWindowCallback);
   };
 
-  static void SceneDraw(std::function<void()> nSceneCallback) {
+  static void SceneDraw(std::function<void()> nSceneCallback)
+  {
     sceneCallback = nSceneCallback;
   }
 
-  static void setPhysicWorld(b2World *nworld);
-  static b2World *getPhysicsWorld();
-
   static void setFrameBufferId(int id, const char *label);
-
-  static void setBody(b2World *world, b2Body *nBody);
-
-  static void addPhysicsWorld(b2World *world);
-
-  // static b2World *getB2World(b2World *world);
-
-  static void setCurrentPhysicsWorld(b2World *world) { currentWorld = world; }
-  static b2World *getCurrentWolrd() { return currentWorld; }
-
-  static void removePhysicsWorld(b2World *world);
 
   static float getFixedDt() { return fixedDt; }
 };
