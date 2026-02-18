@@ -3,7 +3,7 @@
 namespace dudis
 {
 
-    enum class Key
+    enum class KeyCode
     {
         Unknown,
 
@@ -143,5 +143,4 @@ namespace dudis
         COUNT
     };
 
-    constexpr int DD_KEYS_COUNT = 125;
 }
