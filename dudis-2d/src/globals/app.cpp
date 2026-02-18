@@ -13,6 +13,7 @@ b2World *App::physicsWorld;
 std::vector<b2Body *> App::bodies;
 std::unordered_map<b2World *, std::vector<b2Body *>> App::worlds;
 b2World *App::currentWorld = nullptr;
+double App::fixedDt = 1.0f / 60.f;
 
 void App::setWindow(Window &nWindow) {
   window = &nWindow;
