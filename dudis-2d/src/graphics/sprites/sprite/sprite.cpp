@@ -1,57 +1,61 @@
 #include "dudis2d/graphics/sprites/sprite/sprite.h"
-#include "dudis2d/core/log/log.h"
+
 #include <cmath>
+
+#include "dudis2d/core/log/log.h"
+#include "dudis2d/graphics/drawCommand/drawCommand.h"
 
 using namespace dudis;
 using namespace std;
 
-Sprite::Sprite(const char *texturPath, SizeI size) {
-  texture = LoadTexture(texturPath);
+Sprite::Sprite(const char *texturPath, Size size)
+{
   pos = {0, 0};
+  _rectSrc = {0, 0, 0, 0};
+  _tex = true;
 
   this->filePath = std::string(texturPath);
 
   this->size = size;
 
   this->type = TypeShape::Rectangle;
+}
+Sprite::~Sprite()
+{
+  Log::Alert("[INFO] liberando recursos [Sprite]");
 
-  if (texture.id == 0) {
-    Log::Error("Erro ao carregar textura");
+  res::Texture2D::unload(_rlTex->id);
+  Log::Info("[INFO] recursos de sprite liberado [Sprite]");
+}
+
+void Sprite::start()
+{
+  if (!_createTexture)
+  {
+    auto path = filePath.c_str();
+    // _ddTex = res::Texture2D::create(path, res::TextureLoadMode::Uncached);
+    auto _ddTex = res::Texture2D::create(path);
+    _rlTex = _ddTex._rlTex;
     return;
   }
-
-  this->rect = {0, 0, (float)texture.width, (float)texture.height};
+  return;
 }
 
-void Sprite::render() {
+void Sprite::render() {}
 
-  this->getGlobalMatrix();
-
-  auto gPos = this->getGlobalPos();
-  auto gRotation = this->getGlobalRotation() * RAD2DEG;
-  auto gScale = this->getGlocalScale();
-  auto finalSize = Size(size.w * gScale.x, size.h * gScale.y);
-
-  Rectangle dest = {gPos.x, gPos.y, (float)finalSize.w, (float)finalSize.h};
-  Rectangle sourceRect = rect;
-
-  if (flippedX) {
-    sourceRect.width = -rect.width;
-  }
-
-  // Rectangle dest = {pos.x, pos.y, (float)size.w, (float)size.h};
-  // Rectangle sourceRect = rect;
-
-  // if (flippedX) {
-  //   sourceRect.width = -rect.width;
-  // }
-
-  DrawTexturePro(texture, sourceRect, dest, origin, angle, color);
-
-  // DrawTexturePro(texture, rect, dest, origin, angle, color);
-}
-
-shared_ptr<Sprite> Sprite::create(const char *texturPath, SizeI size) {
+shared_ptr<Sprite> Sprite::create(const char *texturPath, Size size)
+{
   auto sprite = make_shared<Sprite>(texturPath, size);
+  sprite->_createTexture = false;
+  sprite->start();
+  return sprite;
+}
+
+DDRef Sprite::create(const char *path, Size size, res::DDTexture tex)
+{
+  auto sprite = make_shared<Sprite>(path, size);
+  sprite->_createTexture = true;
+  sprite->_rlTex = tex._rlTex;
+  sprite->start();
   return sprite;
 }
