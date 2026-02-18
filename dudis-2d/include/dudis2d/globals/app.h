@@ -22,6 +22,7 @@ protected:
   static std::vector<b2Body *> bodies;
   static std::unordered_map<b2World *, std::vector<b2Body *>> worlds;
   static b2World *currentWorld;
+  static double fixedDt;
 
 public:
   static std::function<void()> windowCallback;
@@ -54,4 +55,6 @@ public:
   static b2World *getCurrentWolrd() { return currentWorld; }
 
   static void removePhysicsWorld(b2World *world);
+
+  static float getFixedDt() { return fixedDt; }
 };
