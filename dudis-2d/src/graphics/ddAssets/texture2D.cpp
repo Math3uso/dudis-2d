@@ -32,16 +32,12 @@ DDTexture res::Texture2D::_create(const char *path, DDTexture &ddTex,
     *id = rlTex.id;
   }
 
-  //_rlTextures[path] = rlTex;
-
   ddTex.width = rlTex.width;
   ddTex.height = rlTex.height;
   ddTex.id = rlTex.id;
   ddTex.formate = fmt;
 
-  // forçando 1 (TEMP)
   ddTex.mipmaps = 1;
-  // ddTex._rlTex = &;
 
   _rlTextures.emplace(key, rlTex);
 
