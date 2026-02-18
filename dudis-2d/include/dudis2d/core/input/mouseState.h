@@ -7,13 +7,17 @@ namespace dudis
         Left,
         Right,
         Middle,
+        Side,
+        Extra,
+        Forward,
+        Back,
         COUNT
     };
 
     struct ButtonState
     {
         bool down;
-        bool preesed;
+        bool pressed;
         bool released;
     };
 }
