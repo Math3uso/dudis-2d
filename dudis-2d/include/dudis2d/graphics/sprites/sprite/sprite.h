@@ -1,34 +1,38 @@
 #pragma once
 
+#include "dudis2d/core/log/log.h"
 #include "dudis2d/graphics/renderable.h"
 #include <memory>
 
-namespace dudis {
-class Sprite : public Renderable {
+namespace dudis
+{
 
-protected:
-  Texture2D texture;
-  // Color color = WHITE;
-  Rectangle rect;
+  class Sprite;
+  using DDRef = std::shared_ptr<Sprite>;
 
-public:
-  Sprite(const char *texturPath, SizeI size);
-  ~Sprite() {
-    if (texture.id != 0) {
-      UnloadTexture(texture);
-      puts("recursos de sprite liberado [Sprite]");
-    }
-  }
+  class Sprite : public Renderable
+  {
 
-  void setCrop(Rectangle src) {
-    this->setDirty();
-    rect = src;
-  }
+  protected:
+    // Color color = WHITE;
+    // Rectangle rect;
+    DDRect rect;
+    bool _createTexture = false;
 
-  static std::shared_ptr<Sprite> create(const char *texturPath, SizeI size);
+  public:
+    Sprite(const char *texturPath, Size size);
+    ~Sprite();
 
-  void render() override;
+    void start() override;
 
-  Texture2D &getTextureRef() { return texture; }
-};
+    // void setCrop(Rectangle src) { rect = src; }
+    void setCrop(DDRect src) { _rectSrc = src; }
+
+    static std::shared_ptr<Sprite> create(const char *texturPath, Size size);
+    static DDRef create(const char *path, Size size, res::DDTexture tex);
+
+    void render() override;
+
+    // Texture2D &getTextureRef() { return texture; }
+  };
 } // namespace dudis
