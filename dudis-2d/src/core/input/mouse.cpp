@@ -12,7 +12,7 @@ void Mouse::_beginFrame()
 {
     for (auto &st : _btState)
     {
-        st.preesed = false;
+        st.pressed = false;
         st.released = false;
     }
 }
@@ -33,7 +33,7 @@ void Mouse::_setMouseButton(MouseButton bt, bool isDownNow)
     auto &btState = _btState[(int)bt];
 
     if (isDownNow && !btState.down)
-        btState.preesed = true;
+        btState.pressed = true;
 
     if (!isDownNow && btState.down)
         btState.released = true;
@@ -45,6 +45,9 @@ bool Mouse::_getButtonsStateInRl(MouseButton bt)
 {
     auto rlBt = ddrlUtils::toRLMouseButton(bt);
 
+    if (rlBt < 0)
+        return false;
+
     return IsMouseButtonDown(rlBt);
 }
 
@@ -53,4 +56,28 @@ Vec2 Mouse::getPosition()
     auto rlMousePos = GetMousePosition();
 
     return Vec2(rlMousePos.x, rlMousePos.y);
+}
+
+Vec2 Mouse::getPositionScreen()
+{
+    return Mouse::getPosition();
+}
+
+Vec2 Mouse::getDelta()
+{
+    auto rlDelta = GetMouseDelta();
+
+    return Vec2(rlDelta.x, rlDelta.y);
+}
+
+float Mouse::getWheel()
+{
+    return GetMouseWheelMove();
+}
+
+Vec2 Mouse::getWheelDelta()
+{
+    auto rlWheel = GetMouseWheelMoveV();
+
+    return Vec2(rlWheel.x, rlWheel.y);
 }
