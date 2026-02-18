@@ -8,7 +8,9 @@
 
 #include <iostream>
 #include <memory>
-#include "dudis2d/core/math/react.h"
+#include "dudis2d/core/math/rect.h"
+
+#include "dudis2d/core/utils/sizeF.h"
 
 namespace rl
 {
@@ -20,7 +22,7 @@ namespace rl
 namespace dudis
 {
 
-  using Size = SizeI;
+  using Size = SizeF;
 
   template <typename T>
   using Scope = std::unique_ptr<T>;
