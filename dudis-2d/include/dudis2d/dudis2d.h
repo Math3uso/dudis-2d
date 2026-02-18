@@ -16,3 +16,6 @@
 #include "dudis2d/scenes/scene/scene.h"
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
 #include "dudis2d/scenes/sceneProperty/sceneProperty.h"
+#include "dudis2d/core/input/input.h"
+#include "dudis2d/core/input/keyboard.h"
+#include "dudis2d/core/input/mouse.h"
