@@ -1,162 +1,91 @@
 #include "dudis2d/core/window/window.h"
 #include "../../extern/raygui/raygui.h"
-// #include "dudis2d/core/debug/dd-debug.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/globals/app.h"
+#include "dudis2d/graphics/DDRender/DDRender.h"
+#include "dudis2d/graphics/frameQueue/frameQueue.h"
+#include "dudis2d/graphics/renderQueue/renderQueue.h"
 #include <box2d/box2d.h>
+#include "dudis2d/core/input/input.h"
 
 using namespace dudis;
 
-Window::Window(SizeI nSize, const char *nTitle) {
+Window::Window(SizeI nSize, const char *nTitle)
+{
 
-  SetTraceLogLevel(LOG_ERROR);
+#ifdef DD_DEBUG
+  puts("dudis in debug");
+#endif
 
-  _globalCamera = DDCamera();
+  // #ifdef DD_RELEASE
+  //   puts("dudis in release");
+  // #endif
+
+  // SetTraceLogLevel(LOG_ERROR);
 
   size = nSize;
   title = nTitle;
+}
 
+bool Window::init()
+{
+  SetTraceLogLevel(LOG_ERROR);
   InitWindow(size.w, size.h, title);
 
   SetTargetFPS(60);
-
   App::setWindow(*this);
+
+  return true;
 }
 
-// void Window::Running() {
+// v2
+void Window::Running()
+{
 
-//   while (!WindowShouldClose()) {
+  auto renderQueue = RenderQueue::create();
+  auto DDRender = DDRender::create();
 
-//     int currentWidth = GetScreenWidth();
-//     int currentHeight = GetScreenHeight();
+  while (!WindowShouldClose())
+  {
 
-//     RenderTexture2D frameBuffer = {};
-
-//     // Size internalSize = _resolution.size;
-
-//     if (renderManager) {
-
-//       renderManager->applyChangeScene();
-
-//       if (renderManager->getTotalScenes() > 0) {
-//         auto scene = renderManager->getCurrentScene();
-
-//         // std::cout << scene->label << "\n";
-
-//         scene->drawing(frameBuffer, {currentWidth, currentHeight});
-//       }
-
-//       // auto currentScene = renderManager->getScene();
-//       // auto replace = renderManager->replaceSceneMode;
-
-//       // if (renderManager->getTotalScenes() > 0 && replace) {
-//       //   const auto scene = renderManager->getCurrentScene();
-
-//       //   if (scene) {
-//       //     scene->drawing(frameBuffer, {currentWidth, currentHeight});
-
-//       //     if (currentScene) {
-//       //       renderManager->releaseCurrentScene();
-//       //     }
-//       //   }
-//       // } else {
-
-//       //   currentScene->drawing(frameBuffer, {currentWidth, currentHeight});
-//       // }
-
-//       BeginDrawing();
-
-//       ClearBackground(WHITE);
-
-//       // BeginMode2D(_globalCamera.getCameraProps());
-
-//       this->_drawTextureFromRenderManager(frameBuffer);
-
-//       if (App::windowCallback) {
-//         App::windowCallback();
-//       }
-
-//       if (_globalCamera.isDebugMode()) {
-//         _globalCamera.drawDebugInfo();
-//       }
-
-//       // EndMode2D();
-
-//       EndDrawing();
-
-//       continue;
-//       //==============
-//     }
-
-//     BeginDrawing();
-//     ClearBackground(clearColor);
-
-//     EndDrawing();
-//   }
-
-//   puts("preparando pra fechar");
-
-//   if (renderManager) {
-//     renderManager->dispose();
-//   }
-
-//   puts("fechando janela");
-
-//   CloseWindow();
-// }
-
-// Versão modificada: agora a Scene é tratada como uma Entity.
-// Antes, a Scene possuía uma textura inteira para renderizar os elementos.
-// Mantendo o código original comentado para referência e testes.
-
-void Window::Running() {
-
-  while (!WindowShouldClose()) {
+    Input::update();
 
     int currentWidth = GetScreenWidth();
     int currentHeight = GetScreenHeight();
 
-    // RenderTexture2D frameBuffer = {};
-
-    if (renderManager) {
+    if (renderManager)
+    {
 
       BeginDrawing();
 
       renderManager->applyChangeScene();
 
-      Color clearColor;
-
-      if (renderManager->getTotalScenes() > 0) {
+      if (renderManager->getTotalScenes() > 0)
+      {
         auto scene = renderManager->getCurrentScene();
-        scene->draw();
-        clearColor = scene->getClearColor();
+
+        renderQueue->clear();
+        scene->collectRenderCommands(renderQueue.get());
+        DDRender->draw(renderQueue->getCommands());
       }
 
       ClearBackground(clearColor);
 
-      if (App::windowCallback) {
+      if (App::windowCallback)
+      {
         App::windowCallback();
-      }
-
-      if (_globalCamera.isDebugMode()) {
-        _globalCamera.drawDebugInfo();
       }
 
       EndDrawing();
 
       continue;
-      //==============
     }
-
-    // BeginDrawing();
-    // ClearBackground(clearColor);
-
-    // EndDrawing();
   }
 
   puts("preparando pra fechar");
 
-  if (renderManager) {
+  if (renderManager)
+  {
     renderManager->dispose();
   }
 
@@ -165,14 +94,26 @@ void Window::Running() {
   CloseWindow();
 }
 
+void Window::release()
+{
+
+  if (renderManager)
+  {
+    renderManager->dispose();
+  }
+  CloseWindow();
+}
+
 void Window::Quit() { CloseWindow(); }
 
-void Window::SetRenderManager(SceneManager &renderer) {
+void Window::SetRenderManager(SceneManager &renderer)
+{
   renderManager = &renderer;
   return;
 }
 
-const ResolutionProps Window::_getResoltionProps() {
+const ResolutionProps Window::_getResoltionProps()
+{
   float scale = fminf((float)size.w / _resolution.size.w,
                       (float)size.h / _resolution.size.h);
   int offsetX = (size.w - (_resolution.size.w * scale)) / 2;
@@ -181,46 +122,19 @@ const ResolutionProps Window::_getResoltionProps() {
   return ResolutionProps(Vec2{(float)offsetX, (float)offsetY}, scale);
 }
 
-void Window::_drawTextureFromRenderManager(const RenderTexture2D &frameBuffer) {
-
-  if (this->_resolution._policy == ResolutionPolicy::None) {
-    DrawTextureRec(frameBuffer.texture,
-                   Rectangle{0, 0, (float)frameBuffer.texture.width,
-                             -(float)frameBuffer.texture.height},
-                   Vector2{0, 0}, WHITE);
-    return;
-  }
-
-  auto resolutionProps = this->_getResoltionProps();
-
-  auto sizeSrc = Size{frameBuffer.texture.width, frameBuffer.texture.height};
-
-  auto posDest = resolutionProps.offset;
-  auto sizeDes = Size{_resolution.size.w * resolutionProps.scale,
-                      _resolution.size.h * resolutionProps.scale};
-
-  DrawTexturePro(
-      frameBuffer.texture,
-      {0, 0, (float)sizeSrc.w,
-       -(float)sizeSrc.h}, // tamanho original da textura
-      {posDest.x, posDest.y, (float)sizeDes.w,
-       (float)
-           sizeDes.h}, // tamanho alterado pela resolução (desenhando com scele)
-      {0, 0}, 0, WHITE);
-
-  return;
-}
-
-void Window::setSize(const Size &nSize) {
+void Window::setSize(const SizeI &nSize)
+{
   size = nSize;
 
   SetWindowSize(size.w, size.h);
-  if (_center) {
+  if (_center)
+  {
     this->_centerWindow();
   }
 }
 
-void Window::_centerWindow() {
+void Window::_centerWindow()
+{
   int screenWidth = GetMonitorWidth(GetCurrentMonitor());
   int screenHeight = GetMonitorHeight(GetCurrentMonitor());
 
