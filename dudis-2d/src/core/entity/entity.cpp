@@ -6,9 +6,11 @@
 using namespace std;
 using namespace dudis;
 
-void Entity::defaultUpdate() {
+void Entity::defaultUpdate()
+{
   this->update();
-  if (_physicsComponent) {
+  if (_physicsComponent)
+  {
     auto physicsComponent = this->getComponent<PhysicsComponent>();
     physicsComponent->syncFromPhysics();
   }
@@ -16,12 +18,17 @@ void Entity::defaultUpdate() {
   this->runMotions();
 }
 
-void Entity::runMotions() {
-  if (_action) {
-    if (_action->isDone()) {
+void Entity::runMotions()
+{
+  if (_action)
+  {
+    if (_action->isDone())
+    {
       _action.reset();
       puts("motion liberada");
-    } else {
+    }
+    else
+    {
       _action->step();
     }
   }
@@ -34,24 +41,30 @@ void Entity::updateChildren() {}
 
 void Entity::render() { this->getGlobalMatrix(); }
 
-void Entity::addChild(shared_ptr<Entity> child) {
+void Entity::addChild(shared_ptr<Entity> child)
+{
 
-  if (_transformType == TransformType::DisableParentTransform) {
+  if (_transformType == TransformType::DisableParentTransform)
+  {
     child->setTransformType(TransformType::Absolute);
   }
 
-  if (child->_zOrder == 0) {
+  if (child->_zOrder == 0)
+  {
     child->_zOrder = _children.size() + 1;
   }
 
-  this->setDirty();
   child->setParent(this);
   _children.push_back(child);
+
+  this->setDirty();
+
   _orderChildren = true;
   this->_sortChildrenByIndex();
 }
 
-void Entity::addChild(shared_ptr<Entity> child, const int zOrder) {
+void Entity::addChild(shared_ptr<Entity> child, const int zOrder)
+{
   child->_zOrder = zOrder;
   this->addChild(child);
   return;
@@ -74,8 +87,10 @@ void Entity::addChild(shared_ptr<Entity> child, const int zOrder) {
  * @return const glm::mat4& Referência constante à matriz de transformação
  * local.
  */
-const glm::mat4 &Entity::getLocalMatrix() {
-  if (_localDirty) {
+const glm::mat4 &Entity::getLocalMatrix()
+{
+  if (_localDirty)
+  {
     _localMatrix = glm::mat4(1.0f);
     _localMatrix = glm::translate(_localMatrix, glm::vec3(pos.x, pos.y, 0));
     _localMatrix = glm::rotate(_localMatrix, angle, glm::vec3(0, 0, 1));
@@ -103,11 +118,18 @@ const glm::mat4 &Entity::getLocalMatrix() {
  * @return const glm::mat4& Referência constante à matriz de transformação
  * global.
  */
-const glm::mat4 &Entity::getGlobalMatrix() {
-  if (_globalDirty) {
-    if (_parent && _transformType != TransformType::Absolute) {
+const glm::mat4 &Entity::getGlobalMatrix()
+{
+  if (_globalDirty)
+  {
+    if (_parent && _transformType != TransformType::Absolute)
+    {
+      // std::cout << "n foi do cache." << "chamado de: " << this->labelT << "\n";
       _globalMatrix = _parent->getGlobalMatrix() * getLocalMatrix();
-    } else {
+    }
+    else
+    {
+      // std::cout << "c pa foi do cache " << "chamado de: " << this->labelT << "\n";
       _globalMatrix = getLocalMatrix();
     }
     _globalDirty = false;
@@ -115,54 +137,64 @@ const glm::mat4 &Entity::getGlobalMatrix() {
   return _globalMatrix;
 }
 
-void Entity::setPos(const dudis::Vec2 &nPos) {
+void Entity::setPos(const dudis::Vec2 &nPos)
+{
   this->setDirty();
   pos = nPos;
 }
 
-void Entity::setPos(float x, float y) {
+void Entity::setPos(float x, float y)
+{
   this->setPos(Vec2{x, y});
   return;
 }
 
-void Entity::setSize(dudis::Size nSize) {
+void Entity::setSize(dudis::SizeF nSize)
+{
   this->setDirty();
   size = nSize;
 }
 
-void Entity::setZOrder(int zIndex) {
+void Entity::setZOrder(int zIndex)
+{
   _zOrder = zIndex;
   // temp entity precia de um zOrderGlobal
   _parent->_orderChildren = true;
   _parent->_sortChildrenByIndex();
 }
 
-void Entity::rotate(float nAngle) {
+void Entity::rotate(float nAngle)
+{
   this->setDirty();
   angle = nAngle;
 }
 
-void Entity::translate(const Vec2 &nPos) {
+void Entity::translate(const Vec2 &nPos)
+{
 
   this->setDirty();
   pos.x += nPos.x;
   pos.y += nPos.y;
 }
 
-void Entity::setDirty() {
+void Entity::setDirty()
+{
   _localDirty = true;
   _globalDirty = true;
-  for (auto &child : _children) {
+  for (auto &child : _children)
+  {
     child->setDirty();
   }
 }
 
-const Vec2 Entity::getGlobalPos() {
+const Vec2 Entity::getGlobalPos()
+{
   glm::mat4 m = getGlobalMatrix();
   return {m[3][0], m[3][1]};
 }
 
-float Entity::getGlobalRotation() {
+float Entity::getGlobalRotation()
+{
   glm::mat4 m = getGlobalMatrix();
 
   float scaleX = glm::length(glm::vec3(m[0]));
@@ -173,14 +205,16 @@ float Entity::getGlobalRotation() {
   return rot;
 }
 
-const Vec2 Entity::getGlocalScale() {
+const Vec2 Entity::getGlocalScale()
+{
   glm::mat4 m = getGlobalMatrix();
   float scaleX = glm::length(glm::vec3(m[0])); // 1ª coluna
   float scaleY = glm::length(glm::vec3(m[1])); // 2ª coluna
   return {scaleX, scaleY};
 }
 
-Size Entity::getGlobalSize() {
+Size Entity::getGlobalSize()
+{
 
   glm::mat4 m = getGlobalMatrix();
 
@@ -190,15 +224,34 @@ Size Entity::getGlobalSize() {
   return {size.w * scaleX, size.h * scaleY};
 }
 
+Rect Entity::getBoundingBox()
+{
+  auto globalSize = this->getGlobalSize();
+  auto scale = this->getGlocalScale();
+
+  float minX = this->getGlobalPos().x - origin.x * scale.x;
+  float minY = this->getGlobalPos().y - origin.y * scale.y;
+
+  return Rect{minX, minY, (float)globalSize.w, (float)globalSize.h};
+}
+
+bool Entity::intersectsWith(const std::shared_ptr<Entity> &other)
+{
+  return this->getBoundingBox().intersects(other->getBoundingBox());
+}
+
 // void Entity::release() { _children.clear(); }
 
-void Entity::_sortChildrenByIndex() {
+void Entity::_sortChildrenByIndex()
+{
   //_children
-  if (_orderChildren) {
+  if (_orderChildren)
+  {
     Log::Info("order chamado");
     sort(
         _children.begin(), _children.end(),
-        [](const shared_ptr<Entity> &child1, const shared_ptr<Entity> &child2) {
+        [](const shared_ptr<Entity> &child1, const shared_ptr<Entity> &child2)
+        {
           return child1->_zOrder < child2->_zOrder;
         });
     _orderChildren = false;
@@ -206,13 +259,16 @@ void Entity::_sortChildrenByIndex() {
   return;
 }
 
-Entity::~Entity() {
+Entity::~Entity()
+{
 
   Log::Info("Entity liberada [ENTITY]");
 
-  if (_owned.size() > 0) {
+  if (_owned.size() > 0)
+  {
     Log::Alert("\n[ENTITY] Deletando dados extras [OWNED]\n");
-    for (auto &data : _owned) {
+    for (auto &data : _owned)
+    {
 
       std::cout << "\u2003bytes liberados: " << data.size << "\n";
 
@@ -220,7 +276,9 @@ Entity::~Entity() {
     }
     _owned.clear();
     Log::Alert("\n[ENTITY] Deletando dados extras [OWNED]\n");
-  } else {
+  }
+  else
+  {
     Log::Success("vazio sem dados extras");
   }
   _components.clear();
