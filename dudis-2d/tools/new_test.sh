@@ -28,6 +28,7 @@ EOF
 
 cat << EOF > ${1}.test.cpp
 #include "dudis2d/dudis2d.h"
+#include "dudis2d/debug.h"
 
 int main()
 {
