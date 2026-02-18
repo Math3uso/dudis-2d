@@ -6,6 +6,6 @@ namespace dudis
 {
     namespace ddrlUtils
     {
-        int toRaylibKey(Key k);
+        int toRaylibKey(KeyCode k);
     }
 }
