@@ -27,7 +27,7 @@ namespace dudis
       static DDTexture create(const char *path);
 
       static void unload(const DDTexture &tex);
-      static DDTexture _rlTex2DFromDDTex(const rl::RlTexture &rltex);
+      // static DDTexture _rlTex2DFromDDTex(const rl::RlTexture &rltex);
     };
   } // namespace res
 } // namespace dudis

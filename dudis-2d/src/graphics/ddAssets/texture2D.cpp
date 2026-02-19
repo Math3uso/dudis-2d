@@ -9,12 +9,14 @@ using namespace res;
 std::unordered_map<string, rl::RlTexture> res::Texture2D::_rlTextures;
 
 DDTexture res::Texture2D::_create(const char *path, DDTexture &ddTex,
-                                  uint32_t *id) {
+                                  uint32_t *id)
+{
 
   auto key = string(path);
   auto it = _rlTextures.find(key);
 
-  if (it != _rlTextures.end()) {
+  if (it != _rlTextures.end())
+  {
     puts("enviado do cache");
     return DDTexture(it->second);
   }
@@ -28,7 +30,8 @@ DDTexture res::Texture2D::_create(const char *path, DDTexture &ddTex,
 
   UnloadImage(img);
 
-  if (id) {
+  if (id)
+  {
     *id = rlTex.id;
   }
 
@@ -46,7 +49,8 @@ DDTexture res::Texture2D::_create(const char *path, DDTexture &ddTex,
   return ddTex;
 }
 
-DDTexture res::Texture2D::create(const char *path) {
+DDTexture res::Texture2D::create(const char *path)
+{
   DDTexture ddTex = DDTexture(0, TextureFormat::RGBA8);
 
   ddTex.mipmaps = 1;
@@ -54,11 +58,11 @@ DDTexture res::Texture2D::create(const char *path) {
   return _create(path, ddTex, nullptr);
 }
 
-void res::Texture2D::unload(const DDTexture &tex) {
-  if (tex.id != 0) {
+void res::Texture2D::unload(const DDTexture &tex)
+{
+  if (tex.id != 0)
+  {
     rlUnloadTexture(tex.id);
     Log::Success("Textura removida");
   }
 }
-
-res::DDTexture res::Texture2D::_rlTex2DFromDDTex(const rl::RlTexture &rlTex) {}
