@@ -8,7 +8,7 @@ namespace dudis
     {
         float x, y, w, h;
 
-        constexpr bool equals(const DDRect &other, float eps = 0.0001f) const
+        bool equals(const DDRect &other, float eps = 0.0001f) const
         {
             return std::abs(x - other.x) < eps &&
                    std::abs(y - other.y) < eps &&
