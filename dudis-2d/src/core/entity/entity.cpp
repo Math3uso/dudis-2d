@@ -11,8 +11,7 @@ void Entity::defaultUpdate()
   this->update();
   if (_physicsComponent)
   {
-    auto physicsComponent = this->getComponent<PhysicsComponent>();
-    physicsComponent->syncFromPhysics();
+    // Temporarily disabled: physics sync handled elsewhere
   }
   // this->updateChildren();
   this->runMotions();
