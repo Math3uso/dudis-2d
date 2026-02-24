@@ -1,14 +1,9 @@
+#include <catch2/catch_test_macros.hpp>
+
 #include "dudis2d/dudis2d.h"
-#include "dudis2d/debug.h"
 
-using namespace std;
-using namespace dudis;
-
-int main()
+TEST_CASE("Init window", "[window]")
 {
-  Window window(dudis::Size(800, 600), "Init window Test");
-
-  debug::Test::Expect(window.init()).Equal(true);
-
-  return 0;
+    Window window(dudis::SizeI(800, 600), "Init window Test");
+    REQUIRE(window.init() == true);
 }
