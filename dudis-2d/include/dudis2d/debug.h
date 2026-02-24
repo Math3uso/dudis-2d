@@ -1,4 +1,5 @@
 #pragma once
 
-#include "dudis2d/core/debug/ddtest.h"
-#include "dudis2d/core/debug/dd-make-context.h"
+#include "dudis2d/core/test/ddtest.h"
+#include "dudis2d/core/test/dd-make-utils.h"
+#include "dudis2d/core/test/ddContext.h"
