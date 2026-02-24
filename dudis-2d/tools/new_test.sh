@@ -15,23 +15,17 @@ mkdir -p "$DIR"
 
 cd "$DIR"
 
-cat << EOF > CMakeLists.txt
-add_executable("$NAME" "$NAME".test.cpp)
+cat << EOF2 > CMakeLists.txt
+dd_add_test("$NAME")
+EOF2
 
-target_link_libraries("$NAME" PRIVATE dudis)
+cat << EOF2 > ${1}.test.cpp
+#include <catch2/catch_test_macros.hpp>
 
-target_include_directories("$NAME" PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-)
-EOF
-
-cat << EOF > ${1}.test.cpp
 #include "dudis2d/dudis2d.h"
-#include "dudis2d/debug.h"
 
-int main()
+TEST_CASE("$NAME test")
 {
-    return 0;
+    REQUIRE(true);
 }
-EOF
+EOF2

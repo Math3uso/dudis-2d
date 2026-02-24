@@ -3,16 +3,24 @@
 using namespace dudis;
 using namespace test;
 
-Window DDContext::window;
-SceneManager DDContext::manager;
-
 void DDContext::InitContext()
 {
-    window = Window(SizeI(800, 600), "Janela");
+    manager = std::make_unique<SceneManager>();
+    window = std::make_unique<Window>(SizeI(800, 600), "Janela");
 
-    window.init();
+    window->init();
 
-    App::setSceneManager(manager);
+    App::setSceneManager(*manager.get());
 
-    window.SetRenderManager(manager);
+    window->SetRenderManager(*manager.get());
+}
+
+void DDContext::ExitContext()
+{
+
+    window->Quit();
+    window->release();
+
+    window.reset();
+    manager.reset();
 }

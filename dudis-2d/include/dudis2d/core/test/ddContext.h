@@ -9,12 +9,14 @@ namespace dudis
         class DDContext
         {
         public:
-            static Window window;
-            static SceneManager manager;
+            DDContext() = default;
 
-            static void InitContext();
-            static void initWindowBySeconds(int seconds);
-            static void exitContext();
+            std::unique_ptr<Window> window;
+            std::unique_ptr<SceneManager> manager;
+
+            void InitContext();
+            void initWindowBySeconds(int seconds);
+            void ExitContext();
         };
     }
 }
