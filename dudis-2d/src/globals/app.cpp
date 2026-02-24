@@ -7,10 +7,13 @@ Window *App::window = nullptr;
 SceneManager *App::sceneManager = nullptr;
 std::function<void()> App::windowCallback = []() {};
 std::function<void()> App::sceneCallback = []() {};
-std::unordered_map<std::string, int> App::frameBuffers;
 double App::fixedDt = 1.0f / 60.f;
 
-void App::setWindow(Window &nWindow) {
+void App::setWindow(Window &nWindow)
+{
+
+  assert(!window && "Window already set");
+
   window = &nWindow;
 
   return;
@@ -18,11 +21,18 @@ void App::setWindow(Window &nWindow) {
 
 Window *App::getWindow() { return window; };
 
-void App::setSceneManager(SceneManager &nManager) {
+void App::setSceneManager(SceneManager &nManager)
+{
   sceneManager = &nManager;
   return;
 }
 
-void App::setFrameBufferId(int id, const char *label) {
-  frameBuffers[std::string(label)] = id;
+void App::setFrameBufferId(int id, const char *label)
+{
+}
+
+void App::release()
+{
+  window = nullptr;
+  sceneManager = nullptr;
 }

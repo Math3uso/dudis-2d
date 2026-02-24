@@ -14,12 +14,12 @@ protected:
   static float deltaTime;
   static Window *window;
   static SceneManager *sceneManager;
-  static std::unordered_map<std::string, int> frameBuffers;
   static double fixedDt;
 
 public:
   static std::function<void()> windowCallback;
   static std::function<void()> sceneCallback;
+  static void release();
   // static void setDeltaTime(float dt) {};
   static void setWindow(Window &nWindow);
   static void setSceneManager(SceneManager &nManager);

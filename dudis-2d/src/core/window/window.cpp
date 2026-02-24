@@ -32,6 +32,11 @@ bool Window::init()
   SetTraceLogLevel(LOG_ERROR);
   InitWindow(size.w, size.h, title);
 
+  if (!IsWindowReady())
+  {
+    return false;
+  }
+
   SetTargetFPS(60);
   App::setWindow(*this);
 
@@ -71,11 +76,6 @@ void Window::Running()
 
       ClearBackground(clearColor);
 
-      if (App::windowCallback)
-      {
-        App::windowCallback();
-      }
-
       EndDrawing();
 
       continue;
@@ -100,8 +100,8 @@ void Window::release()
   if (renderManager)
   {
     renderManager->dispose();
+    App::release();
   }
-  CloseWindow();
 }
 
 void Window::Quit() { CloseWindow(); }
@@ -146,3 +146,42 @@ void Window::_centerWindow()
 
   SetWindowPosition(posX, posY);
 }
+
+void Window::runByFrames(int seconds)
+{
+  this->SetFPS(60);
+
+  auto renderQueue = RenderQueue::create();
+  auto DDRender = DDRender::create();
+
+  for (int i = 0; i < seconds && !WindowShouldClose(); i++)
+  {
+    Input::update();
+
+    BeginDrawing();
+
+    renderManager->applyChangeScene();
+
+    if (renderManager->getTotalScenes() > 0)
+    {
+      auto scene = renderManager->getCurrentScene();
+
+      renderQueue->clear();
+      scene->collectRenderCommands(renderQueue.get());
+      DDRender->draw(renderQueue->getCommands());
+    }
+
+    ClearBackground(clearColor);
+
+    EndDrawing();
+  }
+  // this->release();
+  // this->Quit();
+}
+
+// #ifdef DD_DEBUG
+// void Window::runBySeconds()
+// {
+
+// }
+// #endif

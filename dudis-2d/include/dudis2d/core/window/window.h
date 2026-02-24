@@ -19,6 +19,7 @@ protected:
 public:
   Window(dudis::SizeI nSize, const char *nTitle);
   Window() = default;
+
   static Window *create(dudis::SizeI nSize, const char *nTitle)
   {
     _instance = std::make_unique<Window>(nSize, nTitle);
@@ -28,6 +29,11 @@ public:
   void release();
   void Quit();
   void Running();
+
+  void runByFrames(int frames);
+  // #ifdef DD_DEBUG
+  //   void runBySeconds(int seconds);
+  // #endif
   bool init();
   void keepWindowCentered(bool isCenter) { this->_center = isCenter; }
 
