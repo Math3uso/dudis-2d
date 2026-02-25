@@ -12,12 +12,7 @@ int main(){
     Window window(SizeI(800, 600), "${projectName}");
     window.keepWindowCentered(true);
 
-    Resolution resolution = Resolution({800, 600}, ResolutionPolicy::Letterbox);
-
-    window.setResolution(resolution);
-
-    auto camera = DDCamera();
-    window.setGlobalCamera(camera);
+    window.init();
 
     SceneManager manager;
 
