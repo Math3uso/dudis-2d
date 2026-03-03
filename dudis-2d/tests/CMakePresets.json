@@ -1,0 +1,16 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "tests",
+            "generator": "Ninja",
+            "binaryDir": "build"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "tests",
+            "configurePreset": "tests"
+        }
+    ]
+}
