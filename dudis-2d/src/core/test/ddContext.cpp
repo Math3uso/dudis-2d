@@ -24,3 +24,8 @@ void DDContext::ExitContext()
     window.reset();
     manager.reset();
 }
+
+void DDContext::pushDraw(std::shared_ptr<dudis::Renderable> renderable)
+{
+    manager->getCurrentScene()->addChild(renderable);
+}

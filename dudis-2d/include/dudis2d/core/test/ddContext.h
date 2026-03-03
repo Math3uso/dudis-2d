@@ -17,6 +17,8 @@ namespace dudis
             void InitContext();
             void initWindowBySeconds(int seconds);
             void ExitContext();
+
+            void pushDraw(std::shared_ptr<Renderable> renderable);
         };
     }
 }

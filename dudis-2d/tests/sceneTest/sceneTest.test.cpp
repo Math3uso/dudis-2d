@@ -29,7 +29,46 @@ TEST_CASE("sceneTest test")
 
         context.manager->pushScene(std::move(scene));
 
-        context.window->runByFrames(60);
+        context.window->SetClearColor(dudis::Color::Default());
+
+        context.window->runByFrames(30);
+
+        context.ExitContext();
+    }
+
+    SECTION("It should be able to set scene color using hexadecimal")
+    {
+        test::DDContext context;
+        context.InitContext();
+
+        auto scene = test::MakeSceneWithInstance();
+
+        context.manager->pushScene(std::move(scene));
+
+        context.window->SetClearColor(dudis::Color::Hex(0x202020FF));
+
+        REQUIRE(context.window->getColor() == dudis::Color::Default());
+
+        context.window->runByFrames(1);
+
+        context.ExitContext();
+    }
+
+    SECTION("It should be able to draw in scene")
+    {
+        test::DDContext context;
+        context.InitContext();
+
+        auto scene = test::MakeSceneWithInstance();
+
+        context.manager->pushScene(std::move(scene));
+
+        context.window->SetClearColor(dudis::Color::Hex(0x202020FF));
+
+        auto quad = test::MakeQuadDefault();
+        context.pushDraw(quad);
+
+        context.window->runByFrames(30);
 
         context.ExitContext();
     }

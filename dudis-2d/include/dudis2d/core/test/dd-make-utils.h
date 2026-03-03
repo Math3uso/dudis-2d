@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dudis2d/dudis2d.h"
+#include "dudis2d/graphics.h"
 
 namespace dudis
 {
@@ -35,6 +36,11 @@ namespace dudis
             }
 
             return nullptr;
+        }
+
+        inline std::shared_ptr<DDRectangle> MakeQuadDefault()
+        {
+            return std::make_shared<DDRectangle>(Size(100, 100), Vec2(300, 200));
         }
     }
 }
