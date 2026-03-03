@@ -74,7 +74,7 @@ void Window::Running()
         DDRender->draw(renderQueue->getCommands());
       }
 
-      ClearBackground(clearColor);
+      ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
 
       EndDrawing();
 
@@ -171,7 +171,7 @@ void Window::runByFrames(int seconds)
       DDRender->draw(renderQueue->getCommands());
     }
 
-    ClearBackground(clearColor);
+    ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
 
     EndDrawing();
   }

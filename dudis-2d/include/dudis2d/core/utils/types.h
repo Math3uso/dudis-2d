@@ -16,6 +16,7 @@ namespace rl
 {
   using RlTexture = Texture2D;
   using rlFont = Font;
+  using rlColor = Color;
 
 } // namespace rl
 

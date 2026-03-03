@@ -1,9 +1,10 @@
 #pragma once
 
 #include "dudis2d/core/entity/entity.h"
-#include "dudis2d/core/utils/types.h"
 #include "dudis2d/graphics/ddAssets/texture2D.h"
 #include "dudis2d/scenes/sceneProperty/sceneProperty.h"
+#include "dudis2d/core/math/rect.h"
+#include "dudis2d/graphics/color.h"
 
 namespace dudis
 {
@@ -20,7 +21,7 @@ namespace dudis
   protected:
     // Vec2 origin = {0, 0};
     dudis::TypeShape type;
-    Color color = WHITE;
+    Color color = Color::White();
     bool flippedX = false;
     SceneProperty sceneProps;
     std::string filePath;
@@ -47,14 +48,14 @@ namespace dudis
     // }
 
     // Vec2 getOrigin() const { return origin; }
-    Color getColor() const { return color; }
+    const Color &getColor() const { return color; }
     dudis::TypeShape Type() const { return type; }
 
     SceneProperty &getSceneProps() { return sceneProps; }
 
     // void rotate(float nAngle) { angle = nAngle; }
     //  void setOrigin(Vec2 nOrigin) { origin = nOrigin; }
-    void setColor(Color nColor) { color = nColor; }
+    void setColor(const Color &nColor) { color = nColor; }
 
     virtual void setFlippedX(bool flip)
     {
