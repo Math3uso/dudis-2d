@@ -91,6 +91,7 @@ namespace dudis
 #endif
 
   protected:
+    std::string tag;
     dudis::SizeF size = {0.f, 0.f};
     dudis::Vec2 pos = {0, 0};
     Vec2 origin = {0, 0};
@@ -133,6 +134,9 @@ namespace dudis
     virtual void render();
     virtual void updateChildren();
     virtual void buildRenderCommands(RenderQueue *queue) {};
+    virtual void onAddedToParent() {};
+    virtual void onAddedToParent(Entity *parent) {};
+    virtual void onRemovedFromParent() {}
 
     bool intersectsWith(const std::shared_ptr<Entity> &other);
 
