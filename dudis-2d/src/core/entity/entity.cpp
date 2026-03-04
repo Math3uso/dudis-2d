@@ -59,6 +59,10 @@ void Entity::addChild(shared_ptr<Entity> child)
   this->setDirty();
 
   _orderChildren = true;
+
+  this->onAddedToParent();
+  this->onAddedToParent(this);
+
   this->_sortChildrenByIndex();
 }
 
