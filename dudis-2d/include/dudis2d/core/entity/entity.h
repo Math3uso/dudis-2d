@@ -107,11 +107,18 @@ namespace dudis
   public:
     char *labelT;
     Entity() = default;
+    Entity(const std::string &tag) : tag(tag) {}
     float getAngle() const { return angle; }
     Vec2 getPos() const { return pos; }
     SizeF getSize() const { return size; }
     Vec2 getOrigin() const { return origin; }
     // void alloc(T* buff){}
+
+    static std::shared_ptr<Entity> create()
+    {
+      return std::make_shared<Entity>();
+    };
+    static std::shared_ptr<Entity> create(const std::string &tag);
 
     const Vec2 getGlobalPos();
     float getGlobalRotation();

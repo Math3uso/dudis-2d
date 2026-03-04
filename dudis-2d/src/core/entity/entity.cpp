@@ -6,6 +6,11 @@
 using namespace std;
 using namespace dudis;
 
+shared_ptr<Entity> Entity::create(const string &tag)
+{
+  return make_shared<Entity>(tag);
+}
+
 void Entity::defaultUpdate()
 {
   this->update();
