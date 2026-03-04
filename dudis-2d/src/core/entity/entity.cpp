@@ -73,6 +73,20 @@ void Entity::addChild(shared_ptr<Entity> child, const int zOrder)
   return;
 }
 
+void Entity::removeChild()
+{
+  _children.pop_back();
+};
+
+void Entity::removeChild(const std::string &tag)
+{
+  _children.erase(std::remove_if(_children.begin(), _children.end(), [&tag](const shared_ptr<Entity> &child)
+                                 { return child->tag == tag; }),
+                  _children.end());
+
+  this->onRemovedFromParent();
+};
+
 /**
  * @brief Calcula e retorna a matriz de transformação local do Entity.
  *

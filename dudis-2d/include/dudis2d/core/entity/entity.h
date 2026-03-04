@@ -159,6 +159,8 @@ namespace dudis
 
     void addChild(std::shared_ptr<Entity> entity);
     void addChild(std::shared_ptr<Entity> entity, const int zOrder);
+    void removeChild();
+    void removeChild(const std::string &tag);
 
     const std::vector<std::shared_ptr<Entity>> &getChildren()
     {
