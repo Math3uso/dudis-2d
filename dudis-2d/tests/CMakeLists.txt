@@ -55,3 +55,4 @@ endfunction()
 
 add_subdirectory(initWindow)
 add_subdirectory(sceneTest)
+add_subdirectory(entityTest)
