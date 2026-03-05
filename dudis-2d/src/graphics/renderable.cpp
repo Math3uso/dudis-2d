@@ -42,3 +42,8 @@ void Renderable::buildRenderCommands(RenderQueue *queue)
     child->buildRenderCommands(queue);
   }
 }
+
+const res::DDTexture Renderable::getTexture() const
+{
+  res::DDTexture ddtex;
+}

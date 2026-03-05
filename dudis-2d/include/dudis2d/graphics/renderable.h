@@ -29,7 +29,6 @@ namespace dudis
     DDRect _rectDest;
     bool _tex = false;
     rl::RlTexture *_rlTex;
-    res::DDTexture _ddTex;
 
   public:
     int zIndex = -1;
@@ -51,7 +50,12 @@ namespace dudis
     const Color &getColor() const { return color; }
     dudis::TypeShape Type() const { return type; }
 
-    SceneProperty &getSceneProps() { return sceneProps; }
+    const res::DDTexture getTexture() const;
+
+    SceneProperty &getSceneProps()
+    {
+      return sceneProps;
+    }
 
     // void rotate(float nAngle) { angle = nAngle; }
     //  void setOrigin(Vec2 nOrigin) { origin = nOrigin; }
