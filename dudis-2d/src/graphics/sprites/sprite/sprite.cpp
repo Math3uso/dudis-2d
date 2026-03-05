@@ -24,7 +24,7 @@ Sprite::~Sprite()
 {
   Log::Alert("[INFO] liberando recursos [Sprite]");
 
-  res::Texture2D::unload(_rlTex->id);
+  // res::Texture2D::unload(_rlTex->id);
   Log::Info("[INFO] recursos de sprite liberado [Sprite]");
 }
 
