@@ -12,7 +12,7 @@ namespace dudis
   namespace res
   {
 
-    class Texture2D;
+    class Texture2DManager;
 
     class DDTexture
     {
@@ -25,7 +25,7 @@ namespace dudis
       uint32_t height;
       TextureFormat formate;
       uint8_t mipmaps;
-      friend res::Texture2D;
+      friend res::Texture2DManager;
       friend Sprite;
 
     private:
