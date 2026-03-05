@@ -27,7 +27,6 @@ void Scene::init()
 
   std::cout << "Inicializando scene: " << "\n";
   std::cout << this->renderableList.size() << "\n";
-
 }
 
 dudis::Scope<Scene> Scene::create()
@@ -50,6 +49,12 @@ void Scene::collectRenderCommands(RenderQueue *queue)
     entity->defaultUpdate();
     entity->buildRenderCommands(queue);
   }
+}
+
+void Scene::addChild(std::shared_ptr<Entity> child)
+{
+  child->_setRootEntity(this);
+  Entity::addChild(child);
 }
 
 void Scene::setSize(const SizeI &size) {}

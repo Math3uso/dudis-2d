@@ -23,7 +23,7 @@ private:
 
 protected:
   dudis::SizeI size;
-  Color clearColor;
+  dudis::Color clearColor;
   std::vector<std::shared_ptr<dudis::Renderable>> renderableList;
   // Physics integration temporarily disconnected (components remain available).
 
@@ -42,6 +42,8 @@ public:
 
   virtual void init() override;
   virtual void stop() { _start = false; }
+
+  virtual void addChild(std::shared_ptr<Entity> child) override;
 
   void release()
   {
@@ -62,8 +64,8 @@ public:
   }
 
   void setSize(const dudis::SizeI &nSize);
-  void setClearColor(Color nColor) { clearColor = nColor; };
-  const Color &getClearColor() const { return clearColor; }
+  void setClearColor(dudis::Color nColor) { clearColor = nColor; };
+  const dudis::Color &getClearColor() const { return clearColor; }
   void collectRenderCommands(dudis::RenderQueue *queque);
 
   void setEventListenear(std::function<void()> nCallback)
