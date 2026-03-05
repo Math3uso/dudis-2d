@@ -42,5 +42,10 @@ namespace dudis
         {
             return std::make_shared<DDRectangle>(Size(100, 100), Vec2(300, 200));
         }
+
+        inline std::shared_ptr<Entity> MakeEntity()
+        {
+            return Entity::create();
+        }
     }
 }
