@@ -18,7 +18,6 @@ protected:
 
 public:
   static std::function<void()> windowCallback;
-  static std::function<void()> sceneCallback;
   static void release();
   // static void setDeltaTime(float dt) {};
   static void setWindow(Window &nWindow);
@@ -29,11 +28,6 @@ public:
   {
     windowCallback = std::move(nWindowCallback);
   };
-
-  static void SceneDraw(std::function<void()> nSceneCallback)
-  {
-    sceneCallback = nSceneCallback;
-  }
 
   static void setFrameBufferId(int id, const char *label);
 

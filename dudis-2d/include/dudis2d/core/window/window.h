@@ -32,9 +32,7 @@ public:
   void Running();
 
   void runByFrames(int frames);
-  // #ifdef DD_DEBUG
-  //   void runBySeconds(int seconds);
-  // #endif
+
   bool init();
   void keepWindowCentered(bool isCenter) { this->_center = isCenter; }
 

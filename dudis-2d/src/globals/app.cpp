@@ -6,7 +6,6 @@ float App::deltaTime = 0.f;
 Window *App::window = nullptr;
 SceneManager *App::sceneManager = nullptr;
 std::function<void()> App::windowCallback = []() {};
-std::function<void()> App::sceneCallback = []() {};
 double App::fixedDt = 1.0f / 60.f;
 
 void App::setWindow(Window &nWindow)

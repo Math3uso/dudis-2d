@@ -178,10 +178,3 @@ void Window::runByFrames(int seconds)
   // this->release();
   // this->Quit();
 }
-
-// #ifdef DD_DEBUG
-// void Window::runBySeconds()
-// {
-
-// }
-// #endif
