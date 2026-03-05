@@ -6,10 +6,8 @@ using namespace std;
 using namespace dudis;
 using namespace res;
 
-std::unordered_map<string, rl::RlTexture> res::Texture2D::_rlTextures;
-
-DDTexture res::Texture2D::_create(const char *path, DDTexture &ddTex,
-                                  uint32_t *id)
+DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
+                                         uint32_t *id)
 {
 
   auto key = string(path);
@@ -49,20 +47,28 @@ DDTexture res::Texture2D::_create(const char *path, DDTexture &ddTex,
   return ddTex;
 }
 
-DDTexture res::Texture2D::create(const char *path)
+DDTexture res::Texture2DManager::create(const char *path)
 {
   DDTexture ddTex = DDTexture(0, TextureFormat::RGBA8);
 
   ddTex.mipmaps = 1;
 
-  return _create(path, ddTex, nullptr);
+  return this->_create(path, ddTex, nullptr);
 }
 
-void res::Texture2D::unload(const DDTexture &tex)
+void res::Texture2DManager::unload(const DDTexture &tex)
 {
   if (tex.id != 0)
   {
     rlUnloadTexture(tex.id);
     Log::Success("Textura removida");
+  }
+}
+
+void res::Texture2DManager::unloadAll()
+{
+  for (auto &i : _rlTextures)
+  {
+    this->unload(i.second);
   }
 }

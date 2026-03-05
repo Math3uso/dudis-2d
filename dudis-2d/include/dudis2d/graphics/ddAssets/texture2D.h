@@ -13,21 +13,28 @@ namespace dudis
   namespace res
   {
 
-    class Texture2D;
+    class Texture2DManager;
 
-    class Texture2D
+    class Texture2DManager
     {
     private:
-      static std::unordered_map<std::string, rl::RlTexture> _rlTextures;
-      static std::unordered_map<std::string, DDTexture> _ddTextures;
-      static DDTexture _create(const char *path, DDTexture &ddTex, uint32_t *id);
+      std::unordered_map<std::string, rl::RlTexture> _rlTextures;
+      // std::unordered_map<std::string, DDTexture> _ddTextures;
+
+      // recursos alocanos na scene, ddTexObject é um alias de std::unordered_map<std::string, rl::RlTextur
+      // std::unordered_map<std::string, ddTexObject> _sceneRes;
+
+      DDTexture _create(const char *path, DDTexture &ddTex, uint32_t *id);
       friend DDTexture;
 
     public:
-      static DDTexture create(const char *path);
+      Texture2DManager() = default;
+      DDTexture create(const char *path);
 
-      static void unload(const DDTexture &tex);
-      // static DDTexture _rlTex2DFromDDTex(const rl::RlTexture &rltex);
+      void unload(const DDTexture &tex);
+
+      void unloadAll();
+      //  DDTexture _rlTex2DFromDDTex(const rl::RlTexture &rltex);
     };
   } // namespace res
 } // namespace dudis
