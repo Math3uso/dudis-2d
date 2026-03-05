@@ -72,4 +72,24 @@ TEST_CASE("sceneTest test")
 
         context.ExitContext();
     }
+
+    SECTION("It should be able to draw a sprite in scene")
+    {
+        test::DDContext context;
+        context.InitContext();
+
+        auto scene = test::MakeSceneWithInstance();
+
+        context.manager->pushScene(std::move(scene));
+
+        context.window->SetClearColor(dudis::Color::Hex(0x202020FF));
+
+        const auto sprite = Sprite::create("../../assets/player.png", Size(100, 100));
+
+        context.pushDraw(sprite);
+
+        context.window->runByFrames(30);
+
+        context.ExitContext();
+    }
 }
