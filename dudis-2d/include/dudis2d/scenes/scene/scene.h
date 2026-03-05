@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include "dudis2d/graphics/ddAssets/texture2D.h"
 
 namespace dudis
 {
@@ -20,6 +21,7 @@ private:
   void _drawRenderableOrigin(dudis::Renderable *render);
   bool _start = false;
   void _initPropsInScene();
+  dudis::res::Texture2DManager _resManager;
 
 protected:
   dudis::SizeI size;
@@ -57,6 +59,8 @@ public:
   dudis::SizeI getSize();
 
   int getTotalRenderable() { return renderableList.size(); }
+
+  dudis::res::Texture2DManager getTexture2DManager() { return _resManager; }
 
   void releaseAfterUse(std::function<void()> &&callback)
   {
