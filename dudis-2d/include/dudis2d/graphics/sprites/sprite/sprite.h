@@ -3,6 +3,7 @@
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/graphics/renderable.h"
 #include <memory>
+#include "dudis2d/graphics/ddAssets/resTex2dUtils.h"
 
 namespace dudis
 {
