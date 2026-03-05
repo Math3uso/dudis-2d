@@ -10,6 +10,8 @@
 #include <typeindex>
 #include <unordered_map>
 
+class Scene;
+
 namespace dudis
 {
 
@@ -77,6 +79,9 @@ namespace dudis
     TransformType _transformType = TransformType::Relative;
     int _zOrder = 0;
     std::vector<DDBufferPtr> _owned;
+    Entity *_root = nullptr;
+
+    void _setRootEntity(Entity *root);
 
     template <typename T>
     static void _destroy(void *p)
@@ -112,7 +117,15 @@ namespace dudis
     Vec2 getPos() const { return pos; }
     SizeF getSize() const { return size; }
     Vec2 getOrigin() const { return origin; }
+    const std::string &getTag() const { return tag; }
+
     // void alloc(T* buff){}
+
+    Entity *getRootEntity() { return _root; };
+    const Entity *getRootEntity() const { return _root; };
+
+    Entity *getParent() { return _parent; }
+    const Entity *getParent() const { return _parent; }
 
     static std::shared_ptr<Entity> create()
     {
@@ -164,7 +177,7 @@ namespace dudis
       _action = action;
     };
 
-    void addChild(std::shared_ptr<Entity> entity);
+    virtual void addChild(std::shared_ptr<Entity> entity);
     void addChild(std::shared_ptr<Entity> entity, const int zOrder);
     void removeChild();
     void removeChild(const std::string &tag);
@@ -245,5 +258,6 @@ namespace dudis
     virtual ~Entity();
 
     friend Renderable;
+    friend Scene;
   };
 } // namespace dudis

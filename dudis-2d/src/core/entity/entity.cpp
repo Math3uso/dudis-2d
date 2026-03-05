@@ -41,6 +41,11 @@ void Entity::runMotions()
   // }
 }
 
+void Entity::_setRootEntity(Entity *root)
+{
+  _root = root;
+}
+
 void Entity::updateChildren() {}
 
 void Entity::render() { this->getGlobalMatrix(); }
@@ -56,6 +61,12 @@ void Entity::addChild(shared_ptr<Entity> child)
   if (child->_zOrder == 0)
   {
     child->_zOrder = _children.size() + 1;
+  }
+
+  if (child->getRootEntity() == nullptr && child->getParent() != nullptr)
+  {
+    const auto parent = child->getParent();
+    child->_setRootEntity(parent->getRootEntity());
   }
 
   child->setParent(this);
