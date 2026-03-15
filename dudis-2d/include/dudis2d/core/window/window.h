@@ -47,6 +47,8 @@ public:
   const dudis::Vec2 &getPos() const { return pos; }
   const dudis::Resolution &getResolution() const { return _resolution; }
 
+  void onQuit();
+
 private:
   bool _center = false;
   static std::unique_ptr<Window> _instance;

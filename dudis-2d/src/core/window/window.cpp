@@ -63,6 +63,8 @@ void Window::Running()
 
       BeginDrawing();
 
+      ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
+
       renderManager->applyChangeScene();
 
       if (renderManager->getTotalScenes() > 0)
@@ -73,8 +75,6 @@ void Window::Running()
         scene->collectRenderCommands(renderQueue.get());
         DDRender->draw(renderQueue->getCommands());
       }
-
-      ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
 
       EndDrawing();
 
@@ -160,6 +160,8 @@ void Window::runByFrames(int seconds)
 
     BeginDrawing();
 
+    ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
+
     renderManager->applyChangeScene();
 
     if (renderManager->getTotalScenes() > 0)
@@ -170,8 +172,6 @@ void Window::runByFrames(int seconds)
       scene->collectRenderCommands(renderQueue.get());
       DDRender->draw(renderQueue->getCommands());
     }
-
-    ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
 
     EndDrawing();
   }
