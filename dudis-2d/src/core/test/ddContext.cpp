@@ -18,8 +18,8 @@ void DDContext::InitContext()
 void DDContext::ExitContext()
 {
 
-    window->Quit();
     window->release();
+    window->Quit();
 
     window.reset();
     manager.reset();
