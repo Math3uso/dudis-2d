@@ -18,15 +18,14 @@ class Scene : public dudis::Entity
 private:
   std::function<void()> _release;
   std::function<void()> sceneEvents = nullptr;
-  void _drawRenderableOrigin(dudis::Renderable *render);
   bool _start = false;
+  bool _paused = false;
   void _initPropsInScene();
   dudis::res::Texture2DManager _resManager;
 
 protected:
   dudis::SizeI size;
   dudis::Color clearColor;
-  std::vector<std::shared_ptr<dudis::Renderable>> renderableList;
   // Physics integration temporarily disconnected (components remain available).
 
 public:
@@ -39,13 +38,42 @@ public:
 
   const char *label;
 
+  dudis::SizeI getSize() {};
+  const dudis::res::Texture2DManager &getTexture2DManager() const { return _resManager; }
+  dudis::res::Texture2DManager &getTexture2DManager() { return _resManager; }
+  const dudis::Color &getClearColor() const { return clearColor; }
+
+  void setSize(const dudis::SizeI &nSize);
+  void setClearColor(dudis::Color nColor) { clearColor = nColor; };
+
   virtual void start() override {};
   virtual void update() {};
-
+  virtual void exit() {};
   virtual void init() override;
   virtual void stop() { _start = false; }
-
+  virtual void onPause() {};
+  virtual void onReume() {};
   virtual void addChild(std::shared_ptr<Entity> child) override;
+  virtual void addChild(std::shared_ptr<Entity> child, const int zOrder) override;
+
+  void releaseAfterUse(std::function<void()> &&callback) { _release = std::move(callback); }
+
+  void collectRenderCommands(dudis::RenderQueue *queque);
+
+  void setEventListenear(std::function<void()> nCallback) { sceneEvents = nCallback; }
+
+  std::function<void()> onSceneEvents() { return sceneEvents; }
+
+  void pause()
+  {
+    onPause();
+    _paused = true;
+  };
+  void resume()
+  {
+    onReume();
+    _paused = false;
+  };
 
   void release()
   {
@@ -55,31 +83,6 @@ public:
       puts("extras da scene deletados");
     }
   }
-
-  dudis::SizeI getSize();
-
-  int getTotalRenderable() { return renderableList.size(); }
-
-  dudis::res::Texture2DManager getTexture2DManager() { return _resManager; }
-
-  void releaseAfterUse(std::function<void()> &&callback)
-  {
-    _release = std::move(callback);
-  }
-
-  void setSize(const dudis::SizeI &nSize);
-  void setClearColor(dudis::Color nColor) { clearColor = nColor; };
-  const dudis::Color &getClearColor() const { return clearColor; }
-  void collectRenderCommands(dudis::RenderQueue *queque);
-
-  void setEventListenear(std::function<void()> nCallback)
-  {
-    sceneEvents = nCallback;
-  }
-
-  // void drawAllChilren(dudis::Entity *render);
-
-  std::function<void()> onSceneEvents() { return sceneEvents; }
 };
 
 template <typename T>

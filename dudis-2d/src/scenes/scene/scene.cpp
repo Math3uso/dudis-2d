@@ -26,7 +26,6 @@ void Scene::init()
   _start = true;
 
   std::cout << "Inicializando scene: " << "\n";
-  std::cout << this->renderableList.size() << "\n";
 }
 
 dudis::Scope<Scene> Scene::create()
@@ -43,7 +42,7 @@ void Scene::collectRenderCommands(RenderQueue *queue)
 
   for (auto &entity : _children)
   {
-    if (!entity)
+    if (!entity || _paused)
       continue;
 
     entity->defaultUpdate();
@@ -57,7 +56,15 @@ void Scene::addChild(std::shared_ptr<Entity> child)
   Entity::addChild(child);
 }
 
-void Scene::setSize(const SizeI &size) {}
+void Scene::addChild(std::shared_ptr<Entity> child, const int zOrder)
+{
+  child->_zOrder = zOrder;
+  this->addChild(child);
+}
+
+void Scene::setSize(const SizeI &size)
+{
+}
 
 void Scene::_initPropsInScene()
 {
@@ -72,6 +79,8 @@ Scene::~Scene()
 
   this->release();
 
-  renderableList.clear();
+  // liberando texturas
+  _resManager.unloadAll();
+
   Log::Success("[SCENE] Scene destruida com sucesso");
 }
