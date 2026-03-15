@@ -53,14 +53,19 @@ void Entity::render() { this->getGlobalMatrix(); }
 void Entity::addChild(shared_ptr<Entity> child)
 {
 
+  child->setParent(this);
+
   if (_transformType == TransformType::DisableParentTransform)
   {
     child->setTransformType(TransformType::Absolute);
   }
 
-  if (child->_zOrder == 0)
+  if (child->_parent)
   {
-    child->_zOrder = _children.size() + 1;
+    // caso o elemento filho tenha um zOrder ele faz: ZChild + zParent.
+    //  mas c o z do child for 0 ele faz: filho.z = Zparent +1;
+    int baseZ = child->getParent()->_zOrder;
+    child->_zOrder += (child->_zOrder == 0) ? (_children.size() + 1) + baseZ : baseZ;
   }
 
   if (child->getRootEntity() == nullptr && child->getParent() != nullptr)
@@ -69,7 +74,6 @@ void Entity::addChild(shared_ptr<Entity> child)
     child->_setRootEntity(parent->getRootEntity());
   }
 
-  child->setParent(this);
   _children.push_back(child);
 
   this->setDirty();
