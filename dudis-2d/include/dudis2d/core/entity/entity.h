@@ -118,6 +118,7 @@ namespace dudis
     SizeF getSize() const { return size; }
     Vec2 getOrigin() const { return origin; }
     const std::string &getTag() const { return tag; }
+    int getZOrder() { return _zOrder; }
 
     // void alloc(T* buff){}
 
@@ -178,7 +179,7 @@ namespace dudis
     };
 
     virtual void addChild(std::shared_ptr<Entity> entity);
-    void addChild(std::shared_ptr<Entity> entity, const int zOrder);
+    virtual void addChild(std::shared_ptr<Entity> entity, const int zOrder);
     void removeChild();
     void removeChild(const std::string &tag);
 
