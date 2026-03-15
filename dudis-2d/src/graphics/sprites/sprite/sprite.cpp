@@ -34,7 +34,7 @@ void Sprite::start()
   {
     auto path = filePath.c_str();
     // _ddTex = res::Texture2D::create(path, res::TextureLoadMode::Uncached);
-    auto _ddTex = res::Texture2D::create(path);
+    auto _ddTex = res::Texture2D::create(path, _filter);
     _rlTex = _ddTex._rlTex;
     return;
   }
@@ -43,10 +43,11 @@ void Sprite::start()
 
 void Sprite::render() {}
 
-shared_ptr<Sprite> Sprite::create(const char *texturPath, Size size)
+shared_ptr<Sprite> Sprite::create(const char *texturPath, Size size, res::DDTextureFilter filter)
 {
   auto sprite = make_shared<Sprite>(texturPath, size);
   sprite->_createTexture = false;
+  sprite->_filter = filter;
   sprite->start();
   return sprite;
 }

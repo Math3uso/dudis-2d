@@ -15,10 +15,8 @@ namespace dudis
   {
 
   protected:
-    // Color color = WHITE;
-    // Rectangle rect;
-    DDRect rect;
     bool _createTexture = false;
+    res::DDTextureFilter _filter;
 
   public:
     Sprite(const char *texturPath, Size size);
@@ -26,14 +24,11 @@ namespace dudis
 
     void start() override;
 
-    // void setCrop(Rectangle src) { rect = src; }
     void setCrop(DDRect src) { _rectSrc = src; }
 
-    static std::shared_ptr<Sprite> create(const char *texturPath, Size size);
+    static std::shared_ptr<Sprite> create(const char *texturPath, Size size, res::DDTextureFilter filter = res::DDTextureFilter::Nearest);
     static DDRef create(const char *path, Size size, res::DDTexture tex);
 
     void render() override;
-
-    // Texture2D &getTextureRef() { return texture; }
   };
 } // namespace dudis
