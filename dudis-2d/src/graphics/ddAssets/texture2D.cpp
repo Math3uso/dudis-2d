@@ -7,7 +7,7 @@ using namespace dudis;
 using namespace res;
 
 DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
-                                         uint32_t *id)
+                                         uint32_t *id, DDTextureFilter filter)
 {
 
   auto key = string(path);
@@ -23,6 +23,8 @@ DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
   TextureFormat fmt = ddrlUtils::mapRaylibFormat((PixelFormat)img.format);
 
   auto rlTex = LoadTextureFromImage(img);
+
+  SetTextureFilter(rlTex, ddrlUtils::mapToRLFilter(filter));
 
   printf("img.format=%d  rlTex.format=%d\n", img.format, rlTex.format);
 
@@ -47,13 +49,13 @@ DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
   return ddTex;
 }
 
-DDTexture res::Texture2DManager::create(const char *path)
+DDTexture res::Texture2DManager::create(const char *path, DDTextureFilter filter)
 {
   DDTexture ddTex = DDTexture(0, TextureFormat::RGBA8);
 
   ddTex.mipmaps = 1;
 
-  return this->_create(path, ddTex, nullptr);
+  return this->_create(path, ddTex, nullptr, filter);
 }
 
 void res::Texture2DManager::unload(const DDTexture &tex)
