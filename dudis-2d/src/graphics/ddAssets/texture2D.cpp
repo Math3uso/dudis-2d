@@ -15,6 +15,7 @@ DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
 
   if (it != _rlTextures.end())
   {
+    SetTextureFilter(it->second, ddrlUtils::mapToRLFilter(filter));
     puts("enviado do cache");
     return DDTexture(it->second);
   }

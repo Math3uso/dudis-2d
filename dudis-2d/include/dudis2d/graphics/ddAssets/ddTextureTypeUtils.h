@@ -26,5 +26,13 @@ namespace dudis
       bool mipmaps;
     };
 
+    enum class TextureWrap
+    {
+      Repeat,
+      Clamp,
+      MirrorRepeat,
+      MirrorClamp
+    };
+
   } // namespace res
 } // namespace dudis

@@ -5,6 +5,7 @@
 #include "dudis2d/scenes/sceneProperty/sceneProperty.h"
 #include "dudis2d/core/math/rect.h"
 #include "dudis2d/graphics/color.h"
+#include "dudis2d/graphics/blendType.h"
 
 namespace dudis
 {
@@ -27,7 +28,8 @@ namespace dudis
     DDRect _rectSrc;
     DDRect _rectDest;
     bool _tex = false;
-    rl::RlTexture *_rlTex;
+    rl::RlTexture *_rlTex = nullptr;
+    BlendType _blendType = BlendType::AlphaComposite;
 
   public:
     const char *name;

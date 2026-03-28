@@ -34,6 +34,7 @@ void DDRender::draw(const std::vector<DrawCommand> &listCmd)
     }
     else if (cmd.batch == DDBatchType::Textures)
     {
+
       auto texture = cmd.rlTex;
       auto w = cmd.src.w == 0 ? texture.width : cmd.src.w;
       auto h = cmd.src.h == 0 ? texture.height : cmd.src.h;
@@ -44,4 +45,8 @@ void DDRender::draw(const std::vector<DrawCommand> &listCmd)
           Vector2{cmd.origin.x, cmd.origin.y}, cmd.rotation, WHITE);
     }
   }
+}
+
+void DDRender::setBlendType(BlendType type)
+{
 }
