@@ -2,15 +2,45 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "tests",
+            "name": "tests-debug",
             "generator": "Ninja",
-            "binaryDir": "build"
+            "binaryDir": "build/unit-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "DD_BUILD_GRAPHICAL_TESTS": "OFF"
+            }
+        },
+        {
+            "name": "tests-debug-graphics",
+            "generator": "Ninja",
+            "binaryDir": "build/graphics-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "DD_BUILD_GRAPHICAL_TESTS": "ON"
+            }
+        },
+        {
+            "name": "tests-release",
+            "generator": "Ninja",
+            "binaryDir": "build/unit-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "DD_BUILD_GRAPHICAL_TESTS": "OFF"
+            }
         }
     ],
     "buildPresets": [
         {
-            "name": "tests",
-            "configurePreset": "tests"
+            "name": "tests-debug",
+            "configurePreset": "tests-debug"
+        },
+        {
+            "name": "tests-debug-graphics",
+            "configurePreset": "tests-debug-graphics"
+        },
+        {
+            "name": "tests-release",
+            "configurePreset": "tests-release"
         }
     ]
 }
