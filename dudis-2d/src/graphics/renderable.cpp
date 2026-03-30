@@ -47,4 +47,5 @@ void Renderable::buildRenderCommands(RenderQueue *queue)
 const res::DDTexture Renderable::getTexture() const
 {
   res::DDTexture ddtex;
+  return res::DDTexture();
 }
