@@ -65,4 +65,51 @@ TEST_CASE("EntityTest test")
 
         REQUIRE(entity2->getZOrder() == 11);
     }
+
+    SECTION("It should propagate parent zOrder by delta across multiple updates")
+    {
+        auto parent = Entity::create("parent");
+        auto child = Entity::create("child");
+
+        parent->setZOrder(10);
+        child->setZOrder(50);
+        parent->addChild(child);
+
+        REQUIRE(parent->getZOrder() == 10);
+        REQUIRE(child->getZOrder() == 60);
+
+        parent->setZOrder(200);
+        REQUIRE(parent->getZOrder() == 200);
+        REQUIRE(child->getZOrder() == 250);
+
+        parent->setZOrder(300);
+        REQUIRE(parent->getZOrder() == 300);
+        REQUIRE(child->getZOrder() == 350);
+    }
+
+    SECTION("It should propagate zOrder recursively to grandchildren")
+    {
+        auto parent = Entity::create("parent");
+        auto child = Entity::create("child");
+        auto grandChild = Entity::create("grandChild");
+
+        parent->setZOrder(10);
+        child->setZOrder(50);
+        grandChild->setZOrder(5);
+
+        parent->addChild(child);
+        child->addChild(grandChild);
+
+        REQUIRE(parent->getZOrder() == 10);
+        REQUIRE(child->getZOrder() == 60);
+        REQUIRE(grandChild->getZOrder() == 65);
+
+        parent->setZOrder(200);
+        REQUIRE(child->getZOrder() == 250);
+        REQUIRE(grandChild->getZOrder() == 255);
+
+        parent->setZOrder(300);
+        REQUIRE(child->getZOrder() == 350);
+        REQUIRE(grandChild->getZOrder() == 355);
+    }
 }
