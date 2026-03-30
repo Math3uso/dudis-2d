@@ -51,4 +51,18 @@ TEST_CASE("EntityTest test")
 
         REQUIRE(entity->getChildren().size() == 0);
     }
+
+    SECTION("It should be able to draw a entity with z Order")
+    {
+
+        auto entity = Entity::create("entity");
+        auto entity2 = Entity::create("entity2");
+
+        entity->setZOrder(10);
+        entity2->setZOrder(1);
+
+        entity->addChild(entity2);
+
+        REQUIRE(entity2->getZOrder() == 11);
+    }
 }
