@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-and-test-unit:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,15 +17,23 @@ jobs:
         sudo apt-get install -y \
           build-essential \
           cmake \
+          ninja-build \
           libx11-dev \
           libxrandr-dev \
           libxinerama-dev \
           libxcursor-dev \
           libxi-dev \
-          libgl1-mesa-dev
+          libgl1-mesa-dev \
+          libglu1-mesa-dev
 
-    - name: Configure
-      run: cmake -S dudis-2d/tests -B build -DCMAKE_BUILD_TYPE=Release
+    - name: Configure unit tests
+      working-directory: dudis-2d/tests
+      run: cmake --preset tests-debug
 
-    - name: Build
-      run: cmake --build build
+    - name: Build unit test preset
+      working-directory: dudis-2d/tests
+      run: cmake --build build/unit-debug
+
+    - name: Run unit tests
+      working-directory: dudis-2d/tests
+      run: ctest --test-dir build/unit-debug -L unit --output-on-failure
