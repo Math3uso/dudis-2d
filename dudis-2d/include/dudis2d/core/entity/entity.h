@@ -82,6 +82,7 @@ namespace dudis
     Entity *_root = nullptr;
 
     void _setRootEntity(Entity *root);
+    void _propagateZOrderByChildren(int delta);
 
     template <typename T>
     static void _destroy(void *p)

@@ -60,12 +60,22 @@ void Entity::addChild(shared_ptr<Entity> child)
     child->setTransformType(TransformType::Absolute);
   }
 
+  // if (child->_parent)
+  // {
+  //   // caso o elemento filho tenha um zOrder ele faz: ZChild + zParent.
+  //   //  mas c o z do child for 0 ele faz: filho.z = Zparent +1;
+  //   int baseZ = child->getParent()->_zOrder;
+  //   child->_zOrder += (child->_zOrder == 0) ? (_children.size() + 1) + baseZ : baseZ;
+  // }
+
   if (child->_parent)
   {
     // caso o elemento filho tenha um zOrder ele faz: ZChild + zParent.
     //  mas c o z do child for 0 ele faz: filho.z = Zparent +1;
+    //=============================
     int baseZ = child->getParent()->_zOrder;
     child->_zOrder += (child->_zOrder == 0) ? (_children.size() + 1) + baseZ : baseZ;
+    //=============================
   }
 
   if (child->getRootEntity() == nullptr && child->getParent() != nullptr)
@@ -83,7 +93,7 @@ void Entity::addChild(shared_ptr<Entity> child)
   this->onAddedToParent();
   this->onAddedToParent(this);
 
-  this->_sortChildrenByIndex();
+  // this->_sortChildrenByIndex();
 }
 
 void Entity::addChild(shared_ptr<Entity> child, const int zOrder)
@@ -96,6 +106,7 @@ void Entity::addChild(shared_ptr<Entity> child, const int zOrder)
 void Entity::removeChild()
 {
   _children.pop_back();
+  this->_orderChildren = true;
 };
 
 void Entity::removeChild(const std::string &tag)
@@ -104,8 +115,26 @@ void Entity::removeChild(const std::string &tag)
                                  { return child->tag == tag; }),
                   _children.end());
 
+  this->_orderChildren = true;
   this->onRemovedFromParent();
 };
+
+void Entity::_sortChildrenByIndex()
+{
+  //_children
+  if (_orderChildren && _children.size() > 0)
+  {
+    Log::Info("order chamado");
+    stable_sort(
+        _children.begin(), _children.end(),
+        [](const shared_ptr<Entity> &child1, const shared_ptr<Entity> &child2)
+        {
+          return child1->_zOrder < child2->_zOrder;
+        });
+    _orderChildren = false;
+  }
+  return;
+}
 
 /**
  * @brief Calcula e retorna a matriz de transformação local do Entity.
@@ -194,10 +223,24 @@ void Entity::setSize(dudis::SizeF nSize)
 
 void Entity::setZOrder(int zIndex)
 {
-  _zOrder = zIndex;
+  const int oldZ = _zOrder;
+  const int newZ = _parent ? _parent->getZOrder() + zIndex : zIndex;
+  const int delta = newZ - oldZ;
+
+  _zOrder = newZ;
+
+  if (delta != 0)
+  {
+    _propagateZOrderByChildren(delta);
+  }
+
+  _orderChildren = true;
   // temp entity precia de um zOrderGlobal
-  _parent->_orderChildren = true;
-  _parent->_sortChildrenByIndex();
+  if (_parent)
+  {
+    _parent->_orderChildren = true;
+    //_parent->_sortChildrenByIndex();
+  }
 }
 
 void Entity::rotate(float nAngle)
@@ -279,21 +322,13 @@ bool Entity::intersectsWith(const std::shared_ptr<Entity> &other)
 
 // void Entity::release() { _children.clear(); }
 
-void Entity::_sortChildrenByIndex()
+void Entity::_propagateZOrderByChildren(int delta)
 {
-  //_children
-  if (_orderChildren)
+  for (auto &child : _children)
   {
-    Log::Info("order chamado");
-    sort(
-        _children.begin(), _children.end(),
-        [](const shared_ptr<Entity> &child1, const shared_ptr<Entity> &child2)
-        {
-          return child1->_zOrder < child2->_zOrder;
-        });
-    _orderChildren = false;
+    child->_zOrder += delta;
+    child->_propagateZOrderByChildren(delta);
   }
-  return;
 }
 
 Entity::~Entity()

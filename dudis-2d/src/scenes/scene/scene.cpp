@@ -40,11 +40,14 @@ void Scene::collectRenderCommands(RenderQueue *queue)
 
   this->update();
 
+  this->_sortChildrenByIndex();
+
   for (auto &entity : _children)
   {
     if (!entity || _paused)
       continue;
 
+    entity->_sortChildrenByIndex();
     entity->defaultUpdate();
     entity->buildRenderCommands(queue);
   }

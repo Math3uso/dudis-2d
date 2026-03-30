@@ -7,6 +7,7 @@
 #include "dudis2d/graphics/renderQueue/renderQueue.h"
 #include <box2d/box2d.h>
 #include "dudis2d/core/input/input.h"
+#include "dudis2d/graphics/ddRenderGroup.h"
 
 using namespace dudis;
 
@@ -73,6 +74,7 @@ void Window::Running()
 
         renderQueue->clear();
         scene->collectRenderCommands(renderQueue.get());
+        // DDRenderGroup::initPipeline(renderQueue.get());
         DDRender->draw(renderQueue->getCommands());
       }
 

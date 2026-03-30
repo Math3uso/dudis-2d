@@ -7,6 +7,7 @@ using namespace dudis;
 void Renderable::buildRenderCommands(RenderQueue *queue)
 {
   this->getGlobalMatrix();
+  this->_sortChildrenByIndex();
 
   auto gPos = this->getGlobalPos();
   auto gRotation = this->getGlobalRotation() * RAD2DEG;
