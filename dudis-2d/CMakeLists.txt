@@ -63,6 +63,14 @@ set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
 set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
 set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
 
+# --- CONFIGURAÇÃO DO RAYLIB PARA ANDROID ---
+if(ANDROID)
+    set(PLATFORM "Android" CACHE STRING "" FORCE)
+    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+else()
+    set(PLATFORM "Desktop" CACHE STRING "" FORCE)
+endif()
+
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
 set(CUSTOMIZE_BUILD ON CACHE BOOL "" FORCE)
@@ -75,9 +83,18 @@ set(BOX2D_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 add_subdirectory(${RAYLIB_DIR})
 add_subdirectory(${BOX2D_DIR})
 
+# temp
+option(ANDROID "Compilar para Android" OFF)
+
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
+if(ANDROID)
+add_library(dudis SHARED ${SRC_FILES})
+else()
 add_library(dudis STATIC ${SRC_FILES})
+endif()
+
+# add_library(dudis STATIC ${SRC_FILES})
 
 include(FetchContent)
 
@@ -98,6 +115,10 @@ target_include_directories(dudis PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${RAYGUI_DIR}
 )
+
+if(ANDROID)
+    target_link_libraries(dudis PUBLIC android)
+endif()
 
 target_link_libraries(dudis
     PUBLIC
