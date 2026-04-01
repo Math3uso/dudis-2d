@@ -8,7 +8,7 @@ class TestScene : public Scene
 {
 public:
     void update() override {}
-    void start() override {}
+    bool start() override { return true; }
 };
 
 class TestContext

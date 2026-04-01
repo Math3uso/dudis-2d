@@ -11,7 +11,7 @@ namespace dudis
         {
         public:
             void update() override {};
-            void start() override {};
+            bool start() override { return true; };
         };
 
         inline bool MakeScene()
