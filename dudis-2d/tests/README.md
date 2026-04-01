@@ -17,8 +17,10 @@ Hoje a estrutura está separada por objetivo:
 - [Visão Geral do Fluxo](#visao-geral-do-fluxo)
 - [Presets Disponíveis](#presets-disponiveis)
 - [Estrutura Atual](#estrutura-atual)
-- [Como Configurar](#como-configurar)
-- [Como Compilar](#como-compilar)
+- [Como Configurar com Preset](#como-configurar-com-preset)
+- [Como Compilar com Preset](#como-compilar-com-preset)
+- [Como Configurar Manualmente](#como-configurar-manualmente)
+- [Como Compilar Manualmente](#como-compilar-manualmente)
 - [Como Listar os Testes](#como-listar-os-testes)
 - [Como Rodar os Testes](#como-rodar-os-testes)
 - [Como Rodar Benchmarks](#como-rodar-benchmarks)
@@ -35,13 +37,23 @@ Há dois fluxos principais:
 
 1. Fluxo rápido
 Usa o preset `tests-debug`.
-Compila apenas `unit` e `benchmarks`.
+Compila:
+
+- `unit`
+- `benchmarks`
 
 2. Fluxo gráfico
 Usa o preset `tests-debug-graphics`.
-Compila `unit`, `smoke`, `visual` e `benchmarks`.
+Compila:
+
+- `unit`
+- `smoke`
+- `visual`
+- `benchmarks`
 
 Isso existe para o ciclo de desenvolvimento rápido não depender de janela nem de ambiente gráfico.
+
+Também é possível fazer exatamente o mesmo fluxo sem preset, usando `cmake -S ... -B ...` manualmente. As duas formas estão documentadas abaixo.
 
 ## Presets Disponíveis
 
@@ -69,7 +81,7 @@ Exemplos reais da árvore:
 - [tests/visual/scene/scene_visual.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/visual/scene/scene_visual.test.cpp)
 - [tests/benchmarks/scene_benchmark.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/benchmarks/scene_benchmark.cpp)
 
-## Como Configurar
+## Como Configurar com Preset
 
 Entre na pasta de testes:
 
@@ -95,12 +107,12 @@ cmake --preset tests-debug-graphics
 cmake --preset tests-release
 ```
 
-## Como Compilar
+## Como Compilar com Preset
 
 ### Compilar tudo do fluxo rápido
 
 ```bash
-cmake --build build/unit-debug
+cmake --build --preset tests-debug
 ```
 
 Isso compila:
@@ -111,7 +123,7 @@ Isso compila:
 ### Compilar tudo do fluxo gráfico
 
 ```bash
-cmake --build build/graphics-debug
+cmake --build --preset tests-debug-graphics
 ```
 
 Isso compila:
@@ -125,21 +137,21 @@ Isso compila:
 
 Na prática, hoje a compilação por categoria funciona assim:
 
-- `unit`: use o preset rápido e compile o build todo.
-- `smoke`: use o preset gráfico e compile o build todo.
-- `visual`: use o preset gráfico e compile o build todo.
+- `unit`: use o preset rápido e compile o build todo, ou um target específico.
+- `smoke`: use o preset gráfico.
+- `visual`: use o preset gráfico.
 - `benchmarks`: pode compilar só o target de benchmark.
 
 Exemplos:
 
 ```bash
 cmake --preset tests-debug
-cmake --build build/unit-debug
+cmake --build --preset tests-debug
 ```
 
 ```bash
 cmake --preset tests-debug-graphics
-cmake --build build/graphics-debug
+cmake --build --preset tests-debug-graphics
 ```
 
 ```bash
@@ -168,6 +180,140 @@ Para `visual`:
 
 ```bash
 cmake --preset tests-debug-graphics
+cmake --build build/graphics-debug --target scene_visual
+```
+
+## Como Configurar Manualmente
+
+Entre na pasta de testes:
+
+```bash
+cd dudis-2d/tests
+```
+
+### Configurar build sem suites gráficas
+
+Esse build gera a pasta `build/unit-debug` e deixa `smoke` e `visual` de fora.
+
+```bash
+cmake -S . -B build/unit-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=OFF
+```
+
+### Configurar build com suites gráficas
+
+Esse build gera a pasta `build/graphics-debug` e inclui `smoke` e `visual`.
+
+```bash
+cmake -S . -B build/graphics-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=ON
+```
+
+### Configurar build release sem suites gráficas
+
+```bash
+cmake -S . -B build/unit-release -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DDD_BUILD_GRAPHICAL_TESTS=OFF
+```
+
+### Trocar o compilador manualmente
+
+Se você quiser testar outro compilador sem depender de preset, basta configurar o build com `CC` e `CXX`.
+
+Exemplo com `clang`:
+
+```bash
+CC=clang CXX=clang++ cmake -S . -B build/unit-debug-clang -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=OFF
+```
+
+Exemplo com build gráfico em `clang`:
+
+```bash
+CC=clang CXX=clang++ cmake -S . -B build/graphics-debug-clang -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=ON
+```
+
+Se o diretório de build já tiver sido configurado com outro compilador, o ideal é usar outro `-B` ou limpar o cache antes de reconfigurar.
+
+## Como Compilar Manualmente
+
+### Compilar tudo do build sem suites gráficas
+
+```bash
+cmake --build build/unit-debug
+```
+
+Isso compila:
+
+- `unit`
+- `benchmarks`
+
+### Compilar tudo do build com suites gráficas
+
+```bash
+cmake --build build/graphics-debug
+```
+
+Isso compila:
+
+- `unit`
+- `smoke`
+- `visual`
+- `benchmarks`
+
+### Compilar todos os testes de uma categoria
+
+Na prática, hoje a compilação por categoria funciona assim:
+
+- `unit`: configure com `DD_BUILD_GRAPHICAL_TESTS=OFF` e compile o build inteiro, ou um target específico.
+- `smoke`: configure com `DD_BUILD_GRAPHICAL_TESTS=ON`.
+- `visual`: configure com `DD_BUILD_GRAPHICAL_TESTS=ON`.
+- `benchmarks`: pode compilar só o target de benchmark.
+
+Exemplos:
+
+```bash
+cmake -S . -B build/unit-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=OFF
+cmake --build build/unit-debug
+```
+
+```bash
+cmake -S . -B build/graphics-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=ON
+cmake --build build/graphics-debug
+```
+
+```bash
+cmake --build build/unit-debug --target scene_benchmark
+```
+
+### Compilar apenas 1 target de teste
+
+Para `unit`:
+
+```bash
+cmake --build build/unit-debug --target entity_unit
+```
+
+Para `smoke`:
+
+```bash
+cmake --build build/graphics-debug --target window_smoke
+cmake --build build/graphics-debug --target scene_smoke
+```
+
+Para `visual`:
+
+```bash
 cmake --build build/graphics-debug --target scene_visual
 ```
 
@@ -264,7 +410,7 @@ Exemplo com `smoke`:
 Benchmarks não entram no `ctest`.
 Eles são binários manuais.
 
-Exemplo:
+Exemplo com preset:
 
 ```bash
 cmake --preset tests-debug
@@ -272,7 +418,17 @@ cmake --build build/unit-debug --target scene_benchmark
 ./build/unit-debug/bin/scene_benchmark
 ```
 
-Se você quiser medir cenários gráficos reais, normalmente faz mais sentido usar o preset gráfico e mover o benchmark para depender de janela/contexto real.
+Exemplo manual:
+
+```bash
+cmake -S . -B build/unit-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=OFF
+cmake --build build/unit-debug --target scene_benchmark
+./build/unit-debug/bin/scene_benchmark
+```
+
+Se você quiser medir cenários gráficos reais, normalmente faz mais sentido usar o build gráfico e rodar o benchmark a partir de `build/graphics-debug/bin`.
 
 ## Como Criar Novos Testes
 
@@ -517,7 +673,7 @@ Ex.: `"[unit]"`, `"[smoke]"`, `"[visual]"`
 
 - mantenha `unit` sem dependência de janela, render ou assets externos sempre que possível
 
-- use `smoke` para validar integração e “não crasha”
+- use `smoke` para validar integração e "não crasha"
 
 - use `visual` para validar render de forma explícita
 
@@ -525,20 +681,43 @@ Ex.: `"[unit]"`, `"[smoke]"`, `"[visual]"`
 
 ## Resumo Rápido
 
-### Build rápido
+### Build rápido com preset
 
 ```bash
 cd dudis-2d/tests
 cmake --preset tests-debug
-cmake --build build/unit-debug
+cmake --build --preset tests-debug
 ctest --test-dir build/unit-debug -L unit --output-on-failure
 ```
 
-### Build gráfico
+### Build gráfico com preset
 
 ```bash
 cd dudis-2d/tests
 cmake --preset tests-debug-graphics
+cmake --build --preset tests-debug-graphics
+ctest --test-dir build/graphics-debug -L smoke --output-on-failure
+ctest --test-dir build/graphics-debug -L visual --output-on-failure
+```
+
+### Build manual sem suites gráficas
+
+```bash
+cd dudis-2d/tests
+cmake -S . -B build/unit-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=OFF
+cmake --build build/unit-debug
+ctest --test-dir build/unit-debug -L unit --output-on-failure
+```
+
+### Build manual com suites gráficas
+
+```bash
+cd dudis-2d/tests
+cmake -S . -B build/graphics-debug -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DDD_BUILD_GRAPHICAL_TESTS=ON
 cmake --build build/graphics-debug
 ctest --test-dir build/graphics-debug -L smoke --output-on-failure
 ctest --test-dir build/graphics-debug -L visual --output-on-failure

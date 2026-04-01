@@ -145,11 +145,11 @@ function(dd_add_benchmark name)
 endfunction()
 
 add_subdirectory(unit)
+add_subdirectory(benchmarks)
 
 if(DD_BUILD_GRAPHICAL_TESTS)
   add_subdirectory(smoke)
   add_subdirectory(visual)
-  add_subdirectory(benchmarks)
 else()
   message(STATUS "Graphical smoke/visual tests disabled. Configure with -DDD_BUILD_GRAPHICAL_TESTS=ON to enable them.")
 endif()
