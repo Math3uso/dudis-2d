@@ -38,7 +38,7 @@ public:
 
   const char *label;
 
-  dudis::SizeI getSize() {};
+  dudis::SizeI getSize() { return size; };
   const dudis::res::Texture2DManager &getTexture2DManager() const { return _resManager; }
   dudis::res::Texture2DManager &getTexture2DManager() { return _resManager; }
   const dudis::Color &getClearColor() const { return clearColor; }
@@ -46,7 +46,7 @@ public:
   void setSize(const dudis::SizeI &nSize);
   void setClearColor(dudis::Color nColor) { clearColor = nColor; };
 
-  virtual void start() override {};
+  virtual bool start() override { return true; };
   virtual void update() {};
   virtual void exit() {};
   virtual void init() override;

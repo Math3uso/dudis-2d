@@ -47,9 +47,12 @@ void Scene::collectRenderCommands(RenderQueue *queue)
     if (!entity || _paused)
       continue;
 
-    entity->_sortChildrenByIndex();
-    entity->defaultUpdate();
-    entity->buildRenderCommands(queue);
+    if (entity->_ready)
+    {
+      entity->_sortChildrenByIndex();
+      entity->defaultUpdate();
+      entity->buildRenderCommands(queue);
+    }
   }
 }
 
