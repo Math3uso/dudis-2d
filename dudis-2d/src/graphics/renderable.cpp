@@ -40,7 +40,11 @@ void Renderable::buildRenderCommands(RenderQueue *queue)
 
   for (auto &child : _children)
   {
-    child->buildRenderCommands(queue);
+    if (child->_ready)
+    {
+      child->defaultUpdate();
+      child->buildRenderCommands(queue);
+    }
   }
 }
 

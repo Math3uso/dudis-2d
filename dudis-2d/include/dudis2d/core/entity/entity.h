@@ -107,7 +107,8 @@ namespace dudis
     std::shared_ptr<Motion> _action;
     std::vector<std::shared_ptr<Entity>> _children;
     Entity *_parent = nullptr;
-    bool _isUpdated = false;
+    // bool _isUpdated = false;
+    bool _ready = false;
     void _sortChildrenByIndex();
 
   public:
@@ -150,7 +151,8 @@ namespace dudis
     virtual void translate(const dudis::Vec2 &nPos);
 
     virtual void rotate(float nAngle);
-    virtual void start() {};
+    // virtual void start() {};
+    virtual bool start() { return true; };
     virtual void init() {};
     virtual void update() {};
     virtual void render();
@@ -165,6 +167,7 @@ namespace dudis
     void defaultUpdate();
     void runMotions();
     void setDirty();
+    void updateTree();
 
     Rect getBoundingBox();
 

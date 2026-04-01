@@ -90,8 +90,10 @@ void Entity::addChild(shared_ptr<Entity> child)
 
   _orderChildren = true;
 
-  this->onAddedToParent();
-  this->onAddedToParent(this);
+  child->_ready = child->start();
+
+  child->onAddedToParent();
+  child->onAddedToParent(this);
 
   // this->_sortChildrenByIndex();
 }
