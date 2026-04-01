@@ -28,7 +28,7 @@ Sprite::~Sprite()
   Log::Info("[INFO] recursos de sprite liberado [Sprite]");
 }
 
-void Sprite::start()
+void Sprite::initTexture()
 {
   if (!_createTexture)
   {
@@ -48,7 +48,7 @@ shared_ptr<Sprite> Sprite::create(const char *texturPath, Size size, res::DDText
   auto sprite = make_shared<Sprite>(texturPath, size);
   sprite->_createTexture = false;
   sprite->_filter = filter;
-  sprite->start();
+  sprite->initTexture();
   return sprite;
 }
 
@@ -57,6 +57,6 @@ DDRef Sprite::create(const char *path, Size size, res::DDTexture tex)
   auto sprite = make_shared<Sprite>(path, size);
   sprite->_createTexture = true;
   sprite->_rlTex = tex._rlTex;
-  sprite->start();
+  sprite->initTexture();
   return sprite;
 }

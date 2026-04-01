@@ -22,7 +22,8 @@ namespace dudis
     Sprite(const char *texturPath, Size size);
     ~Sprite();
 
-    void start() override;
+    // void start() override;
+    void initTexture();
 
     void setCrop(DDRect src) { _rectSrc = src; }
 
