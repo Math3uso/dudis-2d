@@ -19,3 +19,4 @@
 #include "dudis2d/core/input/input.h"
 #include "dudis2d/core/input/keyboard.h"
 #include "dudis2d/core/input/mouse.h"
+#include "dudis2d/globals/time.h"
