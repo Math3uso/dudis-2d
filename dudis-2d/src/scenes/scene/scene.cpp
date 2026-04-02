@@ -38,8 +38,11 @@ void Scene::collectRenderCommands(RenderQueue *queue)
 {
   this->_initPropsInScene();
 
-  this->update();
+  if (_paused)
+    return;
 
+  this->update();
+  this->updateTree();
   this->_sortChildrenByIndex();
 
   for (auto &entity : _children)
@@ -49,8 +52,10 @@ void Scene::collectRenderCommands(RenderQueue *queue)
 
     if (entity->_ready)
     {
-      entity->_sortChildrenByIndex();
-      entity->defaultUpdate();
+      if (!entity || !entity->_ready)
+        continue;
+      // entity->_sortChildrenByIndex();
+      // entity->defaultUpdate();
       entity->buildRenderCommands(queue);
     }
   }
@@ -83,6 +88,7 @@ Scene::~Scene()
 
   std::cout << "scene removida: " << label << "\n";
 
+  _children.clear();
   this->release();
 
   // liberando texturas
