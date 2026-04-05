@@ -23,20 +23,21 @@ namespace dudis
     dudis::TypeShape type;
     Color color = Color::White();
     bool flippedX = false;
+    bool _hasScissor = false;
+    bool _tex = false;
     SceneProperty sceneProps;
     std::string filePath;
     DDRect _rectSrc;
     DDRect _rectDest;
-    bool _tex = false;
     rl::RlTexture *_rlTex = nullptr;
     BlendType _blendType = BlendType::AlphaComposite;
 
   public:
     const char *name;
 
-    Renderable() {};
+    Renderable() { _isRenderable = true; };
     virtual ~Renderable() { puts("renderable deletado [Renderable]"); };
-    void render() override = 0;
+    void render() override {};
     void update() override {};
 
     dudis::TypeShape Type() const { return type; }
@@ -45,8 +46,17 @@ namespace dudis
     const Color &getColor() const { return color; }
     const res::DDTexture getTexture() const;
     SceneProperty &getSceneProps() { return sceneProps; }
+    bool hasTexture() { return _tex; }
+    bool hasScissor() { return _hasScissor; }
+    const DDRect &getRectSrc() const { return _rectSrc; }
+    BlendType getBlendMode() { return _blendType; }
+
+    rl::RlTexture *_getTextureData() { return _rlTex; }
 
     void setColor(const Color &nColor) { color = nColor; }
+    void setHiddenOverfflow(bool isHidden) { _hasScissor = isHidden; }
+    void setBlendMode(BlendType type) { _blendType = type; }
+
     virtual void setFlippedX(bool flip)
     {
       this->setDirty();

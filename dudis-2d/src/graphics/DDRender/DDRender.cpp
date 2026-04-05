@@ -1,17 +1,55 @@
 // #include "dudis2d/graphics/DDRender/DDRender.h"
 #include "dudis2d/graphics/DDRender/DDRender.h"
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
+#include "dudis2d/graphics/renderQueue/renderQueue.h"
+#include "dudis2d/core/ddrlUtils/toRLBlendType.h"
 
 using namespace std;
 using namespace dudis;
 
-void DDRender::draw(const std::vector<DrawCommand> &listCmd)
+bool isView = false;
+
+void DDRender::draw(const std::vector<DrawCommand> &listCmd, RenderQueue *queue)
 {
+
+  BlendType currentBlendType = BlendType::AlphaComposite;
+
+#ifdef DD_DEBUG
+  if (isView == false)
+  {
+    for (auto &cmd : listCmd)
+    {
+      cout << cmd << "\n";
+    }
+  }
+  isView = true;
+#endif
+
   for (auto &cmd : listCmd)
   {
-    if (cmd.batch == DDBatchType::Shapes)
+    switch (cmd.cmdState)
     {
-      if (cmd.type == DDPrimitiveType::Fill)
+    case CommandState::PushScissor:
+    {
+      auto r = cmd.scissorRect;
+      BeginScissorMode(r.x, r.y, r.w, r.h);
+      break;
+    }
+
+    case CommandState::EndScissor:
+      EndScissorMode();
+      break;
+
+    default:
+    {
+
+      if (cmd.blendType != currentBlendType)
+      {
+        BeginBlendMode(ddrlUtils::toRLBlendType(cmd.blendType));
+        currentBlendType = cmd.blendType;
+      }
+
+      if (cmd.batch == DDBatchType::Shapes)
       {
         Rectangle rect;
         rect.width = cmd.size.w;
@@ -26,23 +64,19 @@ void DDRender::draw(const std::vector<DrawCommand> &listCmd)
 
         DrawRectanglePro(rect, rlOrigin, cmd.rotation, cmd.color);
       }
-      else if (cmd.type == DDPrimitiveType::Lines)
+      else if (cmd.batch == DDBatchType::Textures)
       {
-        DrawRectangleLines(cmd.pos.x, cmd.pos.y, cmd.size.w, cmd.size.h,
-                           cmd.color);
+
+        auto texture = cmd.rlTex;
+        auto w = cmd.src.w == 0 ? texture.width : cmd.src.w;
+        auto h = cmd.src.h == 0 ? texture.height : cmd.src.h;
+
+        DrawTexturePro(
+            texture, Rectangle{0, 0, w, h},
+            Rectangle{cmd.pos.x, cmd.pos.y, cmd.size.w, cmd.size.h},
+            Vector2{cmd.origin.x, cmd.origin.y}, cmd.rotation, WHITE);
       }
     }
-    else if (cmd.batch == DDBatchType::Textures)
-    {
-
-      auto texture = cmd.rlTex;
-      auto w = cmd.src.w == 0 ? texture.width : cmd.src.w;
-      auto h = cmd.src.h == 0 ? texture.height : cmd.src.h;
-
-      DrawTexturePro(
-          texture, Rectangle{0, 0, w, h},
-          Rectangle{cmd.pos.x, cmd.pos.y, cmd.size.w, cmd.size.h},
-          Vector2{cmd.origin.x, cmd.origin.y}, cmd.rotation, WHITE);
     }
   }
 }

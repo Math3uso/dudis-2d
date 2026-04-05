@@ -6,21 +6,19 @@
 namespace dudis
 {
 
+  class RenderQueue;
+
   class DDRender
   {
   public:
     DDRender() = default;
     void init() {};
-    void draw(const std::vector<DrawCommand> &cmd);
+    void draw(const std::vector<DrawCommand> &cmd, RenderQueue *queue);
     static std::shared_ptr<DDRender> create()
     {
       return std::make_shared<DDRender>();
     }
 
     static void setBlendType(BlendType type);
-
-    // static void draw(const std::vector<DrawCommand> &cmd);
-    // static void beginDraw();
-    // static void endDraw();
   };
 } // namespace dudis
