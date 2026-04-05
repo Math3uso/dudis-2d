@@ -1,54 +1,48 @@
 #pragma once
 
-#include "dudis2d/core/log/log.h"
-#include <unordered_map>
+namespace dudis
+{
 
-// #ifdef DD_DEBUG
-// #define DD_DEBUG(x) x
-// #else
-// #define DD_DEBUG(x)
-// #endif
+#ifdef DD_DEBUG
 
-#define DD_DEBUG
+#include "dudis2d/graphics/commandState.h"
+#include "dudis2d/graphics/blendType.h"
 
-#ifndef DD_DEBUG_MODE
-#define DD_DEBUG_MODE 1
-#endif
-
-class Scene;
-
-namespace dudis {
-class DDModel;
-
-class DDConfig {
-public:
-  static constexpr bool debugMode = DD_DEBUG_MODE;
-};
-
-class DD_DebugDetails {
-private:
-  static std::unordered_map<Scene *, size_t> _s_scenes;
-  static std::unordered_map<void *, size_t> _s_models;
-
-  // static void registerScene(Scene *data);
-  static void _registerModel(DDModel *data);
-
-public:
-  static void registerScene(Scene *data);
-  static size_t getSceneBytes();
-};
-// namespace dd_debug
-
-inline void DDPrintMemoryUsage() {
-
-  if constexpr (DDConfig::debugMode) {
-    // somente das scenes
-    size_t bytes = DD_DebugDetails::getSceneBytes();
-
-    // Log::Info("================ Debug ================");
-    // Log::Alert("Bytes: " + std::to_string(bytes));
-    // Log::Info("================ Debug ================");
+  inline const char *DD_Debug_CmdStateToString(CommandState b)
+  {
+    switch (b)
+    {
+    case CommandState::Draw:
+      return "Draw";
+    case CommandState::PushScissor:
+      return "PushScissor";
+    case CommandState::EndScissor:
+      return "EndScissor";
+    default:
+      return "Unknow";
+    }
   }
-};
+
+  inline const char *DD_Debug_BlendModeToStr(BlendType type)
+  {
+    switch (type)
+    {
+    case BlendType::AlphaComposite:
+      return "AlphaComposite";
+    case BlendType::LightAdd:
+      return "LightAdd";
+    case BlendType::ColorMultiply:
+      return "ColorMultiply";
+    case BlendType::ColorAdd:
+      return "ColorAdd";
+    case BlendType::ColorSubtract:
+      return "ColorSubtract";
+    case BlendType::PremultipliedAlpha:
+      return "PremultipliedAlpha";
+    default:
+      return "Unknow";
+    }
+  }
+#endif
 
 } // namespace dudis
