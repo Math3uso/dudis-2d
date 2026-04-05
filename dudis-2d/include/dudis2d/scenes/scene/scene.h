@@ -26,6 +26,7 @@ private:
 protected:
   dudis::SizeI size;
   dudis::Color clearColor;
+  float _deltaTime = 0.f;
   // Physics integration temporarily disconnected (components remain available).
 
 public:
@@ -45,6 +46,7 @@ public:
 
   void setSize(const dudis::SizeI &nSize);
   void setClearColor(dudis::Color nColor) { clearColor = nColor; };
+  void setDeltaTimeInRoot(float dt) { _deltaTime = dt; };
 
   virtual bool start() override { return true; };
   virtual void update() {};
