@@ -8,6 +8,7 @@
 #include <box2d/box2d.h>
 #include "dudis2d/core/input/input.h"
 #include "dudis2d/graphics/ddRenderGroup.h"
+#include "dudis2d/globals/time.h"
 
 using namespace dudis;
 
@@ -56,6 +57,8 @@ void Window::Running()
 
     Input::update();
 
+    Time::deltaTime = GetFrameTime() * Time::timeScele;
+
     int currentWidth = GetScreenWidth();
     int currentHeight = GetScreenHeight();
 
@@ -73,9 +76,10 @@ void Window::Running()
         auto scene = renderManager->getCurrentScene();
 
         renderQueue->clear();
+        scene->setDeltaTimeInRoot(Time::deltaTime);
         scene->collectRenderCommands(renderQueue.get());
         // DDRenderGroup::initPipeline(renderQueue.get());
-        DDRender->draw(renderQueue->getCommands());
+        DDRender->draw(renderQueue->getCommands(), renderQueue.get());
       }
 
       EndDrawing();
@@ -172,7 +176,7 @@ void Window::runByFrames(int seconds)
 
       renderQueue->clear();
       scene->collectRenderCommands(renderQueue.get());
-      DDRender->draw(renderQueue->getCommands());
+      DDRender->draw(renderQueue->getCommands(), renderQueue.get());
     }
 
     EndDrawing();
