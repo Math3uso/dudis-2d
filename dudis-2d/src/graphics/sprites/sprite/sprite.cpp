@@ -14,7 +14,10 @@ Sprite::Sprite(const char *texturPath, Size size)
   _rectSrc = {0, 0, 0, 0};
   _tex = true;
 
-  this->filePath = std::string(texturPath);
+  if (texturPath)
+  {
+    this->filePath = std::string(texturPath);
+  }
 
   this->size = size;
 
