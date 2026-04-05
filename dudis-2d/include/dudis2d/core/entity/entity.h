@@ -103,10 +103,12 @@ namespace dudis
     Vec2 origin = {0, 0};
     Vec2 scale = {1, 1};
     float angle = 0.0f; // in radians
+    bool _isRenderable = false;
     std::vector<std::shared_ptr<Motion>> actions;
     std::shared_ptr<Motion> _action;
     std::vector<std::shared_ptr<Entity>> _children;
     Entity *_parent = nullptr;
+    std::shared_ptr<Renderable> _renderable = nullptr;
     // bool _isUpdated = false;
     bool _ready = false;
     void _sortChildrenByIndex();
@@ -140,6 +142,7 @@ namespace dudis
     float getGlobalRotation();
     const Vec2 getGlocalScale();
     Size getGlobalSize();
+    std::shared_ptr<Entity> clone() const;
 
     void setTransformType(TransformType type) { _transformType = type; }
 
@@ -157,7 +160,8 @@ namespace dudis
     virtual void update() {};
     virtual void render();
     virtual void updateChildren();
-    virtual void buildRenderCommands(RenderQueue *queue) {};
+    virtual void buildRenderCommands(RenderQueue *queue);
+    virtual void buildRenderTree(std::shared_ptr<Entity> ddEntity, RenderQueue *queue, Entity *ddEntityPtr = nullptr);
     virtual void onAddedToParent() {};
     virtual void onAddedToParent(Entity *parent) {};
     virtual void onRemovedFromParent() {}

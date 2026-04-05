@@ -1,6 +1,9 @@
 #include "dudis2d/core/entity/entity.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/core/motion/motion.h"
+#include "dudis2d/graphics/renderable.h"
+#include "dudis2d/graphics/drawCommand/drawCommand.h"
+#include "dudis2d/graphics/renderQueue/renderQueue.h"
 #include <algorithm>
 
 using namespace std;
@@ -39,6 +42,20 @@ void Entity::runMotions()
   // if (_action && !_action->isDone()) {
   //   _action->step();
   // }
+}
+
+void Entity::updateTree()
+{
+
+  for (auto &child : _children)
+  {
+    if (!child || !child->_ready)
+      continue;
+
+    child->defaultUpdate();
+    child->updateTree();
+  }
+  this->_sortChildrenByIndex();
 }
 
 void Entity::_setRootEntity(Entity *root)
@@ -136,6 +153,99 @@ void Entity::_sortChildrenByIndex()
     _orderChildren = false;
   }
   return;
+}
+
+void Entity::buildRenderCommands(RenderQueue *queue)
+{
+
+  if (!_renderable)
+  {
+    puts("instanciou");
+    _renderable = make_shared<Renderable>();
+    // _renderable->setTransformType(TransformType::DisableParentTransform);
+    // this->addChild(_renderable);
+  }
+
+  _renderable->buildRenderTree(nullptr, queue, this);
+}
+
+void Entity::buildRenderTree(shared_ptr<Entity> ddEntity, RenderQueue *queue, Entity *ddEntityPtr)
+{
+
+  auto entity = ddEntityPtr == nullptr ? ddEntity.get() : ddEntityPtr;
+
+  entity->getGlobalPos();
+  DrawCommand cmd;
+  bool hasScissor = false;
+
+  if (entity->_isRenderable)
+  {
+
+    auto render = dynamic_cast<Renderable *>(entity);
+
+    auto gPos = entity->getGlobalPos();
+    auto gRotation = entity->getGlobalRotation() * RAD2DEG;
+    auto gScale = entity->getGlocalScale();
+    auto finalSize = SizeF(entity->size.w * gScale.x, entity->size.h * gScale.y);
+
+    cmd.pos = gPos;
+    cmd.size = finalSize;
+    cmd.origin = origin;
+    cmd.rotation = gRotation;
+    cmd.scale = gScale;
+    cmd.src = DDRect{0, 0, 0, 0};
+    cmd._tex = render->hasTexture();
+    cmd.type = DDPrimitiveType::Fill;
+    cmd.batch = DDBatchType::Shapes;
+    cmd.color = render->getColor();
+    cmd.z = _zOrder;
+    cmd.blendType = render->getBlendMode();
+
+    if (cmd._tex)
+    {
+      cmd.src = render->getRectSrc();
+      cmd.batch = DDBatchType::Textures;
+      cmd.rlTex = *render->_getTextureData();
+    }
+
+    cmd.cmdState = CommandState::Draw;
+
+    hasScissor = render->hasScissor();
+
+    // queue->addCommand(cmd);
+  }
+
+  if (hasScissor)
+  {
+
+    DrawCommand cmdWithScissor;
+    cmdWithScissor.scissorRect = entity->getBoundingBox();
+    cmdWithScissor.cmdState = CommandState::PushScissor;
+    cmdWithScissor.z = entity->_zOrder - 1;
+    queue->addCommand(cmdWithScissor);
+  }
+
+  if (entity->_isRenderable)
+  {
+    queue->addCommand(cmd);
+  }
+
+  for (auto child : entity->getChildren())
+  {
+
+    if (child->_ready)
+    {
+      child->buildRenderTree(child, queue);
+    }
+  }
+
+  if (hasScissor)
+  {
+    DrawCommand cmdPophScissor;
+    cmdPophScissor.cmdState = CommandState::EndScissor;
+    cmdPophScissor.z = entity->_zOrder + 1;
+    queue->addCommand(cmdPophScissor);
+  }
 }
 
 /**
@@ -320,6 +430,36 @@ Rect Entity::getBoundingBox()
 bool Entity::intersectsWith(const std::shared_ptr<Entity> &other)
 {
   return this->getBoundingBox().intersects(other->getBoundingBox());
+}
+
+shared_ptr<Entity> Entity::clone() const
+{
+  auto copy = make_shared<Entity>();
+
+  copy->size = size;
+  copy->pos = pos;
+  copy->origin = origin;
+  copy->scale = scale;
+  copy->angle = angle;
+  copy->labelT = labelT;
+  copy->_transformType = _transformType;
+  copy->_zOrder = _zOrder;
+  copy->_physicsComponent = _physicsComponent;
+
+  // Clones of the base entity must not share hierarchy, components,
+  // motions, or manually owned buffers with the original instance.
+  copy->_parent = nullptr;
+  copy->_root = nullptr;
+  copy->_ready = false;
+  copy->_orderChildren = false;
+  copy->_children.clear();
+  copy->_components.clear();
+  copy->actions.clear();
+  copy->_action.reset();
+  copy->_owned.clear();
+  copy->setDirty();
+
+  return copy;
 }
 
 // void Entity::release() { _children.clear(); }
