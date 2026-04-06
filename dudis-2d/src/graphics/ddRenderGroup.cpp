@@ -22,10 +22,10 @@ void DDRenderGroup::initPipeline(RenderQueue *queue)
 
         current = queue->getCommands().size();
         _target = queue;
-        DDRenderGroup::sortByZ();
-        // DDRenderGroup::sortByShaders();
-        // DDRenderGroup::sortByTextures();
-        // DDRenderGroup::sortByBlendType();
+        // DDRenderGroup::sortByZ();
+        //  DDRenderGroup::sortByShaders();
+        //  DDRenderGroup::sortByTextures();
+        //  DDRenderGroup::sortByBlendType();
 
         return;
     }

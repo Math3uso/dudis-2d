@@ -10,6 +10,9 @@ namespace dudis
 
   class DDRender
   {
+  private:
+    static int _drawCalls;
+
   public:
     DDRender() = default;
     void init() {};
@@ -18,6 +21,9 @@ namespace dudis
     {
       return std::make_shared<DDRender>();
     }
+
+    static void defineRLDrawCalls();
+    static int getDrawCalls() { return _drawCalls; }
 
     static void setBlendType(BlendType type);
   };

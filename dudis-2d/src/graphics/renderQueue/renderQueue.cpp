@@ -4,17 +4,24 @@
 using namespace std;
 using namespace dudis;
 
-void RenderQueue::addCommand(const DrawCommand &cmd) {
+void RenderQueue::addCommand(const DrawCommand &cmd)
+{
   _renderList.push_back(cmd);
   this->_checkRelocation();
 }
 
-void RenderQueue::addCommand(const vector<DrawCommand> &&renderList) {
+void RenderQueue::addCommand(const vector<DrawCommand> &&renderList)
+{
   _renderList.insert(_renderList.end(), renderList.begin(), renderList.end());
   this->_checkRelocation();
 }
+// void RenderQueue::addCmdBuffer(const DDCommandBuffer &cmd)
+// {
+//   _cmdBuffer.push_back(cmd);
+// }
 
-void RenderQueue::_checkRelocation() {
+void RenderQueue::_checkRelocation()
+{
   // size_t renderChunck = _renderList.size() * sizeof(DrawCommand);
   // _current = renderChunck > _current ? renderChunck : _current;
 
@@ -27,11 +34,15 @@ void RenderQueue::_checkRelocation() {
   //   _renderList.reserve(_size);
   // }
 
-  if (_renderList.size() >= _renderList.capacity()) {
+  if (_renderList.size() >= _renderList.capacity())
+  {
     Log::Info("[INFO] realocando _renderList [RenderQueue]");
     _size = _size * 2;
     _renderList.reserve(_size);
   }
 }
 
-void RenderQueue::clear() { _renderList.clear(); }
+void RenderQueue::clear()
+{
+  _renderList.clear();
+}

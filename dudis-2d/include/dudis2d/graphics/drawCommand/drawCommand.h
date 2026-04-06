@@ -1,9 +1,12 @@
 #pragma once
 
-#include "dudis2d/core/utils/types.h"
 #include "dudis2d/graphics/ddAssets/texture2D.h"
 #include "dudis2d/graphics/commandState.h"
 #include "dudis2d/graphics/blendType.h"
+#include "dudis2d/core/math/vec2.h"
+#include "dudis2d/core/math/rect.h"
+#include "dudis2d/graphics/color.h"
+#include "dudis2d/core/utils/sizeF.h"
 
 #ifdef DD_DEBUG
 #include "dudis2d/core/debug/dd-debug.h"
