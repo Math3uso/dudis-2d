@@ -1,9 +1,10 @@
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/scenes/scene/scene.h"
+#include "dudis2d/core/utils/types.h"
 #include "string"
 
-Scene *SceneManager::getScene() { return current.get(); }
+// Scene *SceneManager::getScene() { return current.get(); }
 
 bool SceneManager::setScene(dudis::Scope<Scene> nScene)
 {

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "dudis2d/core/entity/entity.h"
-#include "dudis2d/core/utils/types.h"
 #include "dudis2d/graphics/renderable.h"
 #include <functional>
 #include <memory>
 #include <vector>
 #include "dudis2d/graphics/ddAssets/texture2D.h"
+#include "dudis2d/core/utils/scope.h"
 
 namespace dudis
 {

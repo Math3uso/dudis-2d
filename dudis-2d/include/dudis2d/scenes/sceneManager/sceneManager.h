@@ -1,11 +1,12 @@
 #pragma once
 
-#include "dudis2d/core/utils/types.h"
 #include <vector>
+#include "dudis2d/core/utils/scope.h"
 
 class Scene;
 
-class SceneManager {
+class SceneManager
+{
 protected:
   dudis::Scope<Scene> current;
   std::vector<dudis::Scope<Scene>> scenes;
@@ -21,7 +22,7 @@ protected:
 
 public:
   bool replaceSceneMode = true;
-  Scene *getScene();
+  // Scene *getScene();
   bool setScene(dudis::Scope<Scene> nScene);
   Scene *getCurrentScene();
   std::vector<dudis::Scope<Scene>> getScenes();
