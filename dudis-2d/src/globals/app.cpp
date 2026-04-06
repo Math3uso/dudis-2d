@@ -7,6 +7,8 @@ Window *App::window = nullptr;
 SceneManager *App::sceneManager = nullptr;
 std::function<void()> App::windowCallback = []() {};
 double App::fixedDt = 1.0f / 60.f;
+std::vector<std::function<void()>> App::_mainThreadQueue;
+std::mutex App::_queueMutex;
 
 void App::setWindow(Window &nWindow)
 {
@@ -28,6 +30,23 @@ void App::setSceneManager(SceneManager &nManager)
 
 void App::setFrameBufferId(int id, const char *label)
 {
+}
+
+void App::runOnMainThread(std::function<void()> task)
+{
+  std::lock_guard<std::mutex> lock(_queueMutex);
+  _mainThreadQueue.push_back(task);
+}
+
+void App::processMainThreadQueue()
+{
+  return;
+  std::lock_guard<std::mutex> lock(_queueMutex);
+  for (auto &task : _mainThreadQueue)
+  {
+    task();
+  }
+  _mainThreadQueue.clear();
 }
 
 void App::release()

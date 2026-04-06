@@ -4,6 +4,9 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
+#include <queue>
+#include <mutex>
+
 class Window;
 
 class SceneManager;
@@ -15,6 +18,9 @@ protected:
   static Window *window;
   static SceneManager *sceneManager;
   static double fixedDt;
+
+  static std::vector<std::function<void()>> _mainThreadQueue;
+  static std::mutex _queueMutex;
 
 public:
   static std::function<void()> windowCallback;
@@ -30,6 +36,8 @@ public:
   };
 
   static void setFrameBufferId(int id, const char *label);
+  static void runOnMainThread(std::function<void()> task);
+  static void processMainThreadQueue();
 
   static float getFixedDt() { return fixedDt; }
 };

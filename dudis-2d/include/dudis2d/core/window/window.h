@@ -1,11 +1,13 @@
 #pragma once
 
 #include "dudis2d/core/utils/sizeI.h"
-#include "dudis2d/core/utils/types.h"
+#include "dudis2d/core/math/vec2.h"
 #include "dudis2d/scenes/scene/scene.h"
+#include "dudis2d/graphics/color.h"
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
 #include "dudis2d/core/window/resolution.h"
 #include "dudis2d/graphics/color.h"
+#include <queue>
 
 class Window
 {
@@ -16,6 +18,8 @@ protected:
   dudis::Color clearColor = {32, 32, 32, 255};
   SceneManager *renderManager = nullptr;
   dudis::Resolution _resolution = dudis::Resolution({0, 0}, dudis::ResolutionPolicy::None);
+  std::queue<std::function<void()>> _closeCallback;
+  void _close();
 
 public:
   Window(dudis::SizeI nSize, const char *nTitle);
@@ -41,6 +45,7 @@ public:
   void SetRenderManager(SceneManager &renderer);
   void setSize(const dudis::SizeI &nSize);
   void setResolution(dudis::Resolution &resolution) { _resolution = resolution; };
+  void onClose(const std::function<void()> callback) { _closeCallback.push(std::move(callback)); }
 
   const dudis::SizeI &getSize() const { return size; }
   const dudis::Color &getColor() const { return clearColor; }

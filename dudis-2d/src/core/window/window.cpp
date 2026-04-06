@@ -57,6 +57,9 @@ void Window::Running()
 
     Input::update();
 
+    // fix
+    // App::processMainThreadQueue();
+
     Time::deltaTime = GetFrameTime() * Time::timeScele;
 
     int currentWidth = GetScreenWidth();
@@ -95,6 +98,8 @@ void Window::Running()
     renderManager->dispose();
   }
 
+  this->_close();
+
   puts("fechando janela");
 
   CloseWindow();
@@ -110,7 +115,11 @@ void Window::release()
   }
 }
 
-void Window::Quit() { CloseWindow(); }
+void Window::Quit()
+{
+  this->_close();
+  CloseWindow();
+}
 
 void Window::SetRenderManager(SceneManager &renderer)
 {
@@ -151,6 +160,16 @@ void Window::_centerWindow()
   int posY = (screenHeight - windowHeight) / 2;
 
   SetWindowPosition(posX, posY);
+}
+
+void Window::_close()
+{
+  while (!_closeCallback.empty())
+  {
+    auto close = _closeCallback.front();
+    close();
+    _closeCallback.pop();
+  }
 }
 
 void Window::runByFrames(int seconds)
