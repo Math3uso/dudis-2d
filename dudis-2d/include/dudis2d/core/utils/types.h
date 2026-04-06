@@ -25,20 +25,20 @@ namespace dudis
 
   using Size = SizeF;
 
-  template <typename T>
-  using Scope = std::unique_ptr<T>;
-  template <typename T>
-  constexpr auto SetScope = [](auto &&arg) -> decltype(auto)
-  {
-    return std::move(std::forward<decltype(arg)>(arg));
-  };
+  // template <typename T>
+  // using Scope = std::unique_ptr<T>;
+  // template <typename T>
+  // constexpr auto SetScope = [](auto &&arg) -> decltype(auto)
+  // {
+  //   return std::move(std::forward<decltype(arg)>(arg));
+  // };
 
-  template <typename T, typename... Args>
-  dudis::Scope<T> CreateScope(Args &&...args)
-  {
-    auto scope = std::make_unique<T>(std::forward<Args>(args)...);
-    return scope;
-  }
+  // template <typename T, typename... Args>
+  // dudis::Scope<T> CreateScope(Args &&...args)
+  // {
+  //   auto scope = std::make_unique<T>(std::forward<Args>(args)...);
+  //   return scope;
+  // }
 
 } // namespace dudis
 

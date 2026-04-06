@@ -2,7 +2,9 @@
 
 #include "dudis2d/core/component/physicsComponent/physicsComponent.h"
 #include "dudis2d/core/entity/entity.h"
-#include "dudis2d/core/utils/types.h"
+// #include "dudis2d/core/utils/types.h"
+#include "dudis2d/core/math/vec2.h"
+#include "dudis2d/core/utils/sizeF.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
