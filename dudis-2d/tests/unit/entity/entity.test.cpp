@@ -69,3 +69,7 @@ TEST_CASE("entity z-order is propagated recursively", "[unit]")
     REQUIRE(child->getZOrder() == 350);
     REQUIRE(grandChild->getZOrder() == 355);
 }
+
+TEST_CASE("entity ")
+{
+}
