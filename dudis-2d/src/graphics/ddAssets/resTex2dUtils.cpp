@@ -22,6 +22,22 @@ namespace dudis
 
                 return texManager.create(path, filter);
             }
+            // DDTexture createAsync(const char *path, DDTextureFilter filter)
+            // {
+            //     auto scene = App::getSceneManager().getCurrentScene();
+            //     auto &texManager = scene->getTexture2DManager();
+
+            //     if (!scene)
+            //     {
+            //         return DDTexture();
+            //     }
+
+            //     texManager.createAsync(path, filter);
+
+            //     return DDTexture();
+
+            //     // return texManager.createAsync(path, filter);
+            // }
         }
     }
 }

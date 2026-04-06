@@ -12,6 +12,8 @@ namespace dudis
         namespace Texture2D
         {
             DDTexture create(const char *path, DDTextureFilter filter = DDTextureFilter::Nearest);
+
+            // DDTexture createAsync(const char *path, DDTextureFilter filter) { DDTexture(); };
         }
     }
 }

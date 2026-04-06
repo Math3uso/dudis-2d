@@ -1,17 +1,20 @@
 #include "dudis2d/graphics/ddAssets/texture2D.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
+// #include "dudis2d/core/async/asyncWorker.h"
+#include "dudis2d/core/window/window.h"
+#include "rlgl.h"
 
 using namespace std;
 using namespace dudis;
 using namespace res;
 
-DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
-                                         uint32_t *id, DDTextureFilter filter)
+DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex, Image *rlImage, DDTextureFilter filter)
 {
 
   auto key = string(path);
   auto it = _rlTextures.find(key);
+  Image img;
 
   if (it != _rlTextures.end())
   {
@@ -20,7 +23,8 @@ DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
     return DDTexture(it->second);
   }
 
-  Image img = LoadImage(path);
+  img = rlImage == nullptr ? LoadImage(path) : *rlImage;
+
   TextureFormat fmt = ddrlUtils::mapRaylibFormat((PixelFormat)img.format);
 
   auto rlTex = LoadTextureFromImage(img);
@@ -30,11 +34,11 @@ DDTexture res::Texture2DManager::_create(const char *path, DDTexture &ddTex,
   printf("img.format=%d  rlTex.format=%d\n", img.format, rlTex.format);
 
   UnloadImage(img);
-
-  if (id)
+  if (img.data == nullptr)
   {
-    *id = rlTex.id;
+    puts("conteudo apagadp IMG");
   }
+  // rlImage = nullptr;
 
   ddTex.width = rlTex.width;
   ddTex.height = rlTex.height;
@@ -75,3 +79,39 @@ void res::Texture2DManager::unloadAll()
     this->unload(i.second);
   }
 }
+
+// DDTexture res::Texture2DManager::createAsync(const char *path, DDTextureFilter filter)
+// {
+//   auto asyncWorker = AsyncWorker::create();
+
+//   if (!asyncWorker->hasCreated())
+//   {
+//     asyncWorker->init();
+//     App::getWindow()->onClose((
+//         [asyncWorker]
+//         {
+//           asyncWorker->release();
+//         }));
+//   }
+
+//   std::string sPath = path;
+
+//   asyncWorker->setTask((
+//       [this, &sPath, filter, path]
+//       {
+//         puts("foi em outra thread");
+
+//         auto rlImage = std::make_shared<Image>(LoadImage(path));
+
+//         App::runOnMainThread((
+//             [this, &rlImage, path, filter]
+//             {
+//               cout << path << "\n";
+//               DDTexture ddTex = DDTexture(0, TextureFormat::RGBA8);
+//               this->_create(path, ddTex, rlImage.get(), filter);
+//             }));
+//       }));
+
+//   // ignore isso
+//   return DDTexture();
+// }
