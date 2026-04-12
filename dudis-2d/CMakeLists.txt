@@ -59,17 +59,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
 set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
 set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
-
-# --- CONFIGURAÇÃO DO RAYLIB PARA ANDROID ---
-if(ANDROID)
-    set(PLATFORM "Android" CACHE STRING "" FORCE)
-    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-else()
-    set(PLATFORM "Desktop" CACHE STRING "" FORCE)
-endif()
 
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
@@ -80,18 +75,32 @@ set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
 set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 set(BOX2D_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 
+# --- CONFIGURAÇÃO DO RAYLIB PARA ANDROID ---
+if(ANDROID)
+    set(PLATFORM "Android" CACHE STRING "" FORCE)
+    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+else()
+    set(PLATFORM "Desktop" CACHE STRING "" FORCE)
+endif()
+
 add_subdirectory(${RAYLIB_DIR})
 add_subdirectory(${BOX2D_DIR})
 
+option(DD_SHARED "Construir como biblioteca dinâmica (.dll/.so)" OFF)
 # temp
 option(ANDROID "Compilar para Android" OFF)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
-if(ANDROID)
+
+if(ANDROID OR DD_SHARED)
 add_library(dudis SHARED ${SRC_FILES})
 else()
 add_library(dudis STATIC ${SRC_FILES})
+endif()
+
+if(DD_SHARED)
+target_compile_definitions(dudis PRIVATE DD_BUILD_SHARED)
 endif()
 
 # add_library(dudis STATIC ${SRC_FILES})
