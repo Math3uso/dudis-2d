@@ -9,3 +9,12 @@ void Input::update()
     Keyboard::update();
     Mouse::update();
 }
+
+int Input::getAxis(Axis axis)
+{
+    if (axis == Axis::Horizontal)
+    {
+        return dudis::Keyboard::isDown(KeyCode::D) - Keyboard::isDown(KeyCode::A);
+    }
+    return dudis::Keyboard::isDown(KeyCode::S) - Keyboard::isDown(KeyCode::W);
+}
