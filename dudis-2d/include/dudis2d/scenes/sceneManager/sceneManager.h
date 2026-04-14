@@ -17,7 +17,7 @@ protected:
   bool _pendingPop = false;
   bool _pendingPush = false;
   bool _remove = false;
-  int _index;
+  int _index = 0;
   bool loadScene;
 
 public:
@@ -37,3 +37,8 @@ public:
   void dispose();
   void releaseCurrentScene();
 };
+
+// temp
+#define PUSH_SCENE(scene) App::getSceneManager().pushScene(std::move(scene));
+#define POP_SCENE() App::getSceneManager().popScene();
+#define REPLACE_SCENE(scene) App::getSceneManager().setScene(std::move(scene));
