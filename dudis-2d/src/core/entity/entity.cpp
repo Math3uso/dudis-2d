@@ -49,7 +49,7 @@ void Entity::updateTree()
 
   for (auto &child : _children)
   {
-    if (!child || !child->_ready)
+    if (!child || !child->_ready || child->_suspend)
       continue;
 
     child->defaultUpdate();
@@ -369,6 +369,16 @@ void Entity::translate(const Vec2 &nPos)
   pos.y += nPos.y;
 }
 
+void Entity::suspend()
+{
+  this->_suspend = true;
+}
+
+void Entity::resume()
+{
+  this->_suspend = false;
+}
+
 void Entity::setDirty()
 {
   _localDirty = true;
@@ -426,6 +436,8 @@ Rect Entity::getBoundingBox()
 
   return Rect{minX, minY, (float)globalSize.w, (float)globalSize.h};
 }
+
+bool Entity::isSuspend() { return _suspend; }
 
 bool Entity::intersectsWith(const std::shared_ptr<Entity> &other)
 {
