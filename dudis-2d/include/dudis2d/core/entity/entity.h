@@ -113,6 +113,7 @@ namespace dudis
     std::shared_ptr<Renderable> _renderable = nullptr;
     // bool _isUpdated = false;
     bool _ready = false;
+    bool _suspend = false;
     void _sortChildrenByIndex();
 
   public:
@@ -125,6 +126,7 @@ namespace dudis
     Vec2 getOrigin() const { return origin; }
     const std::string &getTag() const { return tag; }
     int getZOrder() { return _zOrder; }
+    bool isSuspend();
 
     // void alloc(T* buff){}
 
@@ -151,6 +153,8 @@ namespace dudis
     virtual void setPos(const dudis::Vec2 &nPos);
     void setPos(float x, float y);
     void setZOrder(int zIndex);
+    void suspend();
+    void resume();
 
     virtual void setSize(dudis::SizeF nSize);
     virtual void translate(const dudis::Vec2 &nPos);
