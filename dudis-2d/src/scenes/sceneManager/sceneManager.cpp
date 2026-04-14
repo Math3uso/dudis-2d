@@ -55,7 +55,7 @@ void SceneManager::releaseCurrentScene() {}
 
 void SceneManager::applyChangeScene()
 {
-  if (scenes.empty())
+  if (scenes.empty() && !_replaceMode)
     return;
 
   if (_pendingPush)
@@ -73,7 +73,14 @@ void SceneManager::applyChangeScene()
   }
   else if (_replaceMode)
   {
-    scenes[_index] = std::move(nextScene);
+    if (scenes.empty())
+    {
+      scenes.push_back(std::move(nextScene));
+    }
+    else
+    {
+      scenes[_index] = std::move(nextScene);
+    }
     scenes[_index]->start();
     scenes[_index]->init();
     nextScene.reset();
