@@ -52,8 +52,6 @@ void Scene::collectRenderCommands(RenderQueue *queue)
 
     if (entity->_ready)
     {
-      if (!entity || !entity->_ready)
-        continue;
       // entity->_sortChildrenByIndex();
       // entity->defaultUpdate();
       entity->buildRenderCommands(queue);
