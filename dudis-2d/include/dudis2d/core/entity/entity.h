@@ -115,6 +115,7 @@ namespace dudis
     bool _ready = false;
     bool _suspend = false;
     void _sortChildrenByIndex();
+    void _checkColisionAAB();
 
   public:
     char *labelT;
@@ -171,6 +172,9 @@ namespace dudis
     virtual void onAddedToParent() {};
     virtual void onAddedToParent(Entity *parent) {};
     virtual void onRemovedFromParent() {}
+    // temp
+    virtual void onCollisionAABB(Entity *other) {};
+    // temp
 
     bool intersectsWith(const std::shared_ptr<Entity> &other);
 
