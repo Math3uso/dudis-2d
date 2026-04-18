@@ -31,6 +31,20 @@ Window::Window(SizeI nSize, const char *nTitle)
 
 bool Window::init()
 {
+
+  // #if defined(_WIN32)
+  // #ifdef BUILD_MY_ENGINE
+  // #define MY_ENGINE_API __declspec(dllexport)
+  // #else
+  // #define MY_ENGINE_API __declspec(dllimport)
+  // #endif
+  // #elif defined(__GNUC__) || defined(__clang__)
+  // // No Linux/macOS, usamos 'visibility'
+  // #define MY_ENGINE_API __attribute__((visibility("default")))
+  // #else
+  // #define MY_ENGINE_API
+  // #endif
+
   SetTraceLogLevel(LOG_ERROR);
   InitWindow(size.w, size.h, title);
 

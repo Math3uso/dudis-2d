@@ -22,7 +22,10 @@ namespace dudis
 
   void DDRender::draw(const std::vector<DrawCommand> &listCmd, RenderQueue *queue)
   {
-
+    // RenderTexture2D
+    // LoadRenderTexture()
+    // UnloadRenderTexture();
+    // BeginTextureMode
     BlendType currentBlendType = BlendType::AlphaComposite;
 
 #ifdef DD_DEBUG
