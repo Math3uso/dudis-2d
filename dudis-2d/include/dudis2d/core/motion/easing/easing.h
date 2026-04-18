@@ -1,22 +1,28 @@
 #pragma once
 
-//  constexpr float PI = 3.14159265359f;
-// #include <cmath>
+// temp
 
-namespace dudis {
+// inline float lerp(float a, float b, float t)
+// {
+//   return a + (b - a) * t;
+// }
+
+// temp
+
+namespace dudis
+{
 #define DDPI 3.14159265359f
 } // namespace dudis
 
-#pragma once
-// #include <cmath>
-
-namespace dudis {
-class Easing {
-public:
-  static float easeIn(float t);
-  static float easeOut(float t);
-  static float easeInOut(float t);
-  static float easeElastic(float t);
-  static float easeBounce(float t);
-};
+namespace dudis
+{
+  class Easing
+  {
+  public:
+    static float EaseIn(float t);
+    static float EaseOut(float t);
+    static float EaseInOut(float t);
+    static float EaseElastic(float t);
+    static float EaseBounce(float t);
+  };
 } // namespace dudis
