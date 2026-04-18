@@ -1,6 +1,5 @@
 #include "dudis2d/core/entity/entity.h"
 #include "dudis2d/core/log/log.h"
-#include "dudis2d/core/motion/motion.h"
 #include "dudis2d/graphics/renderable.h"
 #include "dudis2d/graphics/drawCommand/drawCommand.h"
 #include "dudis2d/graphics/renderQueue/renderQueue.h"
@@ -21,27 +20,18 @@ void Entity::defaultUpdate()
   {
     // Temporarily disabled: physics sync handled elsewhere
   }
-  // this->updateChildren();
-  this->runMotions();
-}
-
-void Entity::runMotions()
-{
-  if (_action)
+  if (_motion)
   {
-    if (_action->isDone())
+    _motion->update();
+    if (_motion->isDone())
     {
-      _action.reset();
-      puts("motion liberada");
-    }
-    else
-    {
-      _action->step();
+      cout << "current count motion: " << _motion.use_count() << "\n";
+      _motion.reset();
+      cout << "liberando..\n";
+      cout << "current count motion: " << _motion.use_count() << "\n";
     }
   }
-  // if (_action && !_action->isDone()) {
-  //   _action->step();
-  // }
+  // this->updateChildren();
 }
 
 void Entity::updateTree()
@@ -54,6 +44,9 @@ void Entity::updateTree()
 
     child->defaultUpdate();
     child->updateTree();
+    //=============
+    // child->_checkColisionAAB();
+    //=============
   }
   this->_sortChildrenByIndex();
 }
@@ -128,6 +121,13 @@ void Entity::removeChild()
   this->_orderChildren = true;
 };
 
+void Entity::addMotion(std::shared_ptr<Motion> motion)
+{
+  _motion = motion;
+
+  _motion->startWithTarget(this);
+}
+
 void Entity::removeChild(const std::string &tag)
 {
   _children.erase(std::remove_if(_children.begin(), _children.end(), [&tag](const shared_ptr<Entity> &child)
@@ -154,6 +154,24 @@ void Entity::_sortChildrenByIndex()
   }
   return;
 }
+
+//==============================================
+void Entity::_checkColisionAAB()
+{
+  // for (size_t i = 0; i < _children.size(); ++i)
+  // {
+  //   for (size_t j = i + 1; j < _children.size(); ++j)
+  //   {
+  //     puts("foi");
+  //     if (_children[i]->intersectsWith(_children[j]))
+  //     {
+  //       _children[i]->onCollisionAABB(_children[j].get());
+  //       _children[j]->onCollisionAABB(_children[i].get());
+  //     }
+  //   }
+  // }
+}
+//==============================================
 
 void Entity::buildRenderCommands(RenderQueue *queue)
 {
@@ -459,15 +477,13 @@ shared_ptr<Entity> Entity::clone() const
   copy->_physicsComponent = _physicsComponent;
 
   // Clones of the base entity must not share hierarchy, components,
-  // motions, or manually owned buffers with the original instance.
+  // or manually owned buffers with the original instance.
   copy->_parent = nullptr;
   copy->_root = nullptr;
   copy->_ready = false;
   copy->_orderChildren = false;
   copy->_children.clear();
   copy->_components.clear();
-  copy->actions.clear();
-  copy->_action.reset();
   copy->_owned.clear();
   copy->setDirty();
 

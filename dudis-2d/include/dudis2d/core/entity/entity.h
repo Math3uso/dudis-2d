@@ -11,13 +11,13 @@
 #include <memory>
 #include <typeindex>
 #include <unordered_map>
+#include "dudis2d/core/motion/motion.h"
 
 class Scene;
 
 namespace dudis
 {
 
-  class Motion;
   class Component;
   class RenderQueue;
   class Renderable;
@@ -82,6 +82,7 @@ namespace dudis
     int _zOrder = 0;
     std::vector<DDBufferPtr> _owned;
     Entity *_root = nullptr;
+    std::shared_ptr<Motion> _motion = nullptr;
 
     void _setRootEntity(Entity *root);
     void _propagateZOrderByChildren(int delta);
@@ -106,8 +107,6 @@ namespace dudis
     Vec2 scale = {1, 1};
     float angle = 0.0f; // in radians
     bool _isRenderable = false;
-    std::vector<std::shared_ptr<Motion>> actions;
-    std::shared_ptr<Motion> _action;
     std::vector<std::shared_ptr<Entity>> _children;
     Entity *_parent = nullptr;
     std::shared_ptr<Renderable> _renderable = nullptr;
@@ -156,6 +155,7 @@ namespace dudis
     void setZOrder(int zIndex);
     void suspend();
     void resume();
+    void addMotion(std::shared_ptr<Motion> motion);
 
     virtual void setSize(dudis::SizeF nSize);
     virtual void translate(const dudis::Vec2 &nPos);
@@ -179,7 +179,6 @@ namespace dudis
     bool intersectsWith(const std::shared_ptr<Entity> &other);
 
     void defaultUpdate();
-    void runMotions();
     void setDirty();
     void updateTree();
 
@@ -190,12 +189,6 @@ namespace dudis
 
     void setParent(Entity *parent) { _parent = parent; };
     void setOrigin(Vec2 nOrigin) { origin = nOrigin; }
-    void setMotion(std::shared_ptr<Motion> action)
-    {
-      // this->actions.push_back(action);
-      _action = action;
-    };
-
     virtual void addChild(std::shared_ptr<Entity> entity);
     virtual void addChild(std::shared_ptr<Entity> entity, const int zOrder);
     void removeChild();
