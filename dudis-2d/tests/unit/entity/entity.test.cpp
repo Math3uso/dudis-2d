@@ -4,6 +4,17 @@
 
 using namespace dudis;
 
+// TEST_CASE("test mode", "[unit]")
+// {
+//     bool debug = false;
+
+// #ifdef DD_DEBUG
+//     debug = true;
+// #endif
+
+//     REQUIRE(debug == true);
+// }
+
 TEST_CASE("entity creation keeps the tag", "[unit]")
 {
     const auto entity = Entity::create("entity");
@@ -70,6 +81,13 @@ TEST_CASE("entity z-order is propagated recursively", "[unit]")
     REQUIRE(grandChild->getZOrder() == 355);
 }
 
-TEST_CASE("entity ")
-{
-}
+// TEST_CASE("teste sem nome ainda", "[unit]")
+// {
+//     auto entity1 = Entity::create("01");
+//     auto entity2 = Entity::create("02");
+
+//     entity1->setParent(entity2.get());
+//     entity1->getChildren().push_back(entity2);
+
+//     //  REQUIRE(entity1->wouldCreateCycle(entity2.get()) == true);
+// }
