@@ -16,6 +16,8 @@ namespace dudis
 
         constexpr Color() : r(0), g(0), b(0), a(255) {}
 
+        void opacity(float a);
+
         static constexpr Color Red() { return Color(255, 0, 0, 255); }
         static constexpr Color Green() { return Color(0, 255, 0, 255); }
         static constexpr Color Blue() { return Color(0, 0, 255, 255); }
