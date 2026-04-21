@@ -1,27 +1,25 @@
-#!/usr/bin/env node
+import { defineCommand, runMain } from "citty";
+import { version } from "./commands/version";
+import { create } from "./commands/new";
 
-import { Command } from "commander";
-import { z } from "zod";
-import { program } from 'commander';
-import { DDRegisterCommand } from "./core/register.js";
-import { NewProject } from "./commands/newProject.js";
+const dudis = defineCommand({
+    meta: { name: "dudis", description: "dudis cli" },
+    args: {
+        version: {
+            type: "boolean",
+            alias: "v",
+            description: "Mostrar versão atual do dudis-2d"
+        }
+    },
+    run({ args }) {
+        if (args.version) {
+            console.log("1.0.0");
+        }
+    },
+    subCommands: {
+        version,
+        create
+    },
+});
 
-const ddHello = new Command("new")
-    .option("-n, --name <projectName>", "Nome do projeto")
-    .action((options: { name: string }) => {
-        console.log("Nome:", options.name);
-        console.log(options);
-    });
-function start() {
-    const program = new Command();
-
-    program.name("dudis").description("dudis CLI").version("1.0.0");
-
-    // program.addCommand(ddHello);
-
-    DDRegisterCommand(program, new NewProject());
-
-    program.parse();
-}
-
-start();
+runMain(dudis);
