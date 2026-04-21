@@ -65,6 +65,12 @@ void Entity::addChild(shared_ptr<Entity> child)
 
   child->setParent(this);
 
+  if (this->wouldCreateCycle(child.get()))
+  {
+    Log::Error("[ERROR] ENTITY Cycle detected");
+    exit(1);
+  }
+
   if (_transformType == TransformType::DisableParentTransform)
   {
     child->setTransformType(TransformType::Absolute);
@@ -137,6 +143,21 @@ void Entity::removeChild(const std::string &tag)
   this->_orderChildren = true;
   this->onRemovedFromParent();
 };
+
+bool Entity::wouldCreateCycle(Entity *target)
+{
+  Entity *current = this;
+
+  while (current)
+  {
+    if (current == target)
+    {
+      return true;
+    }
+    current = current->_parent;
+  }
+  return false;
+}
 
 void Entity::_sortChildrenByIndex()
 {
