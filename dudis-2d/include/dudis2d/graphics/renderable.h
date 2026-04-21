@@ -65,7 +65,8 @@ namespace dudis
     void setOpacity(float opacity)
     {
       this->setDirty();
-      color = {color.r, color.g, color.b, (unsigned char)opacity};
+      // color = {color.r, color.g, color.b, (unsigned char)opacity};
+      color.opacity(opacity);
     }
   };
 } // namespace dudis
