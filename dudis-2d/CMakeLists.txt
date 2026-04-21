@@ -64,7 +64,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
 set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
-set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
+# set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
 
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
@@ -122,7 +122,7 @@ target_compile_definitions(dudis PRIVATE
 
 target_include_directories(dudis PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${RAYGUI_DIR}
+    # ${RAYGUI_DIR}
 )
 
 if(ANDROID)
@@ -130,7 +130,7 @@ if(ANDROID)
 endif()
 
 target_link_libraries(dudis
-    PUBLIC
+    PRIVATE
         raylib
         box2d
         glm

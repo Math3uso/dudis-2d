@@ -1,10 +1,9 @@
 #pragma once
 
-#include "dudis2d/core/utils/types.h"
 #include "dudis2d/graphics/ddAssets/ddTextureTypeUtils.h"
 #include "dudis2d/graphics/ddAssets/ddTextureFilter.h"
 #include <cstdint>
-
+#include "dudis2d/core/utils/types.h"
 namespace dudis
 {
 

@@ -1,11 +1,12 @@
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
+#include "raylib.h"
 
 namespace dudis
 {
   namespace ddrlUtils
   {
 
-    res::TextureFormat mapRaylibFormat(PixelFormat fmt)
+    res::TextureFormat mapRaylibFormat(unsigned int fmt)
     {
       switch (fmt)
       {
@@ -22,7 +23,7 @@ namespace dudis
       }
     }
 
-    PixelFormat mapToRaylibFormat(res::TextureFormat fmt)
+    unsigned int mapToRaylibFormat(res::TextureFormat fmt)
     {
       switch (fmt)
       {

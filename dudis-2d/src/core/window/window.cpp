@@ -1,5 +1,5 @@
 #include "dudis2d/core/window/window.h"
-#include "../../extern/raygui/raygui.h"
+// #include "../../extern/raygui/raygui.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/globals/app.h"
 #include "dudis2d/graphics/DDRender/DDRender.h"
@@ -14,7 +14,6 @@ using namespace dudis;
 
 Window::Window(SizeI nSize, const char *nTitle)
 {
-
 #ifdef DD_DEBUG
   puts("dudis in debug");
 #endif

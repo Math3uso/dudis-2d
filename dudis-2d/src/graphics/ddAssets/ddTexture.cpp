@@ -1,8 +1,10 @@
+#include <iostream>
 #include "dudis2d/graphics/ddAssets/ddTexture.h"
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
 #include "dudis2d/core/ddrlUtils/toRLTextureWrap.h"
 #include "dudis2d/core/ddrlUtils/toRLTextureFilter.h"
 #include "dudis2d/core/ddrlUtils/toRLTextureFormat.h"
+// #include "dudis2d/core/utils/types.h"
 #include "dudis2d/core/utils/types.h"
 
 using namespace dudis;
@@ -10,6 +12,7 @@ using namespace res;
 
 DDTexture::DDTexture(rl::RlTexture &rltex)
 {
+
   id = rltex.id;
   formate = ddrlUtils::mapRaylibFormat((PixelFormat)rltex.format);
   width = rltex.width;
