@@ -1,7 +1,7 @@
 #pragma once
 
-#include "dudis2d/core/input/key.h"
-#include "dudis2d/core/input/keyState.h"
+#include "dudis2d/platform/input/key.h"
+#include "dudis2d/platform/input/keyState.h"
 
 namespace dudis
 {

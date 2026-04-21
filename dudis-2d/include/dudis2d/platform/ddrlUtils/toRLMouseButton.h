@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dudis2d/core/input/mouseState.h"
+#include "dudis2d/platform/input/mouseState.h"
 
 namespace dudis
 {

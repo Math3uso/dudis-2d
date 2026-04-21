@@ -1,7 +1,7 @@
 #pragma once
 
-#include "dudis2d/core/input/mouse.h"
-#include "dudis2d/core/ddrlUtils/toRLMouseButton.h"
+#include "dudis2d/platform/input/mouse.h"
+#include "dudis2d/platform/ddrlUtils/toRLMouseButton.h"
 #include "raylib.h"
 
 using namespace dudis;

@@ -2,7 +2,7 @@
 // #include "dudis2d/core/debug/dd-debug.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/core/model/model.h"
-#include "dudis2d/core/window/window.h"
+#include "dudis2d/platform/window/window.h"
 #include "dudis2d/globals/app.h"
 #include "dudis2d/graphics/renderQueue/renderQueue.h"
 #include <algorithm>

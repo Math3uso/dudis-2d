@@ -1,81 +1,131 @@
 #include "scenes/scene1.h"
-#include "raygui.h"
-#include "scenes/scene-teste/sceneTeste.h"
+
 #include <cmath>
 
+#include "raygui.h"
+#include "dudis2d/core/events/eventListener.h"
+#include "scenes/scene-bloco.h"
+
 DD_PHYSICS
+#include <random>
 
 using namespace dudis;
 
-void Scene1::start() {
+// auto bloco = DDRectangle::create({300, 250}, {200, 150});
+// bloco->setColor(RED);
 
-  label = "scene1";
+// auto child = DDRectangle::create(Size{100, 100}, Vec2{110, 125});
+// child->setOrigin({50, 50});
+// bloco->setColor(BLUE);
 
-  // this->addPhysics();
-  // showPhysicsDebug = true;
+// // bloco->setTransformType(TransformType::DisableParentTransform);
+// // bloco->setOrigin({50, 125});
 
-  auto bloco = DDRectangle::create({100, 250}, {100, 50});
-  bloco->setColor(RED);
-  bloco->setTransformType(TransformType::DisableParentTransform);
-  bloco->setOrigin({50, 125});
+// auto body = PhysicsComponent::createBoxPhysics(bloco.get(), false, true);
+// bloco->addComponent<PhysicsComponent>(body);
+// bloco->setOrigin(Vec2{150, 125});
 
-  auto player = Sprite::create("../assets/player.png", {100, 100});
-  player->setCrop({0, 0, 32, 32});
+// auto player = Sprite::create("../assets/player.png", Size(100, 100));
+// player->setPos(Vec2(10, 10));
 
-  auto bloco2 = DDRectangle::create({100, 250}, {100, 50});
-  // auto teste = PhysicsComponent::createBoxPhysics(bloco.get());
+bool Scene1::start()
+{
+    label = "scene1";
 
-  auto root = DDRectangle::create({800, 600}, {0, 0});
-  root->setTransformType(TransformType::DisableParentTransform);
-  root->setColor(Color{31, 31, 31, 255});
+    // auto player = DDRectangle::create(Size(300, 300), Vec2(10, 10));
+    // player->setColor(dudis::Color::Red());
 
-  this->addChild(player);
+    // auto teste = DDRectangle::create(Size(100, 100), Vec2(300, 0));
 
-  // root->addChild(bloco, 2);
-  // root->addChild(bloco2, 1);
+    // // // player->setCrop(DDRect{0, 0, 32, 32});
 
-  // bloco->addComponent<PhysicsComponent>(teste);
+    // // std::cout << "pos x " << teste->getGlobalPos().x << "\n";
+    // // std::cout << "pos x " << teste->getGlobalPos().x << "\n";
 
-  // auto text = Text::create("Hello Dudis 2D!", 20);
-  // text->setPos({300, 300});
-  // auto _counter = std::make_shared<int>(0);
+    // // player->addChild(teste);
 
-  // this->addToRender(bloco);
-  // App::SceneDraw([_counter, text]() {
-  //   std::string buttonText = "click " + std::to_string(*_counter);
-  //   if (GuiButton(Rectangle{10, 10, 100, 100}, buttonText.c_str())) {
-  //     *_counter += 1;
-  //   }
+    // std::cout << "pos x " << teste->getGlobalPos().x << "\n";
 
-  //   text->setText("Clicked: " + std::to_string(*_counter) + " times");
-  // if (GuiButton(Rectangle{210, 10, 100, 50}, "Next Scene")) {
-  //   auto scene2 = SceneTeste::create();
-  //   puts("movendo para scene2");
-  //   App::getSceneManager().setScene(std::move(scene2));
-  // }
-  // });
+    // this->addChild(teste);
+    // this->addChild(player);
 
-  int *zOrder = new int(0);
+    // if (player->intersectsWith(teste))
+    // {
+    //     puts("colidiy");
+    // }
 
-  App::WindowDraw([this, root, bloco, zOrder]() {
-    // root->addChild(sla);
-    if (GuiButton(Rectangle{500, 300, 100, 20}, "Next Scene")) {
-      // auto sla = DDRectangle::create({50, 50}, {100, 500});
-      // root->addChild(sla);
-      *zOrder = *zOrder == 0 ? 10 : 0;
-      std::cout << *zOrder << "\n";
-      bloco->setZOrder(*zOrder);
-    }
-  });
+    // auto player = Sprite::create("../assets/player.png", Size(100, 100), res::TextureFilter::Smooth);
+    // player->setCrop(DDRect{0, 0, 32, 32});
 
-  // bloco->addChild(bloco2);
+    // this->addChild(player);
 
-  // this->addToRender(text);
-  // this->addToRender(bloco2);
-  // this->addToRender(bloco);
-  this->addChild(bloco, 0);
-  this->addChild(bloco2, 0);
-  // this->addChild(root);
+    auto bloc1 = DDRectangle::create(Size(500, 500), Vec2(10, 10));
+    auto bloc2 = DDRectangle::create(Size(100, 100), Vec2(10, 10));
+    // auto bloc3 = DDRectangle::create(Size(10, 10), Vec2(0, 0));
+
+    auto bloco3 = DDRectangle::create(Size(100, 100), Vec2(20, 20));
+
+    auto bloco4 = DDRectangle::create(Size(20, 20), Vec2(20, 20));
+    auto bloco5 = DDRectangle::create(Size(20, 20), Vec2(25, 25));
+
+    bloc1->setColor(dudis::Color(230, 41, 55, 255));
+    bloc2->setColor(dudis::Color::Blue());
+    bloco3->setColor(dudis::Color::Green());
+
+    // this->addChild(bloc2, 110);
+    // this->addChild(bloc1, 10);
+
+    // for (int i = 0; i < 5000; i++)
+    // {
+    //     this->addChild(bloc1, i);
+    // }
+
+    // // this->addChild(player2);
+    // // this->addChild(bloco, 14);
+
+    // // // this->addChild(child, 12);
+    bloc1->addChild(bloc2, 10);
+    bloc1->addChild(bloco3, 11);
+
+    bloco4->setColor(dudis::Color::Red());
+    bloco5->setColor(dudis::Color::Blue());
+
+    bloco3->addChild(bloco5, 15);
+    bloco3->addChild(bloco4, 17);
+
+    // for (int i = 0; i < 3000; i++)
+    // {
+    //     this->addChild(bloc1, i);
+    // }
+
+    // this->addChild(bloc1, 12);
+
+    // bloc2->setZOrder(5);
+    // bloc2->addChild(bloc3, 10);
+
+    std::cout << "zOrder do 1 " << bloc1->getZOrder() << "\n";
+    std::cout << "zOrder do 2 " << bloc2->getZOrder() << "\n";
+
+    std::cout << "zOrder do 4 " << bloco4->getZOrder() << "\n";
+    std::cout << "zOrder do 5 " << bloco5->getZOrder() << "\n";
+    // std::cout << "zOrder do 3 " << bloc3->getZOrder() << "\n";
+
+    // auto tex = res::Texture2D::create("../assets/player.png");
+    // tex.setFilter(res::TextureFilter::Smooth);
+
+    // tex.setWrap(res::TextureWrap::Repeat);
+
+    // auto bg = Sprite::create("", Size(200, 200), tex);
+    // bg->setCrop({0, 0, 32, 32});
+
+    // this->addChild(bg);
+    return true;
 }
 
-void Scene1::update() {}
+void Scene1::update()
+{
+    if (Keyboard::isPressed(KeyCode::Space))
+    {
+        App::getSceneManager().popScene();
+    }
+}

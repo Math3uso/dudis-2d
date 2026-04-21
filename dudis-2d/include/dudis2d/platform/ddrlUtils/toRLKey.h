@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dudis2d/core/input/key.h"
+#include "dudis2d/platform/input/key.h"
 
 namespace dudis
 {

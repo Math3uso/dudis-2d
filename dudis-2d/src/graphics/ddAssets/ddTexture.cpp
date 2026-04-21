@@ -1,9 +1,9 @@
 #include <iostream>
 #include "dudis2d/graphics/ddAssets/ddTexture.h"
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
-#include "dudis2d/core/ddrlUtils/toRLTextureWrap.h"
-#include "dudis2d/core/ddrlUtils/toRLTextureFilter.h"
-#include "dudis2d/core/ddrlUtils/toRLTextureFormat.h"
+#include "dudis2d/platform/ddrlUtils/toRLTextureWrap.h"
+#include "dudis2d/platform/ddrlUtils/toRLTextureFilter.h"
+#include "dudis2d/platform/ddrlUtils/toRLTextureFormat.h"
 // #include "dudis2d/core/utils/types.h"
 #include "dudis2d/core/utils/types.h"
 

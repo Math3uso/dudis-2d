@@ -1,6 +1,6 @@
-#include "dudis2d/core/input/input.h"
-#include "dudis2d/core/input/keyboard.h"
-#include "dudis2d/core/input/mouse.h"
+#include "dudis2d/platform/input/input.h"
+#include "dudis2d/platform/input/keyboard.h"
+#include "dudis2d/platform/input/mouse.h"
 
 using namespace dudis;
 

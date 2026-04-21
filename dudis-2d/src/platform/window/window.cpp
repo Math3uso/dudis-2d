@@ -1,4 +1,4 @@
-#include "dudis2d/core/window/window.h"
+#include "dudis2d/platform/window/window.h"
 // #include "../../extern/raygui/raygui.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/globals/app.h"
@@ -6,7 +6,7 @@
 #include "dudis2d/graphics/frameQueue/frameQueue.h"
 #include "dudis2d/graphics/renderQueue/renderQueue.h"
 #include <box2d/box2d.h>
-#include "dudis2d/core/input/input.h"
+#include "dudis2d/platform/input/input.h"
 #include "dudis2d/graphics/ddRenderGroup.h"
 #include "dudis2d/globals/time.h"
 

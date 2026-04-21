@@ -1,4 +1,4 @@
-#include "dudis2d/core/ddrlUtils/toRLTextureFilter.h"
+#include "dudis2d/platform/ddrlUtils/toRLTextureFilter.h"
 #include "raylib.h"
 
 namespace dudis

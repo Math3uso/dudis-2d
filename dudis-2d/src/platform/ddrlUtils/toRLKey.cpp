@@ -1,4 +1,4 @@
-#include "dudis2d/core/ddrlUtils/toRLKey.h"
+#include "dudis2d/platform/ddrlUtils/toRLKey.h"
 #include "raylib.h"
 
 namespace dudis

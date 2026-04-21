@@ -1,6 +1,6 @@
-#include "dudis2d/core/input/keyboard.h"
+#include "dudis2d/platform/input/keyboard.h"
 #include "raylib.h"
-#include "dudis2d/core/ddrlUtils/toRLKey.h"
+#include "dudis2d/platform/ddrlUtils/toRLKey.h"
 
 using namespace dudis;
 

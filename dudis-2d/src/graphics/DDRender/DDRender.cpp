@@ -2,7 +2,7 @@
 #include "dudis2d/graphics/DDRender/DDRender.h"
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
 #include "dudis2d/graphics/renderQueue/renderQueue.h"
-#include "dudis2d/core/ddrlUtils/toRLBlendType.h"
+#include "dudis2d/platform/ddrlUtils/toRLBlendType.h"
 #include "raylib.h"
 
 using RLCOLOR = Color;

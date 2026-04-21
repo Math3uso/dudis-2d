@@ -2,7 +2,7 @@
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/graphics/ddrlUtils/ddrlUtils.h"
 // #include "dudis2d/core/async/asyncWorker.h"
-#include "dudis2d/core/window/window.h"
+#include "dudis2d/platform/window/window.h"
 #include "rlgl.h"
 
 using namespace std;

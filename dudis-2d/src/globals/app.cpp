@@ -1,5 +1,5 @@
 #include "dudis2d/globals/app.h"
-#include "dudis2d/core/window/window.h"
+#include "dudis2d/platform/window/window.h"
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
 
 float App::deltaTime = 0.f;

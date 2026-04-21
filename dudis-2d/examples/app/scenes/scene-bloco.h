@@ -2,10 +2,10 @@
 
 #include "dudis2d/dudis2d.h"
 
-class Scene1 : public Scene
+class SceneBloco : public Scene
 {
-  public:
+public:
     bool start() override;
     void update() override;
-    CREATE_SCENE(Scene1);
+    int pos = 0;
 };

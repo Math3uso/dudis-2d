@@ -1,4 +1,4 @@
-#include "dudis2d/core/ddrlUtils/toRLTextureFormat.h"
+#include "dudis2d/platform/ddrlUtils/toRLTextureFormat.h"
 #include "raylib.h"
 
 namespace dudis

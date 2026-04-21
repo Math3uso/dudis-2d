@@ -8,7 +8,7 @@ add_subdirectory(../../ ../../build)
 
 # Encontra todos os arquivos .cpp automaticamente (excluindo arquivos do CMake)
 file(GLOB_RECURSE APP_SOURCES 
-    "*.cpp"
+    "scenes/*.cpp"
 )
 
 # Filtra arquivos do CMake
@@ -22,7 +22,7 @@ file(GLOB_RECURSE APP_HEADERS
 )
 
 # Cria o executável do jogo
-add_executable(app ${APP_SOURCES})
+add_executable(app main.cpp ${APP_SOURCES})
 
 # Linka com a biblioteca dudis2d e raylib
 target_link_libraries(app dudis raylib)

@@ -5,7 +5,7 @@
 #include "dudis2d/scenes/scene/scene.h"
 #include "dudis2d/graphics/color.h"
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
-#include "dudis2d/core/window/resolution.h"
+#include "dudis2d/platform/window/resolution.h"
 #include "dudis2d/graphics/color.h"
 #include <queue>
 

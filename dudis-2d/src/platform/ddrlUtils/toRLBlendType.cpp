@@ -1,4 +1,4 @@
-#include "dudis2d/core/ddrlUtils/toRLBlendType.h"
+#include "dudis2d/platform/ddrlUtils/toRLBlendType.h"
 #include "raylib.h"
 
 namespace dudis

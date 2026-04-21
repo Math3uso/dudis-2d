@@ -1,4 +1,4 @@
-#include "dudis2d/core/ddrlUtils/toRLMouseButton.h"
+#include "dudis2d/platform/ddrlUtils/toRLMouseButton.h"
 #include "raylib.h"
 
 namespace dudis
