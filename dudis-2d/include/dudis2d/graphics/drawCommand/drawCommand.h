@@ -26,7 +26,7 @@ namespace dudis
     rl::RlTexture rlTex;
     uint32_t texId = 0;
     DDRect src;
-    Color color;
+    Color color = {255, 255, 255, 255};
     DDPrimitiveType type;
     DDBatchType batch{0};
     int z;
