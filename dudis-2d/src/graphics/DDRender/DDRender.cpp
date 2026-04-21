@@ -86,11 +86,12 @@ namespace dudis
           auto texture = cmd.rlTex;
           auto w = cmd.src.w == 0 ? texture.width : cmd.src.w;
           auto h = cmd.src.h == 0 ? texture.height : cmd.src.h;
+          auto ddColor = cmd.color;
 
           DrawTexturePro(
               texture, Rectangle{0, 0, w, h},
               Rectangle{cmd.pos.x, cmd.pos.y, cmd.size.w, cmd.size.h},
-              Vector2{cmd.origin.x, cmd.origin.y}, cmd.rotation, RLCOLOR{255, 255, 255, 255});
+              Vector2{cmd.origin.x, cmd.origin.y}, cmd.rotation, RLCOLOR{ddColor.r, ddColor.g, ddColor.b, ddColor.a});
         }
       }
       }
