@@ -120,6 +120,9 @@ namespace dudis
     char *labelT;
     Entity() = default;
     Entity(const std::string &tag) : tag(tag) {}
+    static std::shared_ptr<Entity> create() { return std::make_shared<Entity>(); };
+    static std::shared_ptr<Entity> create(const std::string &tag);
+
     float getAngle() const { return angle; }
     Vec2 getPos() const { return pos; }
     SizeF getSize() const { return size; }
@@ -132,24 +135,16 @@ namespace dudis
 
     Entity *getRootEntity() { return _root; };
     const Entity *getRootEntity() const { return _root; };
-
     Entity *getParent() { return _parent; }
     const Entity *getParent() const { return _parent; }
-
-    static std::shared_ptr<Entity> create()
-    {
-      return std::make_shared<Entity>();
-    };
-    static std::shared_ptr<Entity> create(const std::string &tag);
-
     const Vec2 getGlobalPos();
     float getGlobalRotation();
     const Vec2 getGlocalScale();
     Size getGlobalSize();
     std::shared_ptr<Entity> clone() const;
+    bool wouldCreateCycle(Entity *target);
 
     void setTransformType(TransformType type) { _transformType = type; }
-
     virtual void setPos(const dudis::Vec2 &nPos);
     void setPos(float x, float y);
     void setZOrder(int zIndex);
