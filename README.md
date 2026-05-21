@@ -23,48 +23,6 @@ Você pode baixar o CMake no site oficial: [cmake.org](https://cmake.org/downloa
 ### Nodejs
 todos os spripts/CLI do `dudis2d` é escrito em JavaScript (até o momento) e por isso é necessario ter instalado em sua maquina. No entando sua instalação e rapida e facil consulete a doc oficial: [nodejs.org](https://nodejs.org/)
 
-## Instalação
-clone o repositorio
-```bash
-git clone https://github.com/Math3uso/dudis-2d.git 
-cd dudis-2d
-```
-entre no diretorio até a pasta de **scripts** (geralmentem em dudis-2d/scrips), lá você verá os scrips de setup execute com base no seu sistema operacional.
-
-### Linux
-```bash
-bash ./setup.sh
-```
-
-### Windows
-```bash
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-# Scope Process → só vale pra sessão atual do PowerShell.
-# Bypass → ignora restrições de script.
-
-.\setup.ps1
-```
-
-## Criando projeto e compilando
-Com o setup já configurado execute (o projeto será criado no diretorio atual):
-```bash
-dudis nome_do_projeto
-
-#vá no diretorio do projeto
-cd ./nome_do_projeto
-
-#crie pasta para o build
-mkdir build
-cd ./build
-
-cmake ..
-make
-./app
-
-```
-
-se tudo ocorrer bem você verá uma janela =)
-
 ## 🏗️ Como Usar
 ....
 
@@ -73,17 +31,6 @@ se tudo ocorrer bem você verá uma janela =)
 - **Raylib** - Sistema de renderização
 - **Box2D** - Motor de física 2D
 - **RayGUI** - Interface gráfica
-
-## 📦 Build
-
-```bash
-
-cmake -S . -B build
-cmake --build build
-
-```
-
-A biblioteca será gerada como `libdudis.a` na pasta `build/`.
 
 ## 📋 Notas
 
