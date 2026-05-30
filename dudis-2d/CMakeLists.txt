@@ -12,6 +12,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
 set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
 # set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
+set(SDL3_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/SDL)
+set(GLAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/glad)
 
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
@@ -30,8 +32,11 @@ else()
     set(PLATFORM "Desktop" CACHE STRING "" FORCE)
 endif()
 
+
+
 add_subdirectory(${RAYLIB_DIR})
 add_subdirectory(${BOX2D_DIR})
+add_subdirectory(${SDL3_DIR})
 
 option(DD_SHARED "Construir como biblioteca dinâmica (.dll/.so)" OFF)
 # temp
@@ -55,6 +60,10 @@ else()
 
     FetchContent_MakeAvailable(glm)
 endif()
+
+add_library(glad INTERFACE)
+target_include_directories(glad INTERFACE ${RAYLIB_DIR}/src)
+
 
 set(DD_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -105,8 +114,10 @@ target_link_libraries(dudis
         dudis-graphics
         dudis-scenes
         dudis-platform
+        glad
     PRIVATE
         raylib
         box2d
         glm
+        SDL3::SDL3
 )
