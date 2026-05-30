@@ -5,7 +5,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
-#include "dudis2d/graphics/ddAssets/texture2D.h"
+// #include "dudis2d/graphics/ddAssets/texture2D.h"
 #include "dudis2d/core/utils/scope.h"
 
 namespace dudis
@@ -21,7 +21,7 @@ private:
   bool _start = false;
   bool _paused = false;
   void _initPropsInScene();
-  dudis::res::Texture2DManager _resManager;
+  // dudis::res::Texture2DManager _resManager;
 
 protected:
   dudis::SizeI size;
@@ -40,8 +40,8 @@ public:
   const char *label;
 
   dudis::SizeI getSize() { return size; };
-  const dudis::res::Texture2DManager &getTexture2DManager() const { return _resManager; }
-  dudis::res::Texture2DManager &getTexture2DManager() { return _resManager; }
+  // const dudis::res::Texture2DManager &getTexture2DManager() const { return _resManager; }
+  // dudis::res::Texture2DManager &getTexture2DManager() { return _resManager; }
   const dudis::Color &getClearColor() const { return clearColor; }
 
   void setSize(const dudis::SizeI &nSize);

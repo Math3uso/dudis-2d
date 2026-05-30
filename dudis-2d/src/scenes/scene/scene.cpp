@@ -90,7 +90,7 @@ Scene::~Scene()
   this->release();
 
   // liberando texturas
-  _resManager.unloadAll();
+  //_resManager.unloadAll();
 
   Log::Success("[SCENE] Scene destruida com sucesso");
 }
