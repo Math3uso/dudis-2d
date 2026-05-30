@@ -1,6 +1,8 @@
 #pragma once
 
-#include "dudis2d/core/utils/types.h"
+// #include "dudis2d/core/utils/types.h"
+#include "dudis2d/core/math/vec2.h"
+#include "dudis2d/core/utils/sizeF.h"
 
 namespace dudis
 {
@@ -23,8 +25,8 @@ namespace dudis
     class Resolution
     {
     public:
-        Size size;
+        SizeF size;
         ResolutionPolicy _policy;
-        Resolution(Size size, ResolutionPolicy type) : size(size), _policy(type) {}
+        Resolution(SizeF size, ResolutionPolicy type) : size(size), _policy(type) {}
     };
 }

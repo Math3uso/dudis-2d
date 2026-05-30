@@ -1,5 +1,4 @@
 #include "dudis2d/platform/window/window.h"
-// #include "../../extern/raygui/raygui.h"
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/globals/app.h"
 #include "dudis2d/graphics/DDRender/DDRender.h"
@@ -9,6 +8,12 @@
 #include "dudis2d/platform/input/input.h"
 #include "dudis2d/graphics/ddRenderGroup.h"
 #include "dudis2d/globals/time.h"
+#include "dudis2d/platform/platformWindow/platformWindow.h"
+#include "dudis2d/graphics/ddgl/ddglTypes.h"
+#include "dudis2d/platform/input/keyboard.h"
+
+// test
+#include "dudis2d/graphics/res/imageLoader.h"
 
 using namespace dudis;
 
@@ -21,8 +26,6 @@ Window::Window(SizeI nSize, const char *nTitle)
   // #ifdef DD_RELEASE
   //   puts("dudis in release");
   // #endif
-
-  // SetTraceLogLevel(LOG_ERROR);
 
   size = nSize;
   title = nTitle;
@@ -44,18 +47,35 @@ bool Window::init()
   // #define MY_ENGINE_API
   // #endif
 
-  SetTraceLogLevel(LOG_ERROR);
-  InitWindow(size.w, size.h, title);
-
-  if (!IsWindowReady())
+  if (_window->init())
   {
-    return false;
+    App::setWindow(*this);
+    std::cout << _window->_getPlatformWindow() << "\n";
+
+    if (std::string(_window->_getPlatformWindow()) == "SDL")
+    {
+      Input::setBackend(InputBackendType::SDL);
+    }
+    else
+    {
+      Input::setBackend(InputBackendType::RL);
+    }
+
+    return true;
   }
 
-  SetTargetFPS(60);
-  App::setWindow(*this);
+  // SetTraceLogLevel(LOG_ERROR);
+  // InitWindow(size.w, size.h, title);
 
-  return true;
+  // if (!IsWindowReady())
+  // {
+  //   return false;
+  // }
+
+  // SetTargetFPS(60);
+  // App::setWindow(*this);
+
+  return false;
 }
 
 // v2
@@ -65,43 +85,73 @@ void Window::Running()
   auto renderQueue = RenderQueue::create();
   auto DDRender = DDRender::create();
 
-  while (!WindowShouldClose())
+  auto *render = App::getRenderContext();
+
+  ddgl::VertexQuadDataTextured quadData;
+  quadData.vertices.push_back({100, 100, 0, 0, dudis::Color::Red().packed()});
+  quadData.vertices.push_back({200, 100, 1, 0, dudis::Color::Green().packed()});
+  quadData.vertices.push_back({200, 200, 1, 1, dudis::Color::Blue().packed()});
+  quadData.vertices.push_back({100, 200, 0, 1, dudis::Color::White().packed()});
+  quadData.indices.push_back(0);
+  quadData.indices.push_back(1);
+  quadData.indices.push_back(2);
+  quadData.indices.push_back(2);
+  quadData.indices.push_back(3);
+  quadData.indices.push_back(0);
+
+  quadData.textureId = ddgl::DD_WHITE_TEXTURE_ID;
+
+  // auto img = ImageLoader::loadFromFile("../assets/player.png");
+
+  while (!_window->shouldClose())
   {
+
+    _window->eventListener();
 
     Input::update();
 
-    // fix
-    // App::processMainThreadQueue();
+    render->beginFrame();
 
-    Time::deltaTime = GetFrameTime() * Time::timeScele;
+    render->submit(quadData);
 
-    int currentWidth = GetScreenWidth();
-    int currentHeight = GetScreenHeight();
+    render->endFrame();
 
-    if (renderManager)
-    {
+    _window->swapBuffers();
 
-      BeginDrawing();
+    // Input::update();
 
-      ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
+    // // fix
+    // // App::processMainThreadQueue();
 
-      renderManager->applyChangeScene();
+    // Time::deltaTime = GetFrameTime() * Time::timeScele;
 
-      if (renderManager->getTotalScenes() > 0)
-      {
-        auto scene = renderManager->getCurrentScene();
+    // int currentWidth = GetScreenWidth();
+    // int currentHeight = GetScreenHeight();
 
-        renderQueue->clear();
-        scene->setDeltaTimeInRoot(Time::deltaTime);
-        scene->collectRenderCommands(renderQueue.get());
-        // DDRenderGroup::initPipeline(renderQueue.get());
-        DDRender->draw(renderQueue->getCommands(), renderQueue.get());
-      }
+    // if (renderManager)
+    // {
 
-      EndDrawing();
+    //   BeginDrawing();
 
-      continue;
-    }
+    //   ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
+
+    //   renderManager->applyChangeScene();
+
+    //   if (renderManager->getTotalScenes() > 0)
+    //   {
+    //     auto scene = renderManager->getCurrentScene();
+
+    //     renderQueue->clear();
+    //     scene->setDeltaTimeInRoot(Time::deltaTime);
+    //     scene->collectRenderCommands(renderQueue.get());
+    //     // DDRenderGroup::initPipeline(renderQueue.get());
+    //     DDRender->draw(renderQueue->getCommands(), renderQueue.get());
+    //   }
+
+    //   EndDrawing();
+
+    //   continue;
+    // }
   }
 
   puts("preparando pra fechar");
@@ -115,7 +165,9 @@ void Window::Running()
 
   puts("fechando janela");
 
-  CloseWindow();
+  // CloseWindow();
+  // _window->shutdown();
+  this->Quit();
 }
 
 void Window::release()
@@ -131,7 +183,9 @@ void Window::release()
 void Window::Quit()
 {
   this->_close();
-  CloseWindow();
+  // CloseWindow();
+  _window->shutdown();
+  App::release();
 }
 
 void Window::SetRenderManager(SceneManager &renderer)
@@ -140,21 +194,22 @@ void Window::SetRenderManager(SceneManager &renderer)
   return;
 }
 
-const ResolutionProps Window::_getResoltionProps()
-{
-  float scale = fminf((float)size.w / _resolution.size.w,
-                      (float)size.h / _resolution.size.h);
-  int offsetX = (size.w - (_resolution.size.w * scale)) / 2;
-  int offsetY = (size.h - (_resolution.size.h * scale)) / 2;
+// const ResolutionProps Window::_getResoltionProps()
+// {
+//   float scale = fminf((float)size.w / _resolution.size.w,
+//                       (float)size.h / _resolution.size.h);
+//   int offsetX = (size.w - (_resolution.size.w * scale)) / 2;
+//   int offsetY = (size.h - (_resolution.size.h * scale)) / 2;
 
-  return ResolutionProps(Vec2{(float)offsetX, (float)offsetY}, scale);
-}
+//   return ResolutionProps(Vec2{(float)offsetX, (float)offsetY}, scale);
+// }
 
 void Window::setSize(const SizeI &nSize)
 {
   size = nSize;
 
-  SetWindowSize(size.w, size.h);
+  _window->setSize(size);
+  // SetWindowSize(size.w, size.h);
   if (_center)
   {
     this->_centerWindow();
@@ -163,16 +218,21 @@ void Window::setSize(const SizeI &nSize)
 
 void Window::_centerWindow()
 {
-  int screenWidth = GetMonitorWidth(GetCurrentMonitor());
-  int screenHeight = GetMonitorHeight(GetCurrentMonitor());
+  auto display = _window->getCurrentDisplay();
 
-  int windowWidth = GetScreenWidth();
-  int windowHeight = GetScreenHeight();
+  auto screen = _window->getDisplaySize(display);
 
-  int posX = (screenWidth - windowWidth) / 2;
-  int posY = (screenHeight - windowHeight) / 2;
+  auto windowSize = _window->getSize();
 
-  SetWindowPosition(posX, posY);
+  int posX = (screen.w - windowSize.w) / 2;
+  int posY = (screen.h - windowSize.h) / 2;
+
+  _window->setWindowPos(Vec2((float)posX, (float)posY));
+}
+
+void Window::setPlatformWindow(PlatformWindow *window)
+{
+  _window = window;
 }
 
 void Window::_close()
@@ -187,32 +247,32 @@ void Window::_close()
 
 void Window::runByFrames(int seconds)
 {
-  this->SetFPS(60);
+  // this->SetFPS(60);
 
-  auto renderQueue = RenderQueue::create();
-  auto DDRender = DDRender::create();
+  // auto renderQueue = RenderQueue::create();
+  // auto DDRender = DDRender::create();
 
-  for (int i = 0; i < seconds && !WindowShouldClose(); i++)
-  {
-    Input::update();
+  // for (int i = 0; i < seconds && !WindowShouldClose(); i++)
+  // {
+  //   Input::update();
 
-    BeginDrawing();
+  //   BeginDrawing();
 
-    ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
+  //   ClearBackground(rl::rlColor{clearColor.r, clearColor.g, clearColor.b, clearColor.a});
 
-    renderManager->applyChangeScene();
+  //   renderManager->applyChangeScene();
 
-    if (renderManager->getTotalScenes() > 0)
-    {
-      auto scene = renderManager->getCurrentScene();
+  //   if (renderManager->getTotalScenes() > 0)
+  //   {
+  //     auto scene = renderManager->getCurrentScene();
 
-      renderQueue->clear();
-      scene->collectRenderCommands(renderQueue.get());
-      DDRender->draw(renderQueue->getCommands(), renderQueue.get());
-    }
+  //     renderQueue->clear();
+  //     scene->collectRenderCommands(renderQueue.get());
+  //     DDRender->draw(renderQueue->getCommands(), renderQueue.get());
+  //   }
 
-    EndDrawing();
-  }
+  //   EndDrawing();
+  // }
   // this->release();
   // this->Quit();
 }

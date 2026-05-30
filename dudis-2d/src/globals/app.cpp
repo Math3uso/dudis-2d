@@ -1,6 +1,10 @@
 #include "dudis2d/globals/app.h"
 #include "dudis2d/platform/window/window.h"
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
+#include "dudis2d/core/log/log.h"
+
+using namespace dudis;
+using namespace ddgl;
 
 float App::deltaTime = 0.f;
 Window *App::window = nullptr;
@@ -9,6 +13,12 @@ std::function<void()> App::windowCallback = []() {};
 double App::fixedDt = 1.0f / 60.f;
 std::vector<std::function<void()>> App::_mainThreadQueue;
 std::mutex App::_queueMutex;
+std::shared_ptr<DDRenderDevice> App::renderContext = nullptr;
+
+PlatformWindow *App::_getPlatformWindow()
+{
+  return window->_getPlatformWindow();
+}
 
 void App::setWindow(Window &nWindow)
 {
@@ -49,8 +59,18 @@ void App::processMainThreadQueue()
   _mainThreadQueue.clear();
 }
 
+void App::setRenderContext(std::shared_ptr<ddgl::DDRenderDevice> render)
+{
+  renderContext = render;
+}
+
 void App::release()
 {
+
+  Log::Alert("[ALERT] release APP");
+
+  renderContext->shutdown();
+
   window = nullptr;
   sceneManager = nullptr;
 }

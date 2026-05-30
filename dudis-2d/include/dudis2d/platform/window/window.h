@@ -5,59 +5,83 @@
 #include "dudis2d/scenes/scene/scene.h"
 #include "dudis2d/graphics/color.h"
 #include "dudis2d/scenes/sceneManager/sceneManager.h"
-#include "dudis2d/platform/window/resolution.h"
+// #include "dudis2d/platform/window/resolution.h"
 #include "dudis2d/graphics/color.h"
+#include "dudis2d/platform/platformWindow/platformWindow.h"
 #include <queue>
 
-class Window
+namespace dudis
 {
-protected:
-  dudis::SizeI size;
-  dudis::Vec2 pos;
-  const char *title;
-  dudis::Color clearColor = {32, 32, 32, 255};
-  SceneManager *renderManager = nullptr;
-  dudis::Resolution _resolution = dudis::Resolution({0, 0}, dudis::ResolutionPolicy::None);
-  std::queue<std::function<void()>> _closeCallback;
-  void _close();
 
-public:
-  Window(dudis::SizeI nSize, const char *nTitle);
-  Window() = default;
-
-  static Window *create(dudis::SizeI nSize, const char *nTitle)
+  namespace tests
   {
-    _instance = std::make_unique<Window>(nSize, nTitle);
-    return _instance.get();
+    class PlatformTestContext;
   }
+  class PlatformWindow;
 
-  void release();
-  void Quit();
-  void Running();
+  class Window
+  {
+  protected:
+    dudis::SizeI size;
+    dudis::Vec2 pos;
+    const char *title;
+    dudis::Color clearColor = {32, 32, 32, 255};
+    SceneManager *renderManager = nullptr;
+    // dudis::Resolution _resolution = dudis::Resolution({0, 0}, dudis::ResolutionPolicy::None);
+    std::queue<std::function<void()>> _closeCallback;
+    void _close();
+    PlatformWindow *_window;
+    // PlatformWindow *_getPlatformWindow() { return _window; };
 
-  void runByFrames(int frames);
+  public:
+    Window(dudis::SizeI nSize, const char *nTitle);
+    Window() = default;
+    PlatformWindow *_getPlatformWindow() { return _window; };
 
-  bool init();
-  void keepWindowCentered(bool isCenter) { this->_center = isCenter; }
+    static Window *create(dudis::SizeI nSize, const char *nTitle)
+    {
+      _instance = std::make_unique<Window>(nSize, nTitle);
+      return _instance.get();
+    }
 
-  void SetFPS(const int nFPS) { SetTargetFPS(nFPS); }
-  void SetClearColor(dudis::Color nColor) { clearColor = nColor; }
-  void SetRenderManager(SceneManager &renderer);
-  void setSize(const dudis::SizeI &nSize);
-  void setResolution(dudis::Resolution &resolution) { _resolution = resolution; };
-  void onClose(const std::function<void()> callback) { _closeCallback.push(std::move(callback)); }
+    void release();
+    void Quit();
+    void Running();
 
-  const dudis::SizeI &getSize() const { return size; }
-  const dudis::Color &getColor() const { return clearColor; }
-  const dudis::Vec2 &getPos() const { return pos; }
-  const dudis::Resolution &getResolution() const { return _resolution; }
+    void runByFrames(int frames);
 
-  void onQuit();
+    bool init();
+    void keepWindowCentered(bool isCenter) { this->_center = isCenter; }
+    bool isReady() const { return _window && _window->isReady(); }
 
-private:
-  bool _center = false;
-  static std::unique_ptr<Window> _instance;
+    void SetFPS(const int nFPS) { _window->setFPSLimit(nFPS); }
+    void SetClearColor(dudis::Color nColor) { clearColor = nColor; }
+    void SetRenderManager(SceneManager &renderer);
+    void setSize(const dudis::SizeI &nSize);
+    // void setResolution(dudis::Resolution &resolution) { _resolution = resolution; };
+    void setPlatformWindow(PlatformWindow *window);
+    void onClose(const std::function<void()> callback) { _closeCallback.push(std::move(callback)); }
 
-  const dudis::ResolutionProps _getResoltionProps();
-  void _centerWindow();
-};
+    const dudis::SizeI &
+    getSize() const
+    {
+      return size;
+    }
+    const dudis::Color &getColor() const { return clearColor; }
+    const dudis::Vec2 &getPos() const { return pos; }
+    // const dudis::Resolution &getResolution() const { return _resolution; }
+
+    void onQuit();
+
+  private:
+    bool _center = false;
+    static std::unique_ptr<Window> _instance;
+
+    // const dudis::ResolutionProps _getResoltionProps();
+    void _centerWindow();
+
+    // friend App;
+    friend tests::PlatformTestContext;
+  };
+
+}
