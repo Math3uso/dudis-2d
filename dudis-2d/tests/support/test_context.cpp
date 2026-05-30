@@ -2,16 +2,24 @@
 
 #include "support/test_paths.h"
 
+#include <cstdlib>
+
 namespace dudis::tests
 {
     bool TestContext::init()
     {
+        if (std::getenv("DISPLAY") == nullptr && std::getenv("WAYLAND_DISPLAY") == nullptr)
+        {
+            return false;
+        }
+
         manager = std::make_unique<SceneManager>();
-        window = std::make_unique<Window>(SizeI(800, 600), "dudis-2d tests");
+        windowContext.initWith();
+        window = &windowContext.createWindow("dudis-2d tests", SizeI(800, 600));
 
         if (!window->init())
         {
-            window.reset();
+            window = nullptr;
             manager.reset();
             return false;
         }
@@ -30,7 +38,7 @@ namespace dudis::tests
 
         window->release();
         window->Quit();
-        window.reset();
+        window = nullptr;
         manager.reset();
     }
 
@@ -56,12 +64,12 @@ namespace dudis::tests
 
     std::shared_ptr<DDRectangle> makeQuadDefault()
     {
-        return DDRectangle::create(Size(100, 100), Vec2(300, 200));
+        return DDRectangle::create(SizeF(100.f, 100.f), Vec2(300, 200));
     }
 
-    std::shared_ptr<Sprite> makePlayerSprite(const Size &size)
-    {
-        const auto path = assetPath("player.png");
-        return Sprite::create(path.string().c_str(), size);
-    }
+    // std::shared_ptr<Sprite> makePlayerSprite(const SizeF &size)
+    // {
+    //     const auto path = assetPath("player.png");
+    //     return Sprite::create(path.string().c_str(), size);
+    // }
 } // namespace dudis::tests

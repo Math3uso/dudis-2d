@@ -5,12 +5,11 @@ Este diretório concentra os testes automatizados e os benchmarks manuais do pro
 Hoje a estrutura está separada por objetivo:
 
 - `unit/`: testes rápidos, determinísticos, sem janela.
+- `platform/`: testes de backend, janela, input e render de baixo nível.
 - `smoke/`: testes de integração curtos com janela/contexto gráfico real.
-- `visual/`: testes de render e validação visual.
 - `benchmarks/`: binários manuais para medir performance.
 - `support/`: helpers compartilhados entre testes.
 - `assets/`: assets usados pelos testes.
-- `baselines/`: referências para comparações visuais futuras.
 
 ## Índice
 
@@ -47,8 +46,8 @@ Usa o preset `tests-debug-graphics`.
 Compila:
 
 - `unit`
+- `platform`
 - `smoke`
-- `visual`
 - `benchmarks`
 
 Isso existe para o ciclo de desenvolvimento rápido não depender de janela nem de ambiente gráfico.
@@ -76,9 +75,10 @@ Diretório: `tests/build/unit-release`
 Exemplos reais da árvore:
 
 - [tests/unit/entity/entity.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/unit/entity/entity.test.cpp)
+- [tests/platform/ddgl/render_gl.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/platform/ddgl/render_gl.test.cpp)
+- [tests/platform/window/window_context.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/platform/window/window_context.test.cpp)
 - [tests/smoke/window/init_window.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/smoke/window/init_window.test.cpp)
 - [tests/smoke/scene/scene_smoke.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/smoke/scene/scene_smoke.test.cpp)
-- [tests/visual/scene/scene_visual.test.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/visual/scene/scene_visual.test.cpp)
 - [tests/benchmarks/scene_benchmark.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/benchmarks/scene_benchmark.cpp)
 
 ## Como Configurar com Preset
@@ -107,6 +107,8 @@ cmake --preset tests-debug-graphics
 cmake --preset tests-release
 ```
 
+Configurar não compila. Depois de qualquer `cmake --preset ...`, rode também `cmake --build ...` antes de usar `ctest`.
+
 ## Como Compilar com Preset
 
 ### Compilar tudo do fluxo rápido
@@ -129,8 +131,8 @@ cmake --build --preset tests-debug-graphics
 Isso compila:
 
 - `unit`
+- `platform`
 - `smoke`
-- `visual`
 - `benchmarks`
 
 ### Compilar todos os testes de uma categoria
@@ -138,8 +140,8 @@ Isso compila:
 Na prática, hoje a compilação por categoria funciona assim:
 
 - `unit`: use o preset rápido e compile o build todo, ou um target específico.
+- `platform`: use o preset gráfico.
 - `smoke`: use o preset gráfico.
-- `visual`: use o preset gráfico.
 - `benchmarks`: pode compilar só o target de benchmark.
 
 Exemplos:
@@ -168,19 +170,14 @@ cmake --preset tests-debug
 cmake --build build/unit-debug --target entity_unit
 ```
 
-Para `smoke`, use o build gráfico:
+Para `platform` e `smoke`, use o build gráfico:
 
 ```bash
 cmake --preset tests-debug-graphics
+cmake --build build/graphics-debug --target ddgl_render_gl_platform
+cmake --build build/graphics-debug --target window_context_platform
 cmake --build build/graphics-debug --target window_smoke
 cmake --build build/graphics-debug --target scene_smoke
-```
-
-Para `visual`:
-
-```bash
-cmake --preset tests-debug-graphics
-cmake --build build/graphics-debug --target scene_visual
 ```
 
 ## Como Configurar Manualmente
@@ -193,7 +190,7 @@ cd dudis-2d/tests
 
 ### Configurar build sem suites gráficas
 
-Esse build gera a pasta `build/unit-debug` e deixa `smoke` e `visual` de fora.
+Esse build gera a pasta `build/unit-debug` e deixa `platform` e `smoke` de fora.
 
 ```bash
 cmake -S . -B build/unit-debug -G Ninja \
@@ -203,7 +200,7 @@ cmake -S . -B build/unit-debug -G Ninja \
 
 ### Configurar build com suites gráficas
 
-Esse build gera a pasta `build/graphics-debug` e inclui `smoke` e `visual`.
+Esse build gera a pasta `build/graphics-debug` e inclui `platform` e `smoke`.
 
 ```bash
 cmake -S . -B build/graphics-debug -G Ninja \
@@ -263,8 +260,8 @@ cmake --build build/graphics-debug
 Isso compila:
 
 - `unit`
+- `platform`
 - `smoke`
-- `visual`
 - `benchmarks`
 
 ### Compilar todos os testes de uma categoria
@@ -272,8 +269,8 @@ Isso compila:
 Na prática, hoje a compilação por categoria funciona assim:
 
 - `unit`: configure com `DD_BUILD_GRAPHICAL_TESTS=OFF` e compile o build inteiro, ou um target específico.
+- `platform`: configure com `DD_BUILD_GRAPHICAL_TESTS=ON`.
 - `smoke`: configure com `DD_BUILD_GRAPHICAL_TESTS=ON`.
-- `visual`: configure com `DD_BUILD_GRAPHICAL_TESTS=ON`.
 - `benchmarks`: pode compilar só o target de benchmark.
 
 Exemplos:
@@ -304,20 +301,18 @@ Para `unit`:
 cmake --build build/unit-debug --target entity_unit
 ```
 
-Para `smoke`:
+Para `platform` e `smoke`:
 
 ```bash
+cmake --build build/graphics-debug --target ddgl_render_gl_platform
+cmake --build build/graphics-debug --target window_context_platform
 cmake --build build/graphics-debug --target window_smoke
 cmake --build build/graphics-debug --target scene_smoke
 ```
 
-Para `visual`:
-
-```bash
-cmake --build build/graphics-debug --target scene_visual
-```
-
 ## Como Listar os Testes
+
+O `ctest -N` lista os testes descobertos no build. Se o build acabou de ser configurado e ainda não foi compilado, o Catch2 pode listar alvos `*_NOT_BUILT`; compile primeiro com `cmake --build ...`.
 
 ### Listar os testes do build rápido
 
@@ -359,10 +354,10 @@ ctest --test-dir build/unit-debug -L unit --output-on-failure
 ctest --test-dir build/graphics-debug -L smoke --output-on-failure
 ```
 
-#### Visual
+#### Platform
 
 ```bash
-ctest --test-dir build/graphics-debug -L visual --output-on-failure
+ctest --test-dir build/graphics-debug -L platform --output-on-failure
 ```
 
 ### Rodar apenas 1 teste pelo nome
@@ -377,10 +372,6 @@ ctest --test-dir build/unit-debug -R "entity" --output-on-failure
 
 ```bash
 ctest --test-dir build/graphics-debug -R "window initializes" --output-on-failure
-```
-
-```bash
-ctest --test-dir build/graphics-debug -R "scene render keeps expected colors" --output-on-failure
 ```
 
 ### Rodar 1 executável de teste diretamente
@@ -403,6 +394,12 @@ Exemplo com `smoke`:
 
 ```bash
 ./build/graphics-debug/bin/window_smoke
+```
+
+Exemplo com `platform`:
+
+```bash
+./build/graphics-debug/bin/ddgl_render_gl_platform
 ```
 
 ## Como Rodar Benchmarks
@@ -432,13 +429,15 @@ Se você quiser medir cenários gráficos reais, normalmente faz mais sentido us
 
 ## Como Criar Novos Testes
 
+Os testes são registrados em um único lugar: [tests/CMakeLists.txt](/home/r6/pasta/dudis-2d/dudis-2d/tests/CMakeLists.txt).
+As subpastas guardam só os arquivos `.test.cpp`.
+
 ### Criar um novo teste `unit`
 
 Estrutura sugerida:
 
 ```text
 tests/unit/<nome>/
-  CMakeLists.txt
   <nome>.test.cpp
 ```
 
@@ -446,16 +445,35 @@ Exemplo:
 
 ```text
 tests/unit/collision/
-  CMakeLists.txt
   collision.test.cpp
 ```
 
-Conteúdo do `CMakeLists.txt`:
+Registro em `tests/CMakeLists.txt`:
 
 ```cmake
-dd_add_suite_test(collision_unit unit
+dd_add_test(collision_unit
+  SUITE unit
   SOURCES
-    collision.test.cpp
+    unit/collision/collision.test.cpp
+)
+```
+
+### Criar um novo teste `platform`
+
+Estrutura:
+
+```text
+tests/platform/<grupo>/
+  <nome>.test.cpp
+```
+
+Registro em `tests/CMakeLists.txt`:
+
+```cmake
+dd_add_test(render_gl_platform
+  SUITE platform
+  SOURCES
+    platform/ddgl/render_gl.test.cpp
 )
 ```
 
@@ -465,35 +483,16 @@ Estrutura:
 
 ```text
 tests/smoke/<nome>/
-  CMakeLists.txt
   <nome>.test.cpp
 ```
 
-Exemplo:
+Registro em `tests/CMakeLists.txt`:
 
 ```cmake
-dd_add_suite_test(audio_smoke smoke
+dd_add_test(audio_smoke
+  SUITE smoke
   SOURCES
-    audio_smoke.test.cpp
-)
-```
-
-### Criar um novo teste `visual`
-
-Estrutura:
-
-```text
-tests/visual/<nome>/
-  CMakeLists.txt
-  <nome>.test.cpp
-```
-
-Exemplo:
-
-```cmake
-dd_add_suite_test(sprite_visual visual
-  SOURCES
-    sprite_visual.test.cpp
+    smoke/audio/audio_smoke.test.cpp
 )
 ```
 
@@ -506,7 +505,7 @@ tests/benchmarks/
   <nome>.cpp
 ```
 
-E registrar em [tests/benchmarks/CMakeLists.txt](/home/r6/pasta/dudis-2d/dudis-2d/tests/benchmarks/CMakeLists.txt):
+E registrar em [tests/CMakeLists.txt](/home/r6/pasta/dudis-2d/dudis-2d/tests/CMakeLists.txt):
 
 ```cmake
 dd_add_benchmark(my_benchmark
@@ -530,9 +529,10 @@ Isso cria:
 
 ```text
 tests/unit/physics/
-  CMakeLists.txt
   physics.test.cpp
 ```
+
+E adiciona o bloco `dd_add_test(...)` correspondente em `tests/CMakeLists.txt`.
 
 Outro exemplo:
 
@@ -540,14 +540,10 @@ Outro exemplo:
 ./new_test.sh startup smoke
 ```
 
-```bash
-./new_test.sh render visual
-```
-
 Observações:
 
 - se você não informar a categoria, ele usa `unit`
-- hoje ele só gera `unit`, `smoke` ou `visual`
+- hoje ele só gera `unit`, `platform` ou `smoke`
 - ele gera um esqueleto simples; talvez você queira ajustar o nome do target manualmente depois
 
 ## Scripts em `dudis-2d/tools`
@@ -564,32 +560,33 @@ Uso:
 cd dudis-2d/tools
 ./build_test.sh all
 ./build_test.sh unit
+./build_test.sh platform
 ./build_test.sh smoke
-./build_test.sh visual
 ./build_test.sh benchmarks
 ./build_test.sh entity_unit
 ```
 
 O que cada modo faz:
 
-- `all`: configura `tests-debug` e compila o build rápido inteiro
+- `all`: configura `tests-debug` e `tests-debug-graphics`, depois compila os dois builds
 - `unit`: configura `tests-debug` e compila o build rápido inteiro
+- `platform`: configura `tests-debug-graphics` e compila o build gráfico inteiro
 - `smoke`: configura `tests-debug-graphics` e compila o build gráfico inteiro
-- `visual`: configura `tests-debug-graphics` e compila o build gráfico inteiro
 - `benchmarks`: configura `tests-debug` e compila o target `dd_benchmarks`
 - `<nome_do_target>`: tenta compilar apenas um target no build rápido
 
 Importante:
 
-- targets `smoke` e `visual` individuais precisam do build gráfico
+- targets `platform` e `smoke` individuais precisam do build gráfico
 - o modo `<nome_do_target>` hoje assume o build rápido
-- então `window_smoke` e `scene_visual` é melhor compilar manualmente com `build/graphics-debug`
+- então `ddgl_render_gl_platform` e `window_smoke` são melhores de compilar manualmente com `build/graphics-debug`
 
 Exemplo manual correto:
 
 ```bash
 cd dudis-2d/tests
 cmake --preset tests-debug-graphics
+cmake --build build/graphics-debug --target ddgl_render_gl_platform
 cmake --build build/graphics-debug --target window_smoke
 ```
 
@@ -605,32 +602,31 @@ Uso:
 cd dudis-2d/tools
 ./run_test.sh all
 ./run_test.sh unit
+./run_test.sh platform
 ./run_test.sh smoke
-./run_test.sh visual
 ./run_test.sh benchmarks
 ./run_test.sh entity_unit
 ```
 
 O que ele faz:
 
-- `all`: roda `ctest` no build rápido
+- `all`: roda `ctest` no build rápido e no build gráfico
 - `unit`: roda `ctest -L unit` no build rápido
+- `platform`: roda `ctest -L platform` no build gráfico
 - `smoke`: roda `ctest -L smoke` no build gráfico
-- `visual`: roda `ctest -L visual` no build gráfico
 - `benchmarks`: roda `scene_benchmark`
-- `<nome_do_target>`: executa um binário do build rápido em `bin/`
+- `<nome_do_target>`: executa um binário de `build/unit-debug/bin` ou `build/graphics-debug/bin`
 
 Importante:
 
-- no modo `<nome_do_target>`, ele procura o binário apenas em `build/unit-debug/bin`
-- então `window_smoke` e `scene_visual` não devem ser rodados por esse caminho hoje
-- para esses casos, rode manualmente a partir de `build/graphics-debug/bin`
+- no modo `<nome_do_target>`, ele procura primeiro em `build/unit-debug/bin` e depois em `build/graphics-debug/bin`
+- para targets gráficos, o build gráfico precisa ter sido compilado antes
 
 Exemplo:
 
 ```bash
+./build/graphics-debug/bin/ddgl_render_gl_platform
 ./build/graphics-debug/bin/window_smoke
-./build/graphics-debug/bin/scene_visual
 ```
 
 ### `new_test.sh`
@@ -644,8 +640,8 @@ Uso:
 ```bash
 cd dudis-2d/tools
 ./new_test.sh entity unit
+./new_test.sh ddgl/render platform
 ./new_test.sh startup smoke
-./new_test.sh render visual
 ```
 
 ## Helpers Compartilhados
@@ -654,28 +650,28 @@ Os testes compartilham utilitários em:
 
 - [tests/support/test_context.h](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/test_context.h)
 - [tests/support/test_context.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/test_context.cpp)
-- [tests/support/visual_check.h](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/visual_check.h)
-- [tests/support/visual_check.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/visual_check.cpp)
+- [tests/support/platform_test_context.h](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/platform_test_context.h)
+- [tests/support/platform_test_context.cpp](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/platform_test_context.cpp)
 - [tests/support/test_paths.h](/home/r6/pasta/dudis-2d/dudis-2d/tests/support/test_paths.h)
 
-Se você estiver criando `smoke`, `visual` ou benchmark, o ideal é reaproveitar esses helpers.
+Se você estiver criando `platform`, `smoke` ou benchmark, o ideal é reaproveitar esses helpers.
 
 ## Convenções Recomendadas
 
 - nomeie targets com o tipo no final
-Ex.: `entity_unit`, `window_smoke`, `scene_visual`
+Ex.: `entity_unit`, `ddgl_render_gl_platform`, `window_smoke`
 
 - nomeie o arquivo com `.test.cpp`
-Ex.: `entity.test.cpp`, `scene_visual.test.cpp`
+Ex.: `entity.test.cpp`, `render_gl.test.cpp`, `window_smoke.test.cpp`
 
 - use a tag correspondente no `TEST_CASE`
-Ex.: `"[unit]"`, `"[smoke]"`, `"[visual]"`
+Ex.: `"[unit]"`, `"[platform][ddgl]"`, `"[smoke]"`
 
 - mantenha `unit` sem dependência de janela, render ou assets externos sempre que possível
 
-- use `smoke` para validar integração e "não crasha"
+- use `platform` para validar backend, janela, input, render device e integrações de plataforma
 
-- use `visual` para validar render de forma explícita
+- use `smoke` para validar integração e "não crasha"
 
 - use `benchmarks` para medição manual, não para gating do `ctest`
 
@@ -696,8 +692,8 @@ ctest --test-dir build/unit-debug -L unit --output-on-failure
 cd dudis-2d/tests
 cmake --preset tests-debug-graphics
 cmake --build --preset tests-debug-graphics
+ctest --test-dir build/graphics-debug -L platform --output-on-failure
 ctest --test-dir build/graphics-debug -L smoke --output-on-failure
-ctest --test-dir build/graphics-debug -L visual --output-on-failure
 ```
 
 ### Build manual sem suites gráficas
@@ -719,8 +715,8 @@ cmake -S . -B build/graphics-debug -G Ninja \
   -DCMAKE_BUILD_TYPE=Debug \
   -DDD_BUILD_GRAPHICAL_TESTS=ON
 cmake --build build/graphics-debug
+ctest --test-dir build/graphics-debug -L platform --output-on-failure
 ctest --test-dir build/graphics-debug -L smoke --output-on-failure
-ctest --test-dir build/graphics-debug -L visual --output-on-failure
 ```
 
 ### Um target específico

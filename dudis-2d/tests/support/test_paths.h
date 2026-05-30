@@ -14,11 +14,6 @@ inline std::filesystem::path assetsDir()
     return std::filesystem::path(DD_TEST_ASSETS_DIR);
 }
 
-inline std::filesystem::path baselinesDir()
-{
-    return std::filesystem::path(DD_TEST_BASELINES_DIR);
-}
-
 inline std::filesystem::path artifactsDir()
 {
     return std::filesystem::path(DD_TEST_ARTIFACTS_DIR);

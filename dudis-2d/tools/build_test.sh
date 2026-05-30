@@ -3,7 +3,7 @@
 set -e
 
 usage() {
-  echo "Uso: $0 all | unit | smoke | visual | benchmarks | <nome_do_target>"
+  echo "Uso: $0 all | unit | platform | smoke | benchmarks | <nome_do_target>"
 }
 
 if [ $# -ne 1 ]; then
@@ -24,7 +24,8 @@ fi
 
 if [ "$arg" = "all" ]; then
   cmake --preset tests-debug "$tests_dir"
-  if cmake --build "$build_dir"; then
+  cmake --preset tests-debug-graphics "$tests_dir"
+  if cmake --build "$build_dir" && cmake --build "$graphics_build_dir"; then
     echo "Compilacao bem sucedida"
     exit 0
   else
@@ -39,11 +40,11 @@ if [ "$arg" = "benchmarks" ]; then
   exit $?
 fi
 
-if [ "$arg" = "unit" ] || [ "$arg" = "smoke" ] || [ "$arg" = "visual" ]; then
+if [ "$arg" = "unit" ] || [ "$arg" = "platform" ] || [ "$arg" = "smoke" ]; then
   preset="tests-debug"
   target_dir="$build_dir"
 
-  if [ "$arg" = "smoke" ] || [ "$arg" = "visual" ]; then
+  if [ "$arg" = "platform" ] || [ "$arg" = "smoke" ]; then
     preset="tests-debug-graphics"
     target_dir="$graphics_build_dir"
   fi

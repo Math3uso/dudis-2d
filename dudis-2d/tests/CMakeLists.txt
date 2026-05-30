@@ -43,11 +43,10 @@ add_subdirectory(.. dudis_build)
 set(TESTS_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(DUDIS_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../include")
 
-option(DD_BUILD_GRAPHICAL_TESTS "Enable smoke and visual tests that require a graphical display" OFF)
+option(DD_BUILD_GRAPHICAL_TESTS "Enable platform and smoke tests that require a graphical display" OFF)
 
 add_library(dd_test_support STATIC
   support/test_context.cpp
-  support/visual_check.cpp
 )
 
 target_link_libraries(dd_test_support PUBLIC dudis)
@@ -60,43 +59,54 @@ target_compile_definitions(dd_test_support
   PUBLIC
     DD_TEST_ROOT_DIR="${TESTS_ROOT_DIR}"
     DD_TEST_ASSETS_DIR="${TESTS_ROOT_DIR}/assets"
-    DD_TEST_BASELINES_DIR="${TESTS_ROOT_DIR}/baselines"
     DD_TEST_ARTIFACTS_DIR="${CMAKE_BINARY_DIR}/artifacts"
 )
 
-function(dd_suite_labels suite out_labels out_timeout)
+function(dd_test_metadata suite out_labels out_timeout out_support_target)
   if(suite STREQUAL "unit")
     set(labels "unit;fast")
     set(timeout 10)
+    set(support_target dd_test_support)
   elseif(suite STREQUAL "smoke")
     set(labels "smoke;integration")
     set(timeout 20)
-  elseif(suite STREQUAL "visual")
-    set(labels "visual;render;slow")
-    set(timeout 30)
+    set(support_target dd_test_support)
+  elseif(suite STREQUAL "platform")
+    set(labels "platform;integration")
+    set(timeout 20)
+    set(support_target dd_platform_test_support)
   else()
     message(FATAL_ERROR "Unknown test suite: ${suite}")
   endif()
 
   set(${out_labels} "${labels}" PARENT_SCOPE)
   set(${out_timeout} "${timeout}" PARENT_SCOPE)
+  set(${out_support_target} "${support_target}" PARENT_SCOPE)
 endfunction()
 
-function(dd_add_suite_test name suite)
-  cmake_parse_arguments(DD "" "" "SOURCES;LIBRARIES" ${ARGN})
+function(dd_add_test name)
+  cmake_parse_arguments(DD "" "SUITE" "SOURCES;LIBRARIES" ${ARGN})
 
-  if(NOT DD_SOURCES)
-    message(FATAL_ERROR "dd_add_suite_test requires SOURCES")
+  if(NOT DD_SUITE)
+    message(FATAL_ERROR "dd_add_test requires SUITE")
   endif()
 
-  dd_suite_labels(${suite} labels timeout)
+  if(NOT DD_SOURCES)
+    message(FATAL_ERROR "dd_add_test requires SOURCES")
+  endif()
+
+  if((DD_SUITE STREQUAL "platform" OR DD_SUITE STREQUAL "smoke") AND NOT DD_BUILD_GRAPHICAL_TESTS)
+    return()
+  endif()
+
+  dd_test_metadata(${DD_SUITE} labels timeout support_target)
 
   add_executable(${name} ${DD_SOURCES})
   target_link_libraries(${name}
     PRIVATE
       dudis
       Catch2::Catch2WithMain
-      dd_test_support
+      ${support_target}
       ${DD_LIBRARIES}
   )
   target_include_directories(${name}
@@ -110,7 +120,7 @@ function(dd_add_suite_test name suite)
   )
 
   catch_discover_tests(${name}
-    TEST_PREFIX "${suite}::"
+    TEST_PREFIX "${DD_SUITE}::"
     WORKING_DIRECTORY "${TESTS_ROOT_DIR}"
     PROPERTIES
       LABELS "${labels}"
@@ -144,12 +154,63 @@ function(dd_add_benchmark name)
   )
 endfunction()
 
-add_subdirectory(unit)
-add_subdirectory(benchmarks)
-
 if(DD_BUILD_GRAPHICAL_TESTS)
-  add_subdirectory(smoke)
-  add_subdirectory(visual)
-else()
-  message(STATUS "Graphical smoke/visual tests disabled. Configure with -DDD_BUILD_GRAPHICAL_TESTS=ON to enable them.")
+  add_library(dd_platform_test_support STATIC
+    support/platform_test_context.cpp
+  )
+
+  target_link_libraries(dd_platform_test_support PUBLIC dudis)
+  target_include_directories(dd_platform_test_support
+    PUBLIC
+      ${TESTS_ROOT_DIR}
+      ${DUDIS_INCLUDE_DIR}
+  )
+
+  target_compile_definitions(dd_platform_test_support
+    PUBLIC
+      DD_TEST_ROOT_DIR="${TESTS_ROOT_DIR}"
+      DD_TEST_ARTIFACTS_DIR="${CMAKE_BINARY_DIR}/artifacts"
+  )
+endif()
+
+dd_add_test(entity_unit
+  SUITE unit
+  SOURCES
+    unit/entity/entity.test.cpp
+    unit/res/image_data.test.cpp
+)
+
+dd_add_test(ddgl_render_gl_platform
+  SUITE platform
+  SOURCES
+    platform/ddgl/render_gl.test.cpp
+)
+
+dd_add_test(window_context_platform
+  SUITE platform
+  SOURCES
+    platform/window/window_context.test.cpp
+)
+
+# dd_add_test(window_smoke
+#   SUITE smoke
+#   SOURCES
+#     smoke/window/init_window.test.cpp
+# )
+
+# dd_add_test(scene_smoke
+#   SUITE smoke
+#   SOURCES
+#     smoke/scene/scene_smoke.test.cpp
+# )
+
+# dd_add_benchmark(scene_benchmark
+#   SOURCES
+#     benchmarks/scene_benchmark.cpp
+# )
+
+add_custom_target(dd_benchmarks DEPENDS scene_benchmark)
+
+if(NOT DD_BUILD_GRAPHICAL_TESTS)
+  message(STATUS "Graphical platform/smoke tests disabled. Configure with -DDD_BUILD_GRAPHICAL_TESTS=ON to enable them.")
 endif()
