@@ -1,6 +1,4 @@
 #include "dudis2d/platform/input/keyboard.h"
-#include "raylib.h"
-#include "dudis2d/platform/ddrlUtils/toRLKey.h"
 
 using namespace dudis;
 
@@ -28,22 +26,12 @@ void Keyboard::_setKeyDown(KeyCode key, bool isDownNow)
     st.down = isDownNow;
 };
 
-void Keyboard::update()
+void Keyboard::update(InputBackend *backend)
 {
     Keyboard::_beginFrames();
     for (int i = 0; i < _keysCount; i++)
     {
         KeyCode k = (KeyCode)i;
-        Keyboard::_setKeyDown(k, Keyboard::_getKeyDownIsRl(k));
+        Keyboard::_setKeyDown(k, backend->isKeyDown(k));
     }
-}
-
-bool Keyboard::_getKeyDownIsRl(KeyCode key)
-{
-    int rk = ddrlUtils::toRaylibKey(key);
-
-    if (rk == KEY_NULL)
-        return false;
-
-    return IsKeyDown(rk);
 }

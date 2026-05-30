@@ -1,8 +1,5 @@
-#pragma once
-
 #include "dudis2d/platform/input/mouse.h"
-#include "dudis2d/platform/ddrlUtils/toRLMouseButton.h"
-#include "raylib.h"
+#include "dudis2d/platform/input/input.h"
 
 using namespace dudis;
 
@@ -17,14 +14,14 @@ void Mouse::_beginFrame()
     }
 }
 
-void Mouse::update()
+void Mouse::update(InputBackend *backend)
 {
     Mouse::_beginFrame();
 
     for (int i = 0; i < (int)MouseButton::COUNT; i++)
     {
         auto bt = (MouseButton)i;
-        Mouse::_setMouseButton(bt, Mouse::_getButtonsStateInRl(bt));
+        Mouse::_setMouseButton(bt, backend->isMouseButtonDown(bt));
     }
 }
 
@@ -41,43 +38,27 @@ void Mouse::_setMouseButton(MouseButton bt, bool isDownNow)
     btState.down = isDownNow;
 }
 
-bool Mouse::_getButtonsStateInRl(MouseButton bt)
-{
-    auto rlBt = ddrlUtils::toRLMouseButton(bt);
-
-    if (rlBt < 0)
-        return false;
-
-    return IsMouseButtonDown(rlBt);
-}
-
 Vec2 Mouse::getPosition()
 {
-    auto rlMousePos = GetMousePosition();
-
-    return Vec2(rlMousePos.x, rlMousePos.y);
+    return Input::getBackend()->getMousePosition();
 }
 
 Vec2 Mouse::getPositionScreen()
 {
-    return Mouse::getPosition();
+    return Input::getBackend()->getMousePositionScreen();
 }
 
 Vec2 Mouse::getDelta()
 {
-    auto rlDelta = GetMouseDelta();
-
-    return Vec2(rlDelta.x, rlDelta.y);
+    return Input::getBackend()->getMouseDelta();
 }
 
 float Mouse::getWheel()
 {
-    return GetMouseWheelMove();
+    return Input::getBackend()->getMouseWheel();
 }
 
 Vec2 Mouse::getWheelDelta()
 {
-    auto rlWheel = GetMouseWheelMoveV();
-
-    return Vec2(rlWheel.x, rlWheel.y);
+    return Input::getBackend()->getMouseWheelDelta();
 }

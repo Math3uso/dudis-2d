@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dudis2d/platform/input/mouseState.h"
+#include "dudis2d/platform/input/inputBackend.h"
 #include "dudis2d/core/math/vec2.h"
 
 namespace dudis
@@ -11,7 +12,6 @@ namespace dudis
         static ButtonState _btState[(int)MouseButton::COUNT];
         static void _setMouseButton(MouseButton, bool isDownNow);
         static void _beginFrame();
-        static bool _getButtonsStateInRl(MouseButton bt);
 
     public:
         /**
@@ -19,7 +19,7 @@ namespace dudis
          *
          * Deve ser chamado uma vez por frame, antes da leitura do estado do mouse.
          */
-        static void update();
+        static void update(InputBackend *backend);
         /**
          * @brief Retorna true enquanto o botao estiver pressionado.
          */

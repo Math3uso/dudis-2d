@@ -2,6 +2,7 @@
 
 #include "dudis2d/platform/input/key.h"
 #include "dudis2d/platform/input/keyState.h"
+#include "dudis2d/platform/input/inputBackend.h"
 
 namespace dudis
 {
@@ -13,7 +14,6 @@ namespace dudis
         static KeyState _keys[_keysCount];
         static void _beginFrames();
         static void _setKeyDown(KeyCode key, bool isDownNow);
-        static bool _getKeyDownIsRl(KeyCode key);
 
     public:
         /**
@@ -21,7 +21,7 @@ namespace dudis
          *
          * Deve ser chamado uma vez por frame, antes da leitura do estado das teclas.
          */
-        static void update();
+        static void update(InputBackend *backend);
         /**
          * @brief Retorna true enquanto a tecla estiver pressionada.
          */
