@@ -4,6 +4,7 @@
 // #include "dudis2d/graphics/ddCommandBuffer.h"
 #include <vector>
 #include <stack>
+#include <memory>
 
 namespace dudis
 {

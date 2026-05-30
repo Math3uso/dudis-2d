@@ -1,65 +1,65 @@
-#include "dudis2d/graphics/sprites/sprite/sprite.h"
+// #include "dudis2d/graphics/sprites/sprite/sprite.h"
 
-#include <cmath>
+// #include <cmath>
 
-#include "dudis2d/core/log/log.h"
-#include "dudis2d/graphics/drawCommand/drawCommand.h"
+// #include "dudis2d/core/log/log.h"
+// #include "dudis2d/graphics/drawCommand/drawCommand.h"
 
-using namespace dudis;
-using namespace std;
+// using namespace dudis;
+// using namespace std;
 
-Sprite::Sprite(const char *texturPath, Size size)
-{
-  pos = {0, 0};
-  _rectSrc = {0, 0, 0, 0};
-  _tex = true;
+// Sprite::Sprite(const char *texturPath, SizeF size)
+// {
+//   pos = {0, 0};
+//   _rectSrc = {0, 0, 0, 0};
+//   _tex = true;
 
-  if (texturPath)
-  {
-    this->filePath = std::string(texturPath);
-  }
+//   if (texturPath)
+//   {
+//     this->filePath = std::string(texturPath);
+//   }
 
-  this->size = size;
+//   this->size = size;
 
-  this->type = TypeShape::Rectangle;
-}
-Sprite::~Sprite()
-{
-  Log::Alert("[INFO] liberando recursos [Sprite]");
+//   this->type = TypeShape::Rectangle;
+// }
+// Sprite::~Sprite()
+// {
+//   Log::Alert("[INFO] liberando recursos [Sprite]");
 
-  // res::Texture2D::unload(_rlTex->id);
-  Log::Info("[INFO] recursos de sprite liberado [Sprite]");
-}
+//   // res::Texture2D::unload(_rlTex->id);
+//   Log::Info("[INFO] recursos de sprite liberado [Sprite]");
+// }
 
-void Sprite::initTexture()
-{
-  if (!_createTexture)
-  {
-    auto path = filePath.c_str();
-    // _ddTex = res::Texture2D::create(path, res::TextureLoadMode::Uncached);
-    auto _ddTex = res::Texture2D::create(path, _filter);
-    _rlTex = _ddTex._rlTex;
-    return;
-  }
-  return;
-}
+// void Sprite::initTexture()
+// {
+//   if (!_createTexture)
+//   {
+//     auto path = filePath.c_str();
+//     // _ddTex = res::Texture2D::create(path, res::TextureLoadMode::Uncached);
+//     auto _ddTex = res::Texture2D::create(path, _filter);
+//     _rlTex = _ddTex._rlTex;
+//     return;
+//   }
+//   return;
+// }
 
-void Sprite::render() {}
+// void Sprite::render() {}
 
-shared_ptr<Sprite> Sprite::create(const char *texturPath, Size size, res::DDTextureFilter filter)
-{
-  auto sprite = make_shared<Sprite>(texturPath, size);
-  sprite->_createTexture = false;
-  sprite->_filter = filter;
-  sprite->initTexture();
-  return sprite;
-}
+// shared_ptr<Sprite> Sprite::create(const char *texturPath, SizeF size, res::DDTextureFilter filter)
+// {
+//   auto sprite = make_shared<Sprite>(texturPath, size);
+//   sprite->_createTexture = false;
+//   sprite->_filter = filter;
+//   sprite->initTexture();
+//   return sprite;
+// }
 
-DDRef Sprite::create(const char *path, Size size, res::DDTexture tex)
-{
-  auto sprite = make_shared<Sprite>(path, size);
-  sprite->_createTexture = true;
-  sprite->_rlTex = tex._rlTex;
-  sprite->initTexture();
-  return sprite;
-}
+// DDRef Sprite::create(const char *path, SizeF size, res::DDTexture tex)
+// {
+//   auto sprite = make_shared<Sprite>(path, size);
+//   sprite->_createTexture = true;
+//   sprite->_rlTex = tex._rlTex;
+//   sprite->initTexture();
+//   return sprite;
+// }

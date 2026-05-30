@@ -1,4 +1,5 @@
 #include "dudis2d/graphics/renderable.h"
+#include "dudis2d/core/math/rect.h"
 
 #pragma once
 
@@ -14,7 +15,7 @@ namespace dudis
   class DDRectangle : public Renderable
   {
   protected:
-    Rectangle rect;
+    DDRect rect;
     dudis::FillMode fill;
 
   public:

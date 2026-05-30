@@ -1,7 +1,7 @@
 #pragma once
 
 #include "dudis2d/core/entity/entity.h"
-#include "dudis2d/graphics/ddAssets/texture2D.h"
+// #include "dudis2d/graphics/ddAssets/texture2D.h"
 #include "dudis2d/scenes/sceneProperty/sceneProperty.h"
 #include "dudis2d/core/math/rect.h"
 #include "dudis2d/graphics/color.h"
@@ -29,7 +29,7 @@ namespace dudis
     std::string filePath;
     DDRect _rectSrc;
     DDRect _rectDest;
-    rl::RlTexture *_rlTex = nullptr;
+    // rl::RlTexture *_rlTex = nullptr;
     BlendType _blendType = BlendType::AlphaComposite;
 
   public:
@@ -44,14 +44,14 @@ namespace dudis
     virtual void buildRenderCommands(RenderQueue *queue) override;
 
     const Color &getColor() const { return color; }
-    const res::DDTexture getTexture() const;
+    // const res::DDTexture getTexture() const;
     SceneProperty &getSceneProps() { return sceneProps; }
     bool hasTexture() { return _tex; }
     bool hasScissor() { return _hasScissor; }
     const DDRect &getRectSrc() const { return _rectSrc; }
     BlendType getBlendMode() { return _blendType; }
 
-    rl::RlTexture *_getTextureData() { return _rlTex; }
+    // rl::RlTexture *_getTextureData() { return _rlTex; }
 
     void setColor(const Color &nColor) { color = nColor; }
     void setHiddenOverfflow(bool isHidden) { _hasScissor = isHidden; }

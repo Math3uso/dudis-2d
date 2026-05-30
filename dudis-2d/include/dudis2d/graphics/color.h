@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "dudis2d/core/math/vec4.h"
 
 namespace dudis
 {
@@ -39,6 +40,21 @@ namespace dudis
         constexpr bool operator==(const Color &other) const
         {
             return r == other.r && g == other.g && b == other.b;
+        }
+
+        constexpr uint32_t operator!=(const Color &other) const
+        {
+            return !(*this == other);
+        }
+
+        constexpr uint32_t packed() const
+        {
+            return ((uint32_t)a << 24) | ((uint32_t)b << 16) | ((uint32_t)g << 8) | ((uint32_t)r << 0);
+        }
+
+        Vec4 normalized() const
+        {
+            return Vec4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
         }
     };
 }

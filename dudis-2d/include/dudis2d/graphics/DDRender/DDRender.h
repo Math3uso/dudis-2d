@@ -2,6 +2,8 @@
 
 #include "dudis2d/graphics/drawCommand/drawCommand.h"
 #include "dudis2d/graphics/blendType.h"
+#include <vector>
+#include <memory>
 
 namespace dudis
 {
@@ -16,15 +18,15 @@ namespace dudis
   public:
     DDRender() = default;
     void init() {};
-    void draw(const std::vector<DrawCommand> &cmd, RenderQueue *queue);
+    void draw(const std::vector<DrawCommand> &cmd, RenderQueue *queue) {};
     static std::shared_ptr<DDRender> create()
     {
       return std::make_shared<DDRender>();
     }
 
-    static void defineRLDrawCalls();
+    static void defineRLDrawCalls() {};
     static int getDrawCalls() { return _drawCalls; }
 
-    static void setBlendType(BlendType type);
+    static void setBlendType(BlendType type) {};
   };
 } // namespace dudis

@@ -50,8 +50,8 @@ void Renderable::buildRenderCommands(RenderQueue *queue)
   this->buildRenderTree(nullptr, queue, this);
 }
 
-const res::DDTexture Renderable::getTexture() const
-{
-  res::DDTexture ddtex;
-  return res::DDTexture();
-}
+// const res::DDTexture Renderable::getTexture() const
+// {
+//   res::DDTexture ddtex;
+//   return res::DDTexture();
+// }
