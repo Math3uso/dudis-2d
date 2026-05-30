@@ -2,7 +2,7 @@
 
 #include "dudis2d/core/component/physicsComponent/physicsComponent.h"
 #include "dudis2d/core/entity/entity.h"
-// #include "dudis2d/core/utils/types.h"
+#include "dudis2d/core/math/rect.h"
 #include "dudis2d/core/math/vec2.h"
 #include "dudis2d/core/utils/sizeF.h"
 #include <glm/glm.hpp>
@@ -140,7 +140,7 @@ namespace dudis
     const Vec2 getGlobalPos();
     float getGlobalRotation();
     const Vec2 getGlocalScale();
-    Size getGlobalSize();
+    SizeF getGlobalSize();
     std::shared_ptr<Entity> clone() const;
     bool wouldCreateCycle(Entity *target);
 

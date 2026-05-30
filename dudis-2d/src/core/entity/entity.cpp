@@ -223,19 +223,19 @@ void Entity::buildRenderTree(shared_ptr<Entity> ddEntity, RenderQueue *queue, En
     auto render = dynamic_cast<Renderable *>(entity);
 
     auto gPos = entity->getGlobalPos();
-    auto gRotation = entity->getGlobalRotation() * RAD2DEG;
+    // auto gRotation = entity->getGlobalRotation() * RAD2DEG;
     auto gScale = entity->getGlocalScale();
     auto finalSize = SizeF(entity->size.w * gScale.x, entity->size.h * gScale.y);
 
     cmd.pos = gPos;
     cmd.size = finalSize;
     cmd.origin = origin;
-    cmd.rotation = gRotation;
+    // cmd.rotation = gRotation;
     cmd.scale = gScale;
     cmd.src = DDRect{0, 0, 0, 0};
     cmd._tex = render->hasTexture();
-    cmd.type = DDPrimitiveType::Fill;
-    cmd.batch = DDBatchType::Shapes;
+    // cmd.type = DDPrimitiveType::Fill;
+    // cmd.batch = DDBatchType::Shapes;
     cmd.color = render->getColor();
     cmd.z = _zOrder;
     cmd.blendType = render->getBlendMode();
@@ -243,8 +243,8 @@ void Entity::buildRenderTree(shared_ptr<Entity> ddEntity, RenderQueue *queue, En
     if (cmd._tex)
     {
       cmd.src = render->getRectSrc();
-      cmd.batch = DDBatchType::Textures;
-      cmd.rlTex = *render->_getTextureData();
+      // cmd.batch = DDBatchType::Textures;
+      //  cmd.rlTex = *render->_getTextureData();
     }
 
     cmd.cmdState = CommandState::Draw;
@@ -454,7 +454,7 @@ const Vec2 Entity::getGlocalScale()
   return {scaleX, scaleY};
 }
 
-Size Entity::getGlobalSize()
+SizeF Entity::getGlobalSize()
 {
 
   glm::mat4 m = getGlobalMatrix();

@@ -4,7 +4,6 @@
 #include "dudis2d/core/log/log.h"
 // #include "dudis2d/core/model/model.h"
 #include "dudis2d/core/motion/easing/easing.h"
-#include "dudis2d/core/utils/types.h"
 #include "dudis2d/core/utils/utils.h"
 #include "dudis2d/platform/window/window.h"
 #include "dudis2d/globals/app.h"
@@ -15,3 +14,5 @@
 #include "dudis2d/platform/input/keyboard.h"
 #include "dudis2d/platform/input/mouse.h"
 #include "dudis2d/globals/time.h"
+#include "dudis2d/platform/ddWindowContext/ddWindowContext.h"
+#include "dudis2d/platform/platformWindow/platformWindow.h"

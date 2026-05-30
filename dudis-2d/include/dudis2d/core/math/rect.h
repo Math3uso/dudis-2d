@@ -18,7 +18,12 @@ namespace dudis
 
         constexpr bool operator!=(const DDRect &other) const
         {
-            return x != other.x && y != other.y && w != other.w && h != other.h;
+            return x != other.x || y != other.y || w != other.w || h != other.h;
+        }
+
+        constexpr bool operator==(const DDRect &other) const
+        {
+            return x == other.x && y == other.y && w == other.w && h == other.h;
         }
 
         float left() const { return x; }

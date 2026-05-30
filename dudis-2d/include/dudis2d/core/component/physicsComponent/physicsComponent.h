@@ -1,10 +1,13 @@
 #pragma once
 
 #include "dudis2d/core/component/physicsComponent/body/body.h"
-#include "dudis2d/core/utils/types.h"
+#include "dudis2d/core/math/vec2.h"
+#include "dudis2d/core/utils/sizeI.h"
 #include <box2d/box2d.h>
 #include <dudis2d/core/component/component.h>
 #include <functional>
+#include <memory>
+#include <string>
 
 namespace dudis {
 

@@ -23,6 +23,5 @@ void Body::setPos(const Vec2 &nPos) {
 }
 
 void Body::setShape(const PhysicsShape &nShape) {
-  auto shape = std::make_shared<PhysicsShape>(nShape);
   this->shapes.push_back(nShape);
 }
