@@ -61,8 +61,8 @@ else()
     FetchContent_MakeAvailable(glm)
 endif()
 
-add_library(glad INTERFACE)
-target_include_directories(glad INTERFACE ${RAYLIB_DIR}/src)
+add_library(glad STATIC ${GLAD_DIR}/src/glad.c)
+target_include_directories(glad PUBLIC ${GLAD_DIR}/include)
 
 
 set(DD_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})

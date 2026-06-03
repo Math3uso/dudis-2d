@@ -164,7 +164,7 @@ bool RenderGL::init()
         return false;
     }
 
-    if (!gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress))
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
     {
         std::cerr << "Erro no RenderGL: falha ao carregar funcoes OpenGL via GLAD." << std::endl;
         return false;

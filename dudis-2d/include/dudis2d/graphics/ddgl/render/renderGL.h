@@ -1,7 +1,7 @@
 #pragma once
 
 #include "dudis2d/graphics/ddgl/render/renderDevice.h"
-#include "external/glad.h"
+#include <glad/glad.h>
 
 namespace dudis
 {
