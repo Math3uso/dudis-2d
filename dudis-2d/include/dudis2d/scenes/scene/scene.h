@@ -1,6 +1,8 @@
 #pragma once
 
 #include "dudis2d/core/entity/entity.h"
+#include "dudis2d/core/utils/sizeI.h"
+#include "dudis2d/graphics/color.h"
 #include "dudis2d/graphics/renderable.h"
 #include <functional>
 #include <memory>

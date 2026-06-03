@@ -31,7 +31,7 @@ namespace dudis
         std::unique_ptr<Window> _wInstance;
 
     public:
-        void initWith(Context context = Context::Default, GfxAPI gfx = GfxAPI::None);
+        void initWith(Context context = Context::Personalized, GfxAPI gfx = GfxAPI::GL);
         Window &createWindow(const char *title, SizeI size);
         PlatformWindow *getPlatform() { return _platform.get(); }
     };
