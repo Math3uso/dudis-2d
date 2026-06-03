@@ -1,6 +1,5 @@
 #pragma once
 
-#include "dudis2d/core/component/physicsComponent/physicsComponent.h"
 #include "dudis2d/core/entity/entity.h"
 #include "dudis2d/core/math/rect.h"
 #include "dudis2d/core/math/vec2.h"
@@ -77,7 +76,6 @@ namespace dudis
     glm::mat4 _localMatrix = glm::mat4(1.0f);
     glm::mat4 _globalMatrix = glm::mat4(1.0f);
     std::unordered_map<std::type_index, std::shared_ptr<Component>> _components;
-    bool _physicsComponent = false;
     TransformType _transformType = TransformType::Relative;
     int _zOrder = 0;
     std::vector<DDBufferPtr> _owned;
@@ -201,12 +199,6 @@ namespace dudis
       auto comp = std::make_shared<T>(std::forward<Args>(args)...);
       _components[typeid(T)] = comp;
 
-      if (auto phys = std::dynamic_pointer_cast<PhysicsComponent>(comp))
-      {
-        _physicsComponent = true;
-        puts("compoenent fisico enviado");
-      }
-
       return comp;
     }
 
@@ -215,15 +207,6 @@ namespace dudis
     std::shared_ptr<T> addComponent(std::shared_ptr<T> &comp)
     {
       _components[typeid(T)] = comp;
-
-      if (auto phys = std::dynamic_pointer_cast<PhysicsComponent>(comp))
-      {
-        _physicsComponent = true;
-        if (_DD_LOGS)
-        {
-          puts("component fisico enviado [INSTANCIA]");
-        }
-      }
 
       return comp;
     }

@@ -16,10 +16,6 @@ shared_ptr<Entity> Entity::create(const string &tag)
 void Entity::defaultUpdate()
 {
   this->update();
-  if (_physicsComponent)
-  {
-    // Temporarily disabled: physics sync handled elsewhere
-  }
   if (_motion)
   {
     _motion->update();
@@ -495,7 +491,6 @@ shared_ptr<Entity> Entity::clone() const
   copy->labelT = labelT;
   copy->_transformType = _transformType;
   copy->_zOrder = _zOrder;
-  copy->_physicsComponent = _physicsComponent;
 
   // Clones of the base entity must not share hierarchy, components,
   // or manually owned buffers with the original instance.
