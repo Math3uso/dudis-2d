@@ -3,7 +3,8 @@
 
 using namespace dudis;
 
-DebugDraw::DebugDraw() {
+DebugDraw::DebugDraw()
+{
   // Definir flags do que queremos desenhar
   // SetFlags(e_shapeBit | e_jointBit | e_centerOfMassBit | e_aabbBit);
 
@@ -11,17 +12,20 @@ DebugDraw::DebugDraw() {
 }
 
 // Converter b2Color para Raylib Color
-Color b2ColorToRaylib(const b2Color &b2color, uint8_t alpha = 255) {
+Color b2ColorToRaylib(const b2Color &b2color, uint8_t alpha = 255)
+{
   return {(uint8_t)(b2color.r * 255), (uint8_t)(b2color.g * 255),
           (uint8_t)(b2color.b * 255), alpha};
 }
 
 void DebugDraw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount,
-                            const b2Color &color) {
+                            const b2Color &color)
+{
   Color raylibColor = b2ColorToRaylib(color);
 
   // Desenhar linhas conectando os vértices
-  for (int i = 0; i < vertexCount; i++) {
+  for (int i = 0; i < vertexCount; i++)
+  {
     int next = (i + 1) % vertexCount;
     Vector2 p1 = metersToPixels(vertices[i]);
     Vector2 p2 = metersToPixels(vertices[next]);
@@ -30,20 +34,24 @@ void DebugDraw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount,
 }
 
 void DebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount,
-                                 const b2Color &color) {
+                                 const b2Color &color)
+{
   Color fillColor = b2ColorToRaylib(color, 100); // Semi-transparente
   Color outlineColor = b2ColorToRaylib(color);
 
   // Converter vértices para Raylib
   std::vector<Vector2> points(vertexCount);
-  for (int i = 0; i < vertexCount; i++) {
+  for (int i = 0; i < vertexCount; i++)
+  {
     points[i] = metersToPixels(vertices[i]);
   }
 
   // Raylib não tem função direta para polígono preenchido
   // Então vamos desenhar triângulos (triangulação simples para convexos)
-  if (vertexCount >= 3) {
-    for (int i = 1; i < vertexCount - 1; i++) {
+  if (vertexCount >= 3)
+  {
+    for (int i = 1; i < vertexCount - 1; i++)
+    {
       DrawTriangle(points[0], points[i], points[i + 1], fillColor);
     }
   }
@@ -53,7 +61,8 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount,
 }
 
 void DebugDraw::DrawCircle(const b2Vec2 &center, float radius,
-                           const b2Color &color) {
+                           const b2Color &color)
+{
   Vector2 centerPixels = metersToPixels(center);
   float radiusPixels = radius * PIXELS_TO_METERS;
   Color raylibColor = b2ColorToRaylib(color);
@@ -62,7 +71,8 @@ void DebugDraw::DrawCircle(const b2Vec2 &center, float radius,
 }
 
 void DebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius,
-                                const b2Vec2 &axis, const b2Color &color) {
+                                const b2Vec2 &axis, const b2Color &color)
+{
   Vector2 centerPixels = metersToPixels(center);
   float radiusPixels = radius * PIXELS_TO_METERS;
   Color fillColor = b2ColorToRaylib(color, 100); // Semi-transparente
@@ -81,7 +91,8 @@ void DebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius,
 }
 
 void DebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2,
-                            const b2Color &color) {
+                            const b2Color &color)
+{
   Vector2 point1 = metersToPixels(p1);
   Vector2 point2 = metersToPixels(p2);
   Color raylibColor = b2ColorToRaylib(color);
@@ -89,7 +100,8 @@ void DebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2,
   DrawLineV(point1, point2, raylibColor);
 }
 
-void DebugDraw::DrawTransform(const b2Transform &xf) {
+void DebugDraw::DrawTransform(const b2Transform &xf)
+{
   const float axisScale = 0.4f;
   Color red = RED;
   Color green = GREEN;
@@ -107,7 +119,8 @@ void DebugDraw::DrawTransform(const b2Transform &xf) {
   DrawLineV(p1, p2, green);
 }
 
-void DebugDraw::DrawPoint(const b2Vec2 &p, float size, const b2Color &color) {
+void DebugDraw::DrawPoint(const b2Vec2 &p, float size, const b2Color &color)
+{
   Vector2 point = metersToPixels(p);
   float sizePixels = size * PIXELS_TO_METERS;
   Color raylibColor = b2ColorToRaylib(color);
