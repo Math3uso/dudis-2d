@@ -9,9 +9,7 @@ set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(RAYLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raylib)
 set(BOX2D_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/box2d)
-# set(RAYGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/raygui)
 set(SDL3_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/SDL)
 set(GLAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/glad)
 
@@ -24,7 +22,6 @@ set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
 set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 set(BOX2D_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 
-# --- CONFIGURAÇÃO DO RAYLIB PARA ANDROID ---
 if(ANDROID)
     set(PLATFORM "Android" CACHE STRING "" FORCE)
     set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -34,7 +31,6 @@ endif()
 
 
 
-add_subdirectory(${RAYLIB_DIR})
 add_subdirectory(${BOX2D_DIR})
 add_subdirectory(${SDL3_DIR})
 
@@ -116,7 +112,6 @@ target_link_libraries(dudis
         dudis-platform
         glad
     PRIVATE
-        raylib
         box2d
         glm
         SDL3::SDL3

@@ -52,14 +52,7 @@ bool Window::init()
     App::setWindow(*this);
     std::cout << _window->_getPlatformWindow() << "\n";
 
-    if (std::string(_window->_getPlatformWindow()) == "SDL")
-    {
-      Input::setBackend(InputBackendType::SDL);
-    }
-    else
-    {
-      Input::setBackend(InputBackendType::RL);
-    }
+    Input::setBackend(InputBackendType::SDL);
 
     return true;
   }

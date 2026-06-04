@@ -2,7 +2,6 @@
 #include "dudis2d/platform/input/keyboard.h"
 #include "dudis2d/platform/input/mouse.h"
 #include "dudis2d/platform/input/sdlInputBackend.h"
-#include "dudis2d/platform/input/raylibInputBackend.h"
 
 using namespace dudis;
 
@@ -34,7 +33,7 @@ void Input::setBackend(InputBackendType type)
         _backend = std::make_unique<SDLInputBackend>();
         break;
     case InputBackendType::RL:
-        _backend = std::make_unique<RaylibInputBackend>();
+        _backend = std::make_unique<SDLInputBackend>();
         break;
     default:
         _backend = nullptr;
@@ -46,7 +45,7 @@ InputBackend *Input::getBackend()
 {
     if (!_backend)
     {
-        Input::setBackend(InputBackendType::RL);
+        Input::setBackend(InputBackendType::SDL);
     }
 
     return _backend.get();

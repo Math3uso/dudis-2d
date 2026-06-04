@@ -1,5 +1,4 @@
 #include "dudis2d/platform/ddWindowContext/ddWindowContext.h"
-#include "dudis2d/platform/platformWindow/RLContext.h"
 #include "dudis2d/platform/platformWindow/SDLContext.h"
 #include "dudis2d/platform/window/window.h"
 
@@ -11,11 +10,7 @@ void DDWindowContext::initWith(Context context, GfxAPI gfx)
     switch (context)
     {
     case Context::Default:
-        _platform = make_unique<RLContext>();
-
-        break;
     case Context::Personalized:
-        // _platform = make_unique
         _platform = make_unique<SDLContext>(gfx);
         break;
     }

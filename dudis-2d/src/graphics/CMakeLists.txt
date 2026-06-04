@@ -6,7 +6,6 @@ add_library(dudis-graphics OBJECT
     # ddAssets/texture2D.cpp
     ddRenderGroup.cpp
     ddgl/render/renderGL.cpp
-    # ddrlUtils/ddrlUtils.cpp
     frameQueue/frameQueue.cpp
     renderQueue/renderQueue.cpp
     renderable.cpp
@@ -32,7 +31,6 @@ dd_configure_module(dudis-graphics)
 
 target_link_libraries(dudis-graphics
     PRIVATE
-        raylib
         SDL3::SDL3
         glad
 )

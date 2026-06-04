@@ -21,7 +21,6 @@ dd_configure_module(dudis-core)
 
 target_link_libraries(dudis-core
     PRIVATE
-        raylib
         box2d
         glm
 )
