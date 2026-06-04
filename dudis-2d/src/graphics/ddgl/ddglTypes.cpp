@@ -36,27 +36,71 @@ void ddgl::transformQuadV3FC4B(const DDTransform2D &transform, std::vector<DDVer
     }
 }
 
-void ddgl::transformDDVertex(const DDTransform2D &transform, VertexQuadDataTextured &vertexData)
+void ddgl::transformDDVertex(const DDTransform2D &transform, VertexQuadDataTextured &vertexData, bool replacePos)
 {
+    // float cosR = cosf(transform.rotation);
+    // float sinR = sinf(transform.rotation);
+
+    // for (auto &vertex : vertexData.vertices)
+    // {
+    //     float localX = vertex.x - transform.origin.x;
+    //     float localY = vertex.y - transform.origin.y;
+
+    //     // Aplicar escala
+    //     float x = localX * transform.scale.x;
+    //     float y = localY * transform.scale.y;
+
+    //     // Aplicar rotação
+    //     float rotatedX = x * cosR - y * sinR;
+    //     float rotatedY = x * sinR + y * cosR;
+
+    //     // Retornar do pivô local e aplicar translação
+    //     vertex.x = rotatedX + transform.origin.x + transform.position.x;
+    //     vertex.y = rotatedY + transform.origin.y + transform.position.y;
+    // }
+
     float cosR = cosf(transform.rotation);
     float sinR = sinf(transform.rotation);
 
+    float skewX = tanf(transform.skewX); // radianos
+    float skewY = tanf(transform.skewY); // radianos
+
     for (auto &vertex : vertexData.vertices)
     {
-        float localX = vertex.x - transform.origin.x;
-        float localY = vertex.y - transform.origin.y;
+        float vertexX = replacePos ? vertex.x - vertexData._pos.x : vertex.x;
+        float vertexY = replacePos ? vertex.y - vertexData._pos.y : vertex.y;
 
-        // Aplicar escala
+        float localX = vertexX - transform.origin.x;
+        float localY = vertexY - transform.origin.y;
+
+        // scale
         float x = localX * transform.scale.x;
         float y = localY * transform.scale.y;
 
-        // Aplicar rotação
-        float rotatedX = x * cosR - y * sinR;
-        float rotatedY = x * sinR + y * cosR;
+        // skew
+        float skewedX = x + y * skewX;
+        float skewedY = y + x * skewY;
 
-        // Retornar do pivô local e aplicar translação
-        vertex.x = rotatedX + transform.origin.x + transform.position.x;
-        vertex.y = rotatedY + transform.origin.y + transform.position.y;
+        // rotation
+        float rotatedX = skewedX * cosR - skewedY * sinR;
+        float rotatedY = skewedX * sinR + skewedY * cosR;
+
+        // translate
+        if (replacePos)
+        {
+            vertex.x = rotatedX + transform.position.x;
+            vertex.y = rotatedY + transform.position.y;
+        }
+        else
+        {
+            vertex.x = rotatedX + transform.origin.x + transform.position.x;
+            vertex.y = rotatedY + transform.origin.y + transform.position.y;
+        }
+    }
+
+    if (!vertexData.vertices.empty())
+    {
+        vertexData._pos = Vec2{vertexData.vertices.front().x, vertexData.vertices.front().y};
     }
 }
 

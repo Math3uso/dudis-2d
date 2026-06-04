@@ -204,8 +204,11 @@ namespace dudis
             float skewY = 0.0f;   // radianos
         };
 
+        constexpr bool DD_REPLACE_POS = true;
+        constexpr bool DD_KEEP_POS = false;
+
         void transformQuadV3FC4B(const DDTransform2D &transform, std::vector<DDVertexV3FC4B> &quad);
 
-        void transformDDVertex(const DDTransform2D &transform, VertexQuadDataTextured &vertexData);
+        void transformDDVertex(const DDTransform2D &transform, VertexQuadDataTextured &vertexData, bool replacePos = false);
     }
 }
