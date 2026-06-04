@@ -1,7 +1,7 @@
 // debugDraw.h
 #pragma once
 #include "box2d/box2d.h"
-#include "raylib.h"
+#include "dudis2d/core/math/vec2.h"
 #include <vector>
 
 namespace dudis {
@@ -11,7 +11,7 @@ private:
   static constexpr float PIXELS_TO_METERS = 100.0f;
   static constexpr float METERS_TO_PIXELS = 1.0f / PIXELS_TO_METERS;
 
-  Vector2 metersToPixels(const b2Vec2 &meters) const {
+  Vec2 metersToPixels(const b2Vec2 &meters) const {
     return {meters.x * PIXELS_TO_METERS, meters.y * PIXELS_TO_METERS};
   }
 
