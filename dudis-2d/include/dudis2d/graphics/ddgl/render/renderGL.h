@@ -1,7 +1,6 @@
 #pragma once
 
 #include "dudis2d/graphics/ddgl/render/renderDevice.h"
-#include <glad/glad.h>
 
 namespace dudis
 {
@@ -23,7 +22,7 @@ namespace dudis
             uint32_t _ebo = 0;
             TextureHandle _whiteTexture = {0};
             Color _clearColor = Color(31, 31, 31, 255);
-            bool _checkShader(GLuint shader, GLenum type);
+            bool _checkShader(unsigned int shader, unsigned int type);
             bool _createShaderProgramDefault(QuadShaderType type = QuadShaderType::DEFAULT);
 
         public:

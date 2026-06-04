@@ -4,6 +4,7 @@
 #include "dudis2d/platform/platformWindow/platformWindow.h"
 #include "dudis2d/graphics/ddgl/color.h"
 #include "SDL3/SDL.h"
+#include <glad/glad.h>
 
 using namespace dudis;
 using namespace ddgl;
@@ -37,7 +38,7 @@ namespace
     }
 }
 
-bool RenderGL::_checkShader(GLuint shader, GLenum type)
+bool RenderGL::_checkShader(unsigned int shader, unsigned int type)
 {
     int success = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
@@ -223,7 +224,7 @@ bool RenderGL::init()
         glUseProgram(_shaderProgram);
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram, "uProjection"), 1, GL_FALSE, glm::value_ptr(_projection));
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram, "uView"), 1, GL_FALSE, glm::value_ptr(_view));
-        // std::cout << "Projection and view matrices set for orthographic mode." << std::endl;
+        std::cout << "Projection and view matrices set for orthographic mode." << std::endl;
     }
 
     uint32_t whitePixel = 0xFFFFFFFF;
