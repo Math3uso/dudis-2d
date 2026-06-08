@@ -8,6 +8,9 @@ namespace dudis
     {
         float x, y, w, h;
 
+        constexpr DDRect(float x = 0.0f, float y = 0.0f, float w = 0.0f, float h = 0.0f)
+            : x(x), y(y), w(w), h(h) {}
+
         bool equals(const DDRect &other, float eps = 0.0001f) const
         {
             return std::abs(x - other.x) < eps &&
