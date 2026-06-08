@@ -80,32 +80,17 @@ void Window::Running()
 
   auto *render = App::getRenderContext();
 
-  ddgl::VertexQuadDataTextured quadData;
-  quadData.vertices.push_back({100, 100, 0, 0, dudis::Color::Red().packed()});
-  quadData.vertices.push_back({200, 100, 1, 0, dudis::Color::Green().packed()});
-  quadData.vertices.push_back({200, 200, 1, 1, dudis::Color::Blue().packed()});
-  quadData.vertices.push_back({100, 200, 0, 1, dudis::Color::White().packed()});
-  quadData.indices.push_back(0);
-  quadData.indices.push_back(1);
-  quadData.indices.push_back(2);
-  quadData.indices.push_back(2);
-  quadData.indices.push_back(3);
-  quadData.indices.push_back(0);
-
-  quadData.textureId = ddgl::DD_WHITE_TEXTURE_ID;
-
-  // auto img = ImageLoader::loadFromFile("../assets/player.png");
-
   while (!_window->shouldClose())
   {
+
+    Time::deltaTime = _window->getFrameTime() * Time::timeScele;
 
     _window->eventListener();
 
     Input::update();
 
     render->beginFrame();
-
-    render->submit(quadData);
+    render->clear(clearColor);
 
     render->endFrame();
 
