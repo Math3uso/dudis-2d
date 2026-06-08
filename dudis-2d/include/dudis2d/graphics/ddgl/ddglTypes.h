@@ -21,6 +21,9 @@ namespace dudis
         constexpr uint32_t DD_INVALID_TEXTURE_ID = -1;
         constexpr uint32_t DD_WHITE_TEXTURE_ID = 0;
 
+        constexpr uint32_t DD_WHITE_TEXTURE_PIXEL = 0xFFFFFFFF;
+        constexpr uint32_t DD_PROGRAM_DEFAULT = 0;
+
         enum class ShaderType
         {
             VERT,
@@ -55,6 +58,15 @@ namespace dudis
         //     Nearest,
         //     Linear,
         // };
+
+        enum class PilelineState
+        {
+            Draw,
+            Scissor,
+            EndScissor,
+            // Stencil,
+            Blend,
+        };
 
         struct DDVertex_V3F_C4B_U2F
         {
@@ -179,6 +191,8 @@ namespace dudis
             std::vector<uint32_t> indices;
             uint32_t textureId;
 
+            uint32_t programShader = 0; // shader específico para este quad, se 0 usa o shader padrão do batch
+
             SizeF _size;
             Vec2 _pos;
         };
@@ -187,11 +201,27 @@ namespace dudis
 
         struct DDGLDrawCommand
         {
+            PilelineState state;
             int startVertex;
             int vertexCount;
             int startIndex;
             int indexCount;
             uint32_t textureId;
+            uint32_t programShader; // shader específico para este comando, se 0 usa o shader padrão do batch
+            DDRect scissorRect;     // retângulo de recorte, se aplicável
+        };
+
+        class DDGLDrawBatch
+        {
+        private:
+            std::vector<DDGLDrawCommand> drawCommands;
+            int lastSize = 0;
+
+        public:
+            void agroup();
+            void append(const DDGLDrawCommand &cmd);
+            void clear() { drawCommands.clear(); }
+            const std::vector<DDGLDrawCommand> &commands() const { return drawCommands; }
         };
 
         struct DDTransform2D
