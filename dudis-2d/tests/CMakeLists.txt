@@ -169,6 +169,7 @@ if(DD_BUILD_GRAPHICAL_TESTS)
   target_compile_definitions(dd_platform_test_support
     PUBLIC
       DD_TEST_ROOT_DIR="${TESTS_ROOT_DIR}"
+      DD_TEST_ASSETS_DIR="${TESTS_ROOT_DIR}/assets"
       DD_TEST_ARTIFACTS_DIR="${CMAKE_BINARY_DIR}/artifacts"
   )
 endif()
