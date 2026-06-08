@@ -35,6 +35,10 @@ namespace dudis
         virtual void setWindowPos(Vec2 pos) = 0;
         virtual bool renderIsLoad() { return true; };
 
+        virtual void updateFrameTime() = 0;
+        virtual float getFrameTime() = 0;
+        virtual uint64_t getTime() = 0;
+
         // temp
         virtual void eventListener() {};
         virtual void swapBuffers() {};
