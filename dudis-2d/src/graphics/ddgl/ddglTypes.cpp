@@ -137,3 +137,36 @@ VertexQuadDataTextured ddgl::createQuadData(const SizeF &size, const Vec2 &pos, 
 
     return quadData;
 }
+
+void DDGLDrawBatch::append(const DDGLDrawCommand &cmd)
+{
+    drawCommands.push_back(cmd);
+    lastSize = drawCommands.size();
+}
+
+void DDGLDrawBatch::agroup()
+{
+    if (drawCommands.empty())
+        return;
+
+    std::vector<DDGLDrawCommand> groupedCommands;
+
+    for (const auto &cmd : drawCommands)
+    {
+        if (!groupedCommands.empty())
+        {
+            auto &lastCmd = groupedCommands.back();
+
+            if (lastCmd.textureId == cmd.textureId && lastCmd.programShader == cmd.programShader && lastCmd.state == cmd.state)
+            {
+                lastCmd.vertexCount += cmd.vertexCount;
+                lastCmd.indexCount += cmd.indexCount;
+                continue;
+            }
+        }
+
+        groupedCommands.push_back(cmd);
+    }
+
+    drawCommands = std::move(groupedCommands);
+}
