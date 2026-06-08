@@ -42,6 +42,11 @@ namespace dudis
             virtual void deleteFrameBuffer(const FrameBuffer &frameBuffer) override;
             virtual void bindFrameBuffer(const FrameBuffer &frameBuffer) override;
             virtual void unbindFrameBuffer() override;
+
+            virtual void bindScissor(const DDRect &rect) override;
+            virtual void unbindScissor() override;
+
+            virtual int getDrawCallCount() const override;
         };
     }
 }

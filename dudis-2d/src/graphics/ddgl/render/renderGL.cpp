@@ -227,6 +227,7 @@ bool RenderGL::init()
         std::cout << "Projection and view matrices set for orthographic mode." << std::endl;
     }
 
+    // Cria textura branca 1x1 para renderizar quads sem textura
     uint32_t whitePixel = 0xFFFFFFFF;
     _whiteTexture = this->createTexture2D(&whitePixel, SizeI(1, 1));
     _index = std::vector<uint32_t>{0, 1, 2, 2, 3, 0}; // indices para um quad;
@@ -234,9 +235,15 @@ bool RenderGL::init()
     return true;
 }
 
+int RenderGL::getDrawCallCount() const
+{
+    return _drawCallCount;
+}
+
 void RenderGL::beginFrame()
 {
     Vec4 color = _clearColor.normalized();
+    _drawCallCount = 0;
 
     if (_viewPortDefault != DDRECT_NONE)
     {
@@ -256,35 +263,6 @@ void RenderGL::beginFrame()
 void RenderGL::endFrame()
 {
     this->flush();
-}
-
-void RenderGL::submit(const VertexQuadDataTextured &data)
-{
-    // Caso onde n ocorre o batch, entao renderiza imediatamente
-    if (data.vertices.size() > DD_MAX_VERTEX || data.indices.size() > DD_MAX_INDEX)
-    {
-        // flush do batch atual
-        this->flush();
-        return;
-    }
-
-    // Caso onde o batch atual + nova data excede o limite, entao flush do batch atual e depois adiciona nova data
-    if (_vert.size() + data.vertices.size() > DD_MAX_VERTEX || _index.size() + data.indices.size() > DD_MAX_INDEX)
-    {
-        this->flush();
-    }
-
-    this->_vert.insert(_vert.end(), data.vertices.begin(), data.vertices.end());
-    _index.insert(_index.end(), data.indices.begin(), data.indices.end());
-
-    DDGLDrawCommand cmd;
-    cmd.startVertex = _vert.size() - data.vertices.size();
-    cmd.vertexCount = data.vertices.size();
-    cmd.startIndex = _index.size() - data.indices.size();
-    cmd.indexCount = data.indices.size();
-    cmd.textureId = data.textureId == DD_WHITE_TEXTURE_ID ? _whiteTexture.id : data.textureId;
-
-    _drawCommands.push_back(cmd);
 }
 
 void RenderGL::submitRect(const VertexQuadData &data)
@@ -314,13 +292,76 @@ void RenderGL::submitRect(const VertexQuadData &data)
     cmd.indexCount = data.indices.size();
     cmd.textureId = DD_WHITE_TEXTURE_ID;
 
-    _drawCommands.push_back(cmd);
+    _drawCommands.append(cmd);
+}
+
+void RenderGL::submit(const VertexQuadDataTextured &data)
+{
+
+    // Caso onde n ocorre o batch, entao renderiza imediatamente
+    if (data.vertices.size() > DD_MAX_VERTEX || data.indices.size() > DD_MAX_INDEX)
+    {
+        // flush do batch atual
+        this->flush();
+        return;
+    }
+
+    // Caso onde o batch atual + nova data excede o limite, entao flush do batch atual e depois adiciona nova data
+    if (_vert.size() + data.vertices.size() > DD_MAX_VERTEX || _index.size() + data.indices.size() > DD_MAX_INDEX)
+    {
+        this->flush();
+    }
+
+    const uint32_t vertexOffset = static_cast<uint32_t>(_vert.size());
+
+    // primeiro adiciona nova data ao batch, depois cria comando de draw para essa data
+    this->_vert.insert(_vert.end(), data.vertices.begin(), data.vertices.end());
+    //    _index.insert(_index.end(), data.indices.begin(), data.indices.end());
+
+    for (uint32_t index : data.indices)
+    {
+        _index.push_back(vertexOffset + index);
+    }
+
+    DDGLDrawCommand cmd;
+    cmd.startVertex = _vert.size() - data.vertices.size();
+    cmd.vertexCount = data.vertices.size();
+    cmd.startIndex = _index.size() - data.indices.size();
+    cmd.indexCount = data.indices.size();
+    cmd.textureId = data.textureId == DD_WHITE_TEXTURE_ID ? _whiteTexture.id : data.textureId;
+    cmd.programShader = data.programShader == DD_PROGRAM_DEFAULT ? _shaderProgram : data.programShader;
+    cmd.state = PilelineState::Draw;
+
+    //   _drawCommands.push_back(cmd);
+    _drawCommands.append(cmd);
+}
+
+void RenderGL::bindScissor(const DDRect &rect)
+{
+    DDGLDrawCommand cmd;
+    cmd.state = PilelineState::Scissor;
+    cmd.scissorRect = rect;
+    _drawCommands.append(cmd);
+    // glEnable(GL_SCISSOR_TEST);
+    // glScissor(static_cast<int>(rect.x), static_cast<int>(rect.y), static_cast<int>(rect.w), static_cast<int>(rect.h));
+}
+
+void RenderGL::unbindScissor()
+{
+    DDGLDrawCommand cmd;
+    cmd.state = PilelineState::EndScissor;
+    cmd.scissorRect = DDRECT_NONE;
+    _drawCommands.append(cmd);
+    // glDisable(GL_SCISSOR_TEST);
 }
 
 void RenderGL::flush()
 {
-    if (_drawCommands.empty())
+    // Se nao tiver nada para renderizar, retorna
+    if (_drawCommands.commands().empty())
+    {
         return;
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, _vert.size() * sizeof(DDVertex_V3F_C4B_U2F), _vert.data());
@@ -337,21 +378,49 @@ void RenderGL::flush()
     int total = _vert.size() / 4; // cada quad tem 4 vertices, entao total de quads é vert.size() / 4
     int i = 0;
 
-    for (const auto &cmd : _drawCommands)
+    // Agrupa comandos de draw por textura e shader para minimizar bind calls
+    if (_drawCommands.commands().size() > 0)
     {
-        i++;
-        glBindTexture(GL_TEXTURE_2D, cmd.textureId);
+        // std::cout << "Draw commands before grouping: " << _drawCommands.commands().size() << std::endl;
+        _drawCommands.agroup();
+        // std::cout << "Draw commands after grouping: " << _drawCommands.commands().size() << std::endl;
+    }
 
-        glDrawElementsBaseVertex(
-            GL_TRIANGLES,
-            cmd.indexCount,
-            GL_UNSIGNED_INT,
-            (void *)(cmd.startIndex * sizeof(uint32_t)),
-            cmd.startVertex
+    for (const auto &cmd : _drawCommands.commands())
+    {
+        switch (cmd.state)
+        {
+        case PilelineState::Scissor:
+            glScissor(cmd.scissorRect.x, cmd.scissorRect.y, cmd.scissorRect.w, cmd.scissorRect.h);
+            glEnable(GL_SCISSOR_TEST);
+            break;
+        case PilelineState::EndScissor:
+            glDisable(GL_SCISSOR_TEST);
+            break;
+        case PilelineState::Draw:
+            i++;
+            glBindTexture(GL_TEXTURE_2D, cmd.textureId);
+            // glDrawElementsBaseVertex(
+            //     GL_TRIANGLES,
+            //     cmd.indexCount,
+            //     GL_UNSIGNED_INT,
+            //     (void *)(cmd.startIndex * sizeof(uint32_t)),
+            //     cmd.startVertex
 
-            //
-        );
-        // glDrawElements(GL_TRIANGLES, cmd.indexCount, GL_UNSIGNED_INT, (void *)(cmd.startIndex * sizeof(uint32_t)));
+            //     //
+            // );
+            _drawCallCount++;
+            glDrawElements(
+                GL_TRIANGLES,
+                cmd.indexCount,
+                GL_UNSIGNED_INT,
+                (void *)(cmd.startIndex * sizeof(uint32_t))
+                //
+            );
+            break;
+        default:
+            break;
+        }
     }
 
     // Limpa batch
@@ -389,6 +458,7 @@ DDTexture2D RenderGL::createTexture2D(const void *data, SizeI size, DDTextureSam
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.w, size.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
+    // Gerar mipmaps apenas se houver dados fornecidos, para evitar overhead desnecessário ao criar texturas vazias (como as usadas para framebuffers)
     if (data)
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -399,6 +469,7 @@ DDTexture2D RenderGL::createTexture2D(const void *data, SizeI size, DDTextureSam
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    // Configura os parâmetros de filtragem e repetição com base no sampler fornecido
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, toGLFilter(sampler.minFilter));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, toGLFilter(sampler.magFilter));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrap(sampler.wrapS));

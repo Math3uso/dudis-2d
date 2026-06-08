@@ -28,11 +28,13 @@ namespace dudis
             std::vector<DDVertex_V3F_C4B_U2F> _vert;
             std::vector<DDVertexV3FC4B> _vertRect;
             std::vector<uint32_t> _index;
-            std::vector<DDGLDrawCommand> _drawCommands;
+            // std::vector<DDGLDrawCommand> _drawCommands;
+            DDGLDrawBatch _drawCommands;
             DDRect _viewPortDefault = DDRECT_NONE;
             ProjectionType _projectionType;
             glm::mat4 _projection;
             glm::mat4 _view;
+            int _drawCallCount = 0;
 
         public:
             virtual bool init();
@@ -54,6 +56,11 @@ namespace dudis
             virtual void deleteFrameBuffer(const FrameBuffer &frameBuffer) = 0;
             virtual void bindFrameBuffer(const FrameBuffer &frameBuffer) = 0;
             virtual void unbindFrameBuffer() = 0;
+
+            virtual void bindScissor(const DDRect &rect) = 0;
+            virtual void unbindScissor() = 0;
+
+            virtual int getDrawCallCount() const { return _drawCallCount; }
             // virtual void submitFrameBuffer(const FrameBuffer &frameBuffer) = 0;
             //  virtual void bindFrameBuffer(const FrameBuffer &frameBuffer) = 0;
             //  virtual void unbindFrameBuffer() = 0;
