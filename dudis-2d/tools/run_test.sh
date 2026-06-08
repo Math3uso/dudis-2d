@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 arg="$1"
+shift || true
 
 if [ -z "$arg" ]; then
-    echo "Uso: $0 all | unit | platform | smoke | benchmarks | <nome_do_target>"
+    echo "Uso: $0 all | unit | platform | smoke | benchmarks | <nome_do_target> [filtro_do_catch2] [args_do_catch2...]"
     exit 1
 fi
 
@@ -11,6 +12,49 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 build_dir="$root/tests/build/unit-debug"
 graphics_build_dir="$root/tests/build/graphics-debug"
 bin_dir="$build_dir/bin"
+
+resolve_test_binary() {
+    local target="$1"
+    local ext=""
+
+    if [[ "$(uname)" == *"MSYS"* || "$(uname)" == *"Windows"* ]]; then
+        ext=".exe"
+    fi
+
+    if [ -x "$bin_dir/$target$ext" ]; then
+        echo "$bin_dir/$target$ext"
+        return 0
+    fi
+
+    if [ -x "$graphics_build_dir/bin/$target$ext" ]; then
+        echo "$graphics_build_dir/bin/$target$ext"
+        return 0
+    fi
+
+    return 1
+}
+
+list_test_names() {
+    local binary="$1"
+
+    (cd "$root/tests" && "$binary" --list-tests) | awk '
+        /^  [^ ]/ {
+            name = $0
+            sub(/^  /, "", name)
+            print name
+        }
+    '
+}
+
+print_indexed_tests() {
+    local binary="$1"
+
+    list_test_names "$binary" | awk '{ print NR - 1 " - " $0 }'
+}
+
+is_number() {
+    [[ "$1" =~ ^[0-9]+$ ]]
+}
 
 if [ "$arg" = "all" ]; then
     ctest --test-dir "$build_dir" --output-on-failure
@@ -44,22 +88,37 @@ if [ "$arg" = "benchmarks" ]; then
     exit $?
 fi
 
-if [ "$(uname)" == "Linux" ]; then
-    if [ -x "$bin_dir/$arg" ]; then
-        "$bin_dir/$arg"
-    else
-        "$graphics_build_dir/bin/$arg"
-    fi
-    exit 0
-
-elif [[ "$(uname)" == *"MSYS"* || "$(uname)" == *"Windows"* ]]; then
-    if [ -x "$bin_dir/$arg.exe" ]; then
-        "$bin_dir/$arg.exe"
-    else
-        "$graphics_build_dir/bin/$arg.exe"
-    fi
-    exit 0
-else
-    echo "Sistema operacional não reconhecido: $(uname)"
+if ! binary="$(resolve_test_binary "$arg")"; then
+    echo "Target de teste nao encontrado: $arg"
     exit 1
 fi
+
+if [ $# -eq 0 ] || [ "$1" = "list" ] || [ "$1" = "--list" ]; then
+    print_indexed_tests "$binary"
+    exit $?
+fi
+
+if [ "$1" = "--all-tests" ]; then
+    shift
+    (cd "$root/tests" && "$binary" "$@")
+    exit $?
+fi
+
+if is_number "$1"; then
+    index="$1"
+    shift
+    test_name="$(list_test_names "$binary" | awk -v wanted="$index" 'NR - 1 == wanted { print; found = 1 } END { exit found ? 0 : 1 }')"
+
+    if [ -z "$test_name" ]; then
+        echo "Indice de teste invalido: $index"
+        echo
+        print_indexed_tests "$binary"
+        exit 1
+    fi
+
+    (cd "$root/tests" && "$binary" "$test_name" "$@")
+    exit $?
+fi
+
+(cd "$root/tests" && "$binary" "$@")
+exit $?
