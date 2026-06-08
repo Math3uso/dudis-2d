@@ -5,12 +5,15 @@
 #include "dudis2d/core/log/log.h"
 #include "dudis2d/platform/input/input.h"
 #include "dudis2d/platform/input/sdlInputBackend.h"
+#include <algorithm>
 
 using namespace std;
 using namespace dudis;
 
 namespace
 {
+    constexpr double MAX_DELTA_TIME_SECONDS = 0.25;
+
     SDL_DisplayID resolveDisplayId(uint32_t display)
     {
         if (display != 0 && SDL_GetDisplayName(display) != nullptr)
@@ -102,6 +105,9 @@ bool SDLContext::init()
     _done = false;
     _initialized = true;
     _size = getSize();
+    _performanceFrequency = SDL_GetPerformanceFrequency();
+    _lastTicks = SDL_GetPerformanceCounter();
+    _deltaTime = 0.0f;
 
     if (_fullscreen)
     {
@@ -126,6 +132,9 @@ void SDLContext::shutdown()
     _initialized = false;
     _fullscreen = false;
     _done = true;
+    _lastTicks = 0;
+    _performanceFrequency = 0;
+    _deltaTime = 0.0f;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
@@ -315,4 +324,59 @@ void SDLContext::eventListener()
 void SDLContext::swapBuffers()
 {
     SDL_GL_SwapWindow((SDL_Window *)_windowRef);
+    updateFrameTime();
+}
+
+uint64_t SDLContext::getTime()
+{
+    if (!_initialized)
+    {
+        return 0;
+    }
+
+    return SDL_GetTicks();
+}
+
+void SDLContext::updateFrameTime()
+{
+    if (!_initialized)
+    {
+        _deltaTime = 0.0f;
+        return;
+    }
+
+    if (_performanceFrequency == 0)
+    {
+        _performanceFrequency = SDL_GetPerformanceFrequency();
+        if (_performanceFrequency == 0)
+        {
+            _deltaTime = 0.0f;
+            return;
+        }
+    }
+
+    const uint64_t currentTicks = SDL_GetPerformanceCounter();
+    if (_lastTicks == 0)
+    {
+        _lastTicks = currentTicks;
+        _deltaTime = 0.0f;
+        return;
+    }
+
+    if (currentTicks <= _lastTicks)
+    {
+        _lastTicks = currentTicks;
+        _deltaTime = 0.0f;
+        return;
+    }
+
+    const double elapsed = static_cast<double>(currentTicks - _lastTicks) /
+                           static_cast<double>(_performanceFrequency);
+    _deltaTime = static_cast<float>(std::clamp(elapsed, 0.0, MAX_DELTA_TIME_SECONDS));
+    _lastTicks = currentTicks;
+}
+
+float SDLContext::getFrameTime()
+{
+    return _deltaTime;
 }

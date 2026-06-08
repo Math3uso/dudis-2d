@@ -29,6 +29,10 @@ namespace dudis
         virtual void setFPSLimit(uint32_t fps) override;
         virtual void setWindowPos(Vec2 pos) override;
 
+        virtual void updateFrameTime() override;
+        virtual uint64_t getTime() override;
+        virtual float getFrameTime() override;
+
         virtual const char *_getPlatformWindow() override { return "SDL"; };
 
         // temp
@@ -46,7 +50,9 @@ namespace dudis
         bool _contextReady = false;
         GfxAPI _renderApi;
         bool _dirty = false;
-
+        uint64_t _lastTicks = 0;
+        uint64_t _performanceFrequency = 0;
+        float _deltaTime = 0.0f;
         void *_context;
     };
 }
