@@ -90,4 +90,5 @@ AsyncWorker *AsyncWorker::create()
     //     _instance = new AsyncWorker();
     // }
     // return _instance;
+    return nullptr;
 }
