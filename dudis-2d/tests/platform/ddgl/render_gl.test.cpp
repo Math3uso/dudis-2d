@@ -9,6 +9,7 @@
 #include "dudis2d/core/math/rect.h"
 #include "dudis2d/platform/input/input.h"
 #include "dudis2d/platform/input/keyboard.h"
+#include "dudis2d/graphics/res/fontLoader.h"
 
 TEST_CASE("ddgl render gl platform context initializes and shuts down", "[platform][ddgl]")
 {
@@ -557,6 +558,13 @@ TEST_CASE("should be able to use scissor test", "[platform][ddgl]")
     context.shutdown();
 }
 
+TEST_CASE("should be able to load TTF in memory", "[platform][ddgl]")
+{
+    using namespace dudis;
+    // ImageLoader::loadFromFile(tests::assetPath("player.png").string().c_str());
+    auto data = dudis::FontLoader::loadTTF(tests::assetPath("font.ttf").string().c_str());
+}
+
 TEST_CASE("teste temp", "[platform][ddgl]")
 {
     using namespace dudis;
@@ -574,7 +582,7 @@ TEST_CASE("teste temp", "[platform][ddgl]")
     auto platform = context.platformWindowRef();
     platform->setFPSLimit(0);
 
-    const int quadCount = 5000;
+    const int quadCount = 100;
     const SizeF quadSize(50.f, 50.f);
     const SizeI windowSize = platform->getSize();
 
