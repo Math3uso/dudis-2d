@@ -2,9 +2,32 @@
     "version": 3,
     "configurePresets": [
         {
+            "name": "default",
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
             "name": "base",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "compiler-ninja",
+            "hidden": true,
+            "generator": "Ninja"
+        },
+        {
+            "name": "compiler-vs2022",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64"
+        },
+        {
+            "name": "gcc-make",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
         },
         {
             "name": "android",
@@ -30,6 +53,13 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "desktop-win32",
+            "inherits": [
+                "default",
+                "compiler-vs2022"
+            ]
         }
     ],
     "buildPresets": [
@@ -44,6 +74,10 @@
         {
             "name": "desktop-release",
             "configurePreset": "desktop-release"
+        },
+        {
+            "name": "desktop-win32",
+            "configurePreset": "desktop-win32"
         }
     ]
 }
