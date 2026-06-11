@@ -18,11 +18,12 @@ add_library(dudis-graphics OBJECT
     ddgl/ddglTypes.cpp
     # ${DD_ROOT_DIR}/extern/stb_image.cpp
     res/imageLoader.cpp
+    res/fontLoader.cpp
 )
 
 
 target_include_directories(dudis-graphics
-      PRIVATE
+      PUBLIC
           ${DD_ROOT_DIR}/extern
 )
 
