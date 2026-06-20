@@ -36,6 +36,22 @@ namespace
             return GL_REPEAT;
         }
     }
+    GLenum toGLColorFormat(DDColorFormat format)
+    {
+        switch (format)
+        {
+        case DDColorFormat::RGBA:
+            return GL_RGBA;
+        case DDColorFormat::RGB:
+            return GL_RGB;
+        case DDColorFormat::R8:
+            return GL_R8;
+        case DDColorFormat::RED:
+            return GL_RED;
+        default:
+            return GL_RGBA;
+        }
+    }
 }
 
 bool RenderGL::_checkShader(unsigned int shader, unsigned int type)
@@ -104,11 +120,24 @@ bool RenderGL::_createShaderProgramDefault(QuadShaderType type)
         in vec2 texCoord;
 
         uniform sampler2D uTexture;
+        uniform int uIsFont;
 
         out vec4 finalColor;
 
         void main(){
-            finalColor = texture(uTexture, texCoord) * fragColor;
+
+            if(uIsFont == 1){
+            
+                //float distance = texture(uTexture, texCoord).r;
+
+                float alpha = texture(uTexture, texCoord).r;
+                //float alpha = smoothstep(0.5 - 0.02, 0.5 + 0.02, distance);
+
+                finalColor = vec4(fragColor.rgb,fragColor.a * alpha);
+
+            }else{
+                finalColor = texture(uTexture, texCoord) * fragColor;
+            }
         }
     )glsl";
 
@@ -295,7 +324,7 @@ void RenderGL::submitRect(const VertexQuadData &data)
     _drawCommands.append(cmd);
 }
 
-void RenderGL::submit(const VertexQuadDataTextured &data)
+void RenderGL::submit(const VertexQuadDataTextured &data, RenderMode mode)
 {
 
     // Caso onde n ocorre o batch, entao renderiza imediatamente
@@ -331,6 +360,7 @@ void RenderGL::submit(const VertexQuadDataTextured &data)
     cmd.textureId = data.textureId == DD_WHITE_TEXTURE_ID ? _whiteTexture.id : data.textureId;
     cmd.programShader = data.programShader == DD_PROGRAM_DEFAULT ? _shaderProgram : data.programShader;
     cmd.state = PilelineState::Draw;
+    cmd.mode = mode;
 
     //   _drawCommands.push_back(cmd);
     _drawCommands.append(cmd);
@@ -373,6 +403,9 @@ void RenderGL::flush()
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(_shaderProgram, "uTexture"), 0);
 
+    int uIsFontLocation = glGetUniformLocation(_shaderProgram, "uIsFont");
+    glUniform1i(uIsFontLocation, 0);
+
     glBindVertexArray(_vao);
 
     int total = _vert.size() / 4; // cada quad tem 4 vertices, entao total de quads é vert.size() / 4
@@ -400,6 +433,7 @@ void RenderGL::flush()
         case PilelineState::Draw:
             i++;
             glBindTexture(GL_TEXTURE_2D, cmd.textureId);
+            glUniform1i(uIsFontLocation, cmd.mode == RenderMode::Font ? 1 : 0);
             // glDrawElementsBaseVertex(
             //     GL_TRIANGLES,
             //     cmd.indexCount,
@@ -445,7 +479,7 @@ void RenderGL::clear(const Color &color)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-DDTexture2D RenderGL::createTexture2D(const void *data, SizeI size, DDTextureSampler sampler)
+DDTexture2D RenderGL::createTexture2D(const void *data, SizeI size, DDTextureSampler sampler, TexInternalFormat format)
 {
     TextureHandle texture;
 
@@ -456,7 +490,19 @@ DDTexture2D RenderGL::createTexture2D(const void *data, SizeI size, DDTextureSam
     glGenTextures(1, &texture.id);
     glBindTexture(GL_TEXTURE_2D, texture.id);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.w, size.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    // DEBUG TEMP
+    // GLenum teste = format == DDColorFormat::R8 ? GL_RED : GL_RGBA;
+    // std::string formatStr = teste == GL_RED ? "RED" : "RBGA";
+    // std::cout << "[DEBUG] formato: " << formatStr << "\n";
+    // DEBUG TEMP
+    glTexImage2D(
+        GL_TEXTURE_2D, 0,
+        toGLColorFormat(format.storageFormat),
+        size.w, size.h,
+        0, toGLColorFormat(format.sourceLayout),
+        GL_UNSIGNED_BYTE, data
+        //
+    );
 
     // Gerar mipmaps apenas se houver dados fornecidos, para evitar overhead desnecessário ao criar texturas vazias (como as usadas para framebuffers)
     if (data)
