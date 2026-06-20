@@ -565,6 +565,125 @@ TEST_CASE("should be able to load TTF in memory", "[platform][ddgl]")
     auto data = dudis::FontLoader::loadTTF(tests::assetPath("font.ttf").string().c_str());
 }
 
+TEST_CASE("should be able to draw a text", "[platform][ddgl]")
+{
+    using namespace dudis;
+    using namespace ddgl;
+
+    tests::PlatformTestContext context;
+
+    if (!context.initOpenGLWindow("DDGL Render GL platform test", SizeI(800, 600)))
+    {
+        SUCCEED("No graphical display is available for platform ddgl render gl tests.");
+        return;
+    }
+
+    auto render = context.renderRef();
+
+    auto platform = context.platformWindowRef();
+
+    auto data = dudis::FontLoader::loadTTF(tests::assetPath("font.ttf").string().c_str());
+
+    REQUIRE(data.bitmaps.size() > 0);
+
+    auto sampler = ddgl::DDTextureSampler();
+
+    DDTexInternalFormat format = DDTexInternalFormat::R8_RED();
+
+    auto tex = render->createTexture2D(data.bitmaps.data(), SizeI(data.bitmapW, data.bitmapH), sampler, format);
+    SizeI imageSize = SizeI(data.bitmapW, data.bitmapH);
+
+    // auto quad = ddgl::createQuadData(SizeF(500, 500), Vec2(100, 100), DDRect(0, 0, imageSize.w, imageSize.h), 0xFFFFFFFF, tex);
+
+    auto texto = ddgl::createTexteQuad(data, "teste de texto", 250, Vec2(100, 100), tex, 0xFFFFFFFF);
+
+    while (platform->isOpen())
+    {
+        platform->eventListener();
+        Input::update();
+
+        render->beginFrame();
+        render->clear(dudis::Color::Default());
+
+        render->submit(texto, RenderMode::Font);
+
+        render->endFrame();
+
+        platform->swapBuffers();
+    }
+
+    // render->deleteTexture2D(tex);
+    render->shutdown();
+    platform->shutdown();
+    context.shutdown();
+}
+
+TEST_CASE("should be able to draw a text with any size", "[platform][ddgl]")
+{
+    using namespace dudis;
+    using namespace ddgl;
+
+    tests::PlatformTestContext context;
+
+    if (!context.initOpenGLWindow("DDGL Render GL platform test", SizeI(800, 600)))
+    {
+        SUCCEED("No graphical display is available for platform ddgl render gl tests.");
+        return;
+    }
+
+    auto render = context.renderRef();
+
+    auto platform = context.platformWindowRef();
+
+    // auto data = dudis::FontLoader::loadTTF(tests::assetPath("font.ttf").string().c_str());
+
+    auto ttfBuffer = FontLoader::createTTFBuffer(tests::assetPath("font.ttf").string().c_str());
+
+    REQUIRE(ttfBuffer.size() > 0);
+
+    auto font1 = FontLoader::createFontWithTTFBuffer(ttfBuffer);
+    auto font2 = FontLoader::createFontWithTTFBuffer(ttfBuffer, 64.f);
+
+    REQUIRE(font1.bitmaps.size() > 0);
+    REQUIRE(font2.bitmaps.size() > 0);
+
+    auto sampler = ddgl::DDTextureSampler();
+
+    DDTexInternalFormat format = DDTexInternalFormat::R8_RED();
+
+    // carregando textura da fonte 1
+    auto tex = render->createTexture2D(font1.bitmaps.data(), SizeI(font1.bitmapW, font1.bitmapH), sampler, format);
+    SizeI imageSize = SizeI(font1.bitmapW, font1.bitmapH);
+
+    // carregando textura da fonte 2
+    auto tex2 = render->createTexture2D(font2.bitmaps.data(), SizeI(font2.bitmapW, font2.bitmapH), sampler, format);
+    SizeI imageSize2 = SizeI(font2.bitmapW, font2.bitmapH);
+
+    auto texto = ddgl::createTexteQuad(font1, "teste de texto", 250, Vec2(100, 100), tex, 0xFFFFFFFF);
+    auto texto2 = ddgl::createTexteQuad(font2, "teste de texto 2", 200, Vec2(200, 200), tex2, 0xFFFFFFFF);
+
+    while (platform->isOpen())
+    {
+        platform->eventListener();
+        Input::update();
+
+        render->beginFrame();
+        render->clear(dudis::Color::Default());
+
+        render->submit(texto, RenderMode::Font);
+        render->submit(texto2, RenderMode::Font);
+
+        render->endFrame();
+
+        platform->swapBuffers();
+    }
+
+    // render->deleteTexture2D(tex);
+    render->shutdown();
+    platform->shutdown();
+    context.shutdown();
+}
+
 TEST_CASE("teste temp", "[platform][ddgl]")
 {
     using namespace dudis;
