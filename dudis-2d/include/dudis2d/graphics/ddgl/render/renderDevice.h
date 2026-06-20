@@ -40,11 +40,11 @@ namespace dudis
             virtual bool init();
             virtual void shutdown() = 0;
             virtual void beginFrame() = 0;
-            virtual void submit(const VertexQuadDataTextured &data) = 0;
+            virtual void submit(const VertexQuadDataTextured &data, RenderMode mode = RenderMode::Texture) = 0;
             virtual void submitRect(const VertexQuadData &data) = 0;
             virtual void flush() = 0;
             virtual void endFrame() = 0;
-            virtual DDTexture2D createTexture2D(const void *data, SizeI size, DDTextureSampler sampler = DDTextureSampler()) = 0;
+            virtual DDTexture2D createTexture2D(const void *data, SizeI size, DDTextureSampler sampler = DDTextureSampler(), TexInternalFormat format = TexInternalFormat::RGBA()) = 0;
             virtual void deleteTexture2D(const DDTexture2D &texture) = 0;
             virtual void clearColor(const Color &color) = 0;
             virtual void clear(const Color &color) = 0;
