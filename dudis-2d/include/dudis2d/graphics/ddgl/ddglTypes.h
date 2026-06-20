@@ -5,6 +5,7 @@
 #include "dudis2d/core/math/vec2.h"
 #include "dudis2d/core/utils/sizeF.h"
 #include "dudis2d/core/math/rect.h"
+#include "dudis2d/graphics/res/fontLoader.h"
 
 namespace dudis
 {
@@ -66,6 +67,12 @@ namespace dudis
             EndScissor,
             // Stencil,
             Blend,
+        };
+
+        enum class RenderMode
+        {
+            Texture,
+            Font
         };
 
         struct DDVertex_V3F_C4B_U2F
@@ -137,6 +144,12 @@ namespace dudis
                              SamplerWrap wrapT = SamplerWrap::Repeat)
                 : minFilter(minFilter), magFilter(magFilter), wrapS(wrapS), wrapT(wrapT) {}
 
+            /// Cria um sampler usando o mesmo filtro para minificação e magnificação
+            /// e o mesmo modo de repetição para os eixos S e T.
+            ///
+            /// @param filter Filtro aplicado tanto quando a textura diminui quanto quando aumenta.
+            /// @param wrap Modo de repetição aplicado nos dois eixos de coordenada da textura.
+            /// @return Um DDTextureSampler com todos os campos preenchidos de forma uniforme.
             static DDTextureSampler uniform(
                 SamplerFilter filter,
                 SamplerWrap wrap)
@@ -174,6 +187,44 @@ namespace dudis
 
         using DDRenderTarget = FrameBuffer;
 
+        enum class DDColorFormat
+        {
+            RGBA,
+            RGB,
+            R8,
+            RED,
+        };
+
+        struct DDTexInternalFormat
+        {
+            DDColorFormat storageFormat; // como a GPU guarda
+            DDColorFormat sourceLayout;  // como enviamos antes de guardar
+
+            DDTexInternalFormat(DDColorFormat format, DDColorFormat src) { storageFormat = format, sourceLayout = src; }
+
+            DDTexInternalFormat() = default;
+
+            /// Cria uma configuração comum para texturas RGBA.
+            ///
+            /// Usa RGBA tanto como formato interno da GPU quanto como layout dos dados
+            /// enviados pela CPU.
+            ///
+            /// @return Configuração de formato para texturas com canais vermelho, verde,
+            /// azul e alfa.
+            static DDTexInternalFormat RGBA() { return DDTexInternalFormat(DDColorFormat::RGBA, DDColorFormat::RGBA); }
+
+            /// Cria uma configuração para texturas de um canal armazenadas como R8.
+            ///
+            /// O armazenamento interno usa R8 e os dados de entrada são interpretados
+            /// pelo canal RED. Esse formato é útil para mapas de máscara, fontes e
+            /// outras texturas que precisam de apenas um canal.
+            ///
+            /// @return Configuração de formato para textura de canal único.
+            static DDTexInternalFormat R8_RED() { return DDTexInternalFormat(DDColorFormat::R8, DDColorFormat::RED); }
+        };
+
+        using TexInternalFormat = DDTexInternalFormat;
+
         constexpr FrameBuffer DD_INVALID_FRAMEBUFFER = FrameBuffer{0};
 
         struct VertexQuadData
@@ -197,7 +248,39 @@ namespace dudis
             Vec2 _pos;
         };
 
+        /// Cria os dados de vértices e índices para desenhar um quad texturizado.
+        ///
+        /// A função monta quatro vértices em ordem horária a partir do canto superior
+        /// esquerdo de `pos`, calcula as coordenadas UV usando `src` dentro da textura
+        /// `img` e gera os seis índices necessários para formar dois triângulos.
+        ///
+        /// @param size Largura e altura finais do quad em coordenadas de tela/mundo.
+        /// @param pos Posição do canto superior esquerdo do quad.
+        /// @param src Retângulo da região da textura que será usada. As coordenadas
+        /// são dadas em pixels da textura.
+        /// @param color Cor aplicada a todos os vértices. Normalmente é usada como
+        /// multiplicador/tint no shader.
+        /// @param img Textura de origem. O campo `id` é guardado no quad e `width`/
+        /// `height` são usados para normalizar as UVs.
+        /// @return Um VertexQuadDataTextured pronto para ser enviado ao batch de render.
         VertexQuadDataTextured createQuadData(const SizeF &size, const Vec2 &pos, const Rect &src, uint32_t color, DDTexture2D img);
+
+        /// Cria os dados de vértices e índices para desenhar uma sequência de texto.
+        ///
+        /// Para cada caractere de `text`, a função consulta as métricas baked da fonte,
+        /// cria um quad com as UVs corretas no atlas e avança a posição de escrita.
+        /// O texto gerado usa a textura informada em `tex`.
+        ///
+        /// @param font Dados da fonte carregada, incluindo as informações baked dos glifos.
+        /// @param text Texto terminado em `\0` que será convertido em quads.
+        /// @param size Tamanho solicitado para o texto. Atualmente a implementação não
+        /// usa esse valor para escalar os vértices.
+        /// @param pos Posição inicial onde o texto será desenhado. A função recebe por
+        /// valor, então o cursor interno pode avançar sem alterar o Vec2 original.
+        /// @param tex Textura/atlas que contém os glifos da fonte.
+        /// @param color Cor aplicada a todos os vértices dos glifos.
+        /// @return Um VertexQuadDataTextured com todos os quads e índices do texto.
+        VertexQuadDataTextured createTexteQuad(FontLoader::FontData &font, const char *text, int size, Vec2 pos, DDTexture2D tex, uint32_t color);
 
         struct DDGLDrawCommand
         {
@@ -209,6 +292,7 @@ namespace dudis
             uint32_t textureId;
             uint32_t programShader; // shader específico para este comando, se 0 usa o shader padrão do batch
             DDRect scissorRect;     // retângulo de recorte, se aplicável
+            RenderMode mode;
         };
 
         class DDGLDrawBatch
@@ -218,9 +302,31 @@ namespace dudis
             int lastSize = 0;
 
         public:
+            /// Agrupa comandos de desenho consecutivos compatíveis.
+            ///
+            /// Dois comandos são considerados compatíveis quando usam a mesma textura,
+            /// o mesmo shader, o mesmo estado de pipeline e o mesmo modo de render.
+            /// Nesses casos, a função soma as contagens de vértices e índices no comando
+            /// anterior, reduzindo a quantidade de draw calls que o renderer precisa
+            /// executar.
             void agroup();
+
+            /// Adiciona um comando de desenho ao final do batch.
+            ///
+            /// @param cmd Comando com estado, intervalos de vértices/índices, textura,
+            /// shader e modo de render que serão usados pelo renderer.
             void append(const DDGLDrawCommand &cmd);
+
+            /// Remove todos os comandos acumulados no batch.
+            ///
+            /// Use antes de iniciar a montagem de um novo frame ou quando os comandos
+            /// atuais não devem mais ser renderizados.
             void clear() { drawCommands.clear(); }
+
+            /// Retorna a lista de comandos de desenho acumulados.
+            ///
+            /// @return Referência constante para os comandos internos. A referência é
+            /// válida enquanto o DDGLDrawBatch existir e não for modificado.
             const std::vector<DDGLDrawCommand> &commands() const { return drawCommands; }
         };
 
@@ -237,8 +343,29 @@ namespace dudis
         constexpr bool DD_REPLACE_POS = true;
         constexpr bool DD_KEEP_POS = false;
 
+        /// Aplica uma transformação 2D diretamente em um quad sem coordenadas UV.
+        ///
+        /// Cada vértice é transformado em torno de `transform.origin`, seguindo a ordem:
+        /// escala, skew, rotação e translação. A transformação altera o vetor recebido.
+        ///
+        /// @param transform Posição, escala, origem, rotação e skew usados no cálculo.
+        /// `rotation`, `skewX` e `skewY` são informados em radianos.
+        /// @param quad Vetor de vértices que será modificado in-place.
         void transformQuadV3FC4B(const DDTransform2D &transform, std::vector<DDVertexV3FC4B> &quad);
 
+        /// Aplica uma transformação 2D diretamente nos vértices de um quad texturizado.
+        ///
+        /// A função preserva UVs, cor, índices e textura; apenas as posições dos vértices
+        /// são recalculadas. Ao final, `_pos` é atualizado com a posição do primeiro
+        /// vértice, quando houver vértices.
+        ///
+        /// @param transform Posição, escala, origem, rotação e skew usados no cálculo.
+        /// `rotation`, `skewX` e `skewY` são informados em radianos.
+        /// @param vertexData Dados do quad que serão modificados in-place.
+        /// @param replacePos Quando `false`, transforma usando as posições atuais dos
+        /// vértices. Quando `true`, subtrai `vertexData._pos` antes do cálculo e escreve
+        /// a nova posição a partir de `transform.position`, útil para reposicionar um
+        /// quad já criado em vez de acumular a posição anterior.
         void transformDDVertex(const DDTransform2D &transform, VertexQuadDataTextured &vertexData, bool replacePos = false);
     }
 }
