@@ -29,11 +29,11 @@ namespace dudis
             virtual bool init() override;
             virtual void shutdown() override;
             virtual void beginFrame() override;
-            virtual void submit(const VertexQuadDataTextured &data) override;
+            virtual void submit(const VertexQuadDataTextured &data, RenderMode mode = RenderMode::Texture) override;
             virtual void submitRect(const VertexQuadData &data) override;
             virtual void flush() override;
             virtual void endFrame() override;
-            virtual DDTexture2D createTexture2D(const void *data, SizeI size, DDTextureSampler sampler = DDTextureSampler()) override;
+            virtual DDTexture2D createTexture2D(const void *data, SizeI size, DDTextureSampler sampler = DDTextureSampler(), TexInternalFormat format = TexInternalFormat::RGBA()) override;
             virtual void deleteTexture2D(const DDTexture2D &texture) override;
             virtual void clearColor(const Color &color) override;
             virtual void clear(const Color &color) override;
