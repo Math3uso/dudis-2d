@@ -612,7 +612,7 @@ TEST_CASE("should be able to draw a text", "[platform][ddgl]")
         platform->swapBuffers();
     }
 
-    // render->deleteTexture2D(tex);
+    render->deleteTexture2D(tex);
     render->shutdown();
     platform->shutdown();
     context.shutdown();
@@ -662,6 +662,11 @@ TEST_CASE("should be able to draw a text with any size", "[platform][ddgl]")
     auto texto = ddgl::createTexteQuad(font1, "teste de texto", 250, Vec2(100, 100), tex, 0xFFFFFFFF);
     auto texto2 = ddgl::createTexteQuad(font2, "teste de texto 2", 200, Vec2(200, 200), tex2, 0xFFFFFFFF);
 
+    float fpsTimer = 0.f;
+    int frames = 0;
+
+    auto texto3 = ddgl::createTexteQuad(font1, "FPS: 00.00", 32, Vec2(25, 25), tex, 0xFFFFFFFF);
+
     while (platform->isOpen())
     {
         platform->eventListener();
@@ -673,12 +678,28 @@ TEST_CASE("should be able to draw a text with any size", "[platform][ddgl]")
         render->submit(texto, RenderMode::Font);
         render->submit(texto2, RenderMode::Font);
 
-        render->endFrame();
+        fpsTimer += platform->getFrameTime();
+        frames++;
 
+        if (fpsTimer >= 1.f)
+        {
+            std::string content = "FPS " + std::to_string(frames / fpsTimer);
+            texto3 = ddgl::createTexteQuad(font1, content.c_str(), 32, Vec2(25, 25), tex, 0xFFFFFFFF);
+            std::cout << "FPS: " << frames / fpsTimer
+                      << "\n";
+
+            fpsTimer = 0.f;
+            frames = 0;
+        }
+
+        render->submit(texto3, RenderMode::Font);
+
+        render->endFrame();
         platform->swapBuffers();
     }
 
-    // render->deleteTexture2D(tex);
+    render->deleteTexture2D(tex);
+    render->deleteTexture2D(tex2);
     render->shutdown();
     platform->shutdown();
     context.shutdown();
@@ -701,7 +722,7 @@ TEST_CASE("teste temp", "[platform][ddgl]")
     auto platform = context.platformWindowRef();
     platform->setFPSLimit(0);
 
-    const int quadCount = 100;
+    const int quadCount = 2000;
     const SizeF quadSize(50.f, 50.f);
     const SizeI windowSize = platform->getSize();
 
