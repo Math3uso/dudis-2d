@@ -27,6 +27,6 @@ export const create = defineCommand({
 
         const projectPath = path.join(dir);
 
-        fs.mkdirSync(`${projectPath}/${name}`);
+        // fs.mkdirSync(`${projectPath}/${name}`);
     }
 });

@@ -1,6 +1,7 @@
 import { defineCommand, runMain } from "citty";
 import { version } from "./commands/version";
 import { create } from "./commands/new";
+import { test } from "./commands/dd-test";
 
 const dudis = defineCommand({
     meta: { name: "dudis", description: "dudis cli" },
@@ -18,7 +19,8 @@ const dudis = defineCommand({
     },
     subCommands: {
         version,
-        create
+        create,
+        test
     },
 });
 
