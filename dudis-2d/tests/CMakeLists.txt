@@ -178,6 +178,7 @@ dd_add_test(entity_unit
   SUITE unit
   SOURCES
     unit/entity/entity.test.cpp
+    unit/math/rect.test.cpp
     unit/res/image_data.test.cpp
 )
 
