@@ -67,6 +67,7 @@ function(dd_configure_module target)
     target_include_directories(${target}
         PUBLIC
             ${DD_ROOT_DIR}/include
+            ${DD_ROOT_DIR}/extern
     )
     target_compile_definitions(${target}
         PRIVATE
