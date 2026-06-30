@@ -1,4 +1,4 @@
-# Dudis2D - Pequeno framework para criação de jogos 2d.
+# Dudis2D - Pequeno framework para criação de jogos 2d
 
 ## dudis2d oq é?
 `dudis2d` foi escrito com raylib e ajuda na criação de jogos 2d usando C++.
