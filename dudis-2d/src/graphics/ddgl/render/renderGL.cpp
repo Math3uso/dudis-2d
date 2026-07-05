@@ -590,6 +590,29 @@ void RenderGL::deleteFrameBuffer(const FrameBuffer &frameBuffer)
     }
 }
 
+void RenderGL::showWireframe()
+{
+
+    int triangleCount = _index.size() / 3;
+
+    for (int i = 0; i < triangleCount; i += 3)
+    {
+        uint32_t a = _index[i];
+        uint32_t b = _index[i + 1];
+        uint32_t c = _index[i + 2];
+
+        _linesIndex.push_back(a);
+        _linesIndex.push_back(b);
+
+        _linesIndex.push_back(b);
+        _linesIndex.push_back(c);
+
+        _linesIndex.push_back(c);
+        _linesIndex.push_back(a);
+    }
+    return;
+}
+
 void RenderGL::shutdown()
 {
 
