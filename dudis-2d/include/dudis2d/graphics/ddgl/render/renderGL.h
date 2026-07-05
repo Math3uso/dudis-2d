@@ -24,6 +24,7 @@ namespace dudis
             Color _clearColor = Color(31, 31, 31, 255);
             bool _checkShader(unsigned int shader, unsigned int type);
             bool _createShaderProgramDefault(QuadShaderType type = QuadShaderType::DEFAULT);
+            std::vector<uint32_t> _linesIndex;
 
         public:
             virtual bool init() override;
@@ -47,6 +48,7 @@ namespace dudis
             virtual void unbindScissor() override;
 
             virtual int getDrawCallCount() const override;
+            virtual void showWireframe() override;
         };
     }
 }
